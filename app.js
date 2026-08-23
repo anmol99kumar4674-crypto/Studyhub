@@ -6,8 +6,10 @@ const ALL_LECTURES = [
   ...ART_CULTURE_LECTURES.map(x => ({...x, subject:"Art & Culture"})),
   ...GENERAL_SCIENCE_LECTURES.map(x => ({...x, subject:"General Science"}))
 ];
+
 const LECTURES = ALL_LECTURES;
 const $ = (s) => document.querySelector(s);
+
 const subjectsView = $("#subjectsView");
 const lecturesView = $("#lecturesView");
 const subjectGrid = $("#subjectGrid");
@@ -18,14 +20,22 @@ const player = $("#player");
 const video = $("#video");
 const unsupported = $("#unsupported");
 const openOriginal = $("#openOriginal");
+
 const iconMap = {
-  Economics:"📈", History:"📜", Geography:"🌍", "Art & Culture":"🏺",
-  "Polity & Governance":"⚖️", "Maths / DI":"∑", "General Science":"🔬",
-  "Current Affairs":"📰", "General Studies":"📚"
+  Economics:"📈",
+  History:"📜",
+  Geography:"🌍",
+  "Art & Culture":"🏺",
+  "Polity & Governance":"⚖️",
+  "Maths / DI":"∑",
+  "General Science":"🔬",
+  "Current Affairs":"📰",
+  "General Studies":"📚"
 };
 
 let activeSubject = "All";
 let activeLectureSubject = null;
+let activeChapter = null;
 
 function subjects() {
   return [...new Set(LECTURES.map(x => x.subject))].sort();
@@ -33,25 +43,41 @@ function subjects() {
 
 function filteredLectures() {
   const q = searchInput.value.trim().toLowerCase();
-  return LECTURES.filter(x =>
-    (activeSubject === "All" || x.subject === activeSubject) &&
-    (!q || [x.title,x.subject,x.chapter].join(" ").toLowerCase().includes(q))
-  ).sort((a,b) => (b.date || "").localeCompare(a.date || "") || b.id.localeCompare(a.id));
+
+  return LECTURES
+    .filter(x =>
+      (activeSubject === "All" || x.subject === activeSubject) &&
+      (!q || [x.title, x.subject, x.chapter].join(" ").toLowerCase().includes(q))
+    )
+    .sort((a,b) =>
+      (b.date || "").localeCompare(a.date || "") ||
+      b.id.localeCompare(a.id)
+    );
 }
 
 function renderFilters() {
   filters.innerHTML = "";
+
   ["All", ...subjects()].forEach(s => {
     const b = document.createElement("button");
     b.className = "filter " + (activeSubject === s ? "active" : "");
     b.textContent = s;
+
     b.onclick = () => {
       activeSubject = s;
       activeLectureSubject = null;
-      history.pushState({studyLectures:true, view:"subjects", subject:s}, "", location.href);
+      activeChapter = null;
+
+      history.pushState(
+        {studyLectures:true, view:"subjects", subject:s},
+        "",
+        location.href
+      );
+
       showSubjects();
       renderFilters();
     };
+
     filters.appendChild(b);
   });
 }
@@ -59,96 +85,190 @@ function renderFilters() {
 function showSubjects() {
   subjectsView.classList.remove("hidden");
   lecturesView.classList.add("hidden");
+
+  activeLectureSubject = null;
+  activeChapter = null;
+
   const data = filteredLectures();
   const grouped = {};
-  data.forEach(x => grouped[x.subject] = (grouped[x.subject] || 0) + 1);
+
+  data.forEach(x => {
+    grouped[x.subject] = (grouped[x.subject] || 0) + 1;
+  });
+
   subjectGrid.innerHTML = "";
+
   Object.keys(grouped).sort().forEach(subject => {
     const card = document.createElement("button");
     card.className = "subject-card";
-    card.innerHTML = `<span class="subject-icon">${iconMap[subject] || "📘"}</span>
-      <span><b>${subject}</b><small>${grouped[subject]} lecture${grouped[subject]===1?"":"s"}</small></span><span class="arrow">›</span>`;
-    card.onclick = () => showLectures(subject, true);
+
+    card.innerHTML = `
+      <span class="subject-icon">${iconMap[subject] || "📘"}</span>
+      <span>
+        <b>${subject}</b>
+        <small>${grouped[subject]} lecture${grouped[subject] === 1 ? "" : "s"}</small>
+      </span>
+      <span class="arrow">›</span>
+    `;
+
+    card.onclick = () => showChapters(subject, true);
     subjectGrid.appendChild(card);
   });
-  $("#countLabel").textContent = `${data.length} lecture${data.length===1?"":"s"}`;
+
+  $("#countLabel").textContent =
+    `${data.length} lecture${data.length === 1 ? "" : "s"}`;
 }
 
-function showLectures(subject, pushHistory = false) {
+/* Subject → Chapter list */
+function showChapters(subject, pushHistory = false) {
   activeLectureSubject = subject;
+  activeChapter = null;
+
   if (pushHistory) {
-    history.pushState({studyLectures:true, view:"lectures", subject}, "", location.href);
+    history.pushState(
+      {studyLectures:true, view:"chapters", subject},
+      "",
+      location.href
+    );
   }
+
   subjectsView.classList.add("hidden");
   lecturesView.classList.remove("hidden");
-  $("#subjectTitle").textContent = subject;
+
+  renderChapterHeader(subject);
 
   const data = filteredLectures().filter(x => x.subject === subject);
   const chapters = {};
-  data.forEach(x => (chapters[x.chapter] ||= []).push(x));
+
+  data.forEach(x => {
+    const key = x.chapter || "General";
+    (chapters[key] ||= []).push(x);
+  });
+
   chapterList.innerHTML = "";
 
   Object.entries(chapters).forEach(([chapter, list]) => {
-    const section = document.createElement("section");
-    section.className = "chapter";
+    const card = document.createElement("button");
+    card.className = "chapter-card";
 
-    const head = document.createElement("div");
-    head.className = "chapter-head";
-    head.innerHTML = `<div><h3>${chapter}</h3><span>${list.length} lecture${list.length===1?"":"s"}</span></div>
-      <span class="chapter-arrow">›</span>`;
+    card.innerHTML = `
+      <span class="chapter-card-main">
+        <b>${chapter}</b>
+        <small>${list.length} lecture${list.length === 1 ? "" : "s"}</small>
+      </span>
+      <span class="chapter-arrow">›</span>
+    `;
 
-    const ul = document.createElement("div");
-    ul.className = "lecture-list hidden";
+    card.onclick = () => showChapterLectures(subject, chapter, true);
+    chapterList.appendChild(card);
+  });
+}
 
-    list.forEach((x,i) => {
-      const row = document.createElement("button");
-      row.className = "lecture";
-      row.innerHTML = `<span class="lecture-no">${String(i+1).padStart(2,"0")}</span>
-        <span class="lecture-main"><b>${x.title}</b><small>${formatDate(x.date)}${x.duration ? " • "+x.duration : ""}</small></span>
-        <span class="lecture-actions">
-          ${x.notes ? '<span class="notes-btn">📄 Notes</span>' : ''}
-          <span class="play">▶</span>
-        </span>`;
-      row.onclick = (e) => {
-        if (e.target.closest(".notes-btn")) {
-          e.stopPropagation();
-          openNotes(x);
-        } else {
-          openLectureDirect(x);
-        }
-      };
-      ul.appendChild(row);
-    });
+/* Chapter → Lecture list */
+function showChapterLectures(subject, chapter, pushHistory = false) {
+  activeLectureSubject = subject;
+  activeChapter = chapter;
 
-    head.onclick = () => {
-      const open = !ul.classList.contains("hidden");
-      ul.classList.toggle("hidden");
-      head.classList.toggle("open", !open);
-      const arrow = head.querySelector(".chapter-arrow");
-      if (arrow) arrow.textContent = open ? "›" : "⌄";
+  if (pushHistory) {
+    history.pushState(
+      {studyLectures:true, view:"chapterLectures", subject, chapter},
+      "",
+      location.href
+    );
+  }
+
+  subjectsView.classList.add("hidden");
+  lecturesView.classList.remove("hidden");
+
+  renderChapterLectureHeader(subject, chapter);
+
+  const data = filteredLectures()
+    .filter(x => x.subject === subject && (x.chapter || "General") === chapter);
+
+  chapterList.innerHTML = "";
+
+  const ul = document.createElement("div");
+  ul.className = "lecture-list chapter-lecture-list";
+
+  data.forEach((x, i) => {
+    const row = document.createElement("button");
+    row.className = "lecture";
+
+    row.innerHTML = `
+      <span class="lecture-no">${String(i + 1).padStart(2, "0")}</span>
+      <span class="lecture-main">
+        <b>${x.title}</b>
+        <small>${formatDate(x.date)}${x.duration ? " • " + x.duration : ""}</small>
+      </span>
+      <span class="lecture-actions">
+        ${x.notes ? '<span class="notes-btn">📄 Notes</span>' : ""}
+        <span class="play">▶</span>
+      </span>
+    `;
+
+    row.onclick = (e) => {
+      if (e.target.closest(".notes-btn")) {
+        e.stopPropagation();
+        openNotes(x);
+      } else {
+        openLectureDirect(x);
+      }
     };
 
-    section.appendChild(head);
-    section.appendChild(ul);
-    chapterList.appendChild(section);
+    ul.appendChild(row);
   });
+
+  chapterList.appendChild(ul);
+}
+
+function renderChapterHeader(subject) {
+  const head = lecturesView.querySelector(".section-head");
+
+  head.innerHTML = `
+    <button class="back-btn" id="backBtn">← Subjects</button>
+    <h2 id="subjectTitle">${subject}</h2>
+  `;
+
+  $("#backBtn").onclick = () => history.back();
+}
+
+function renderChapterLectureHeader(subject, chapter) {
+  const head = lecturesView.querySelector(".section-head");
+
+  head.innerHTML = `
+    <button class="back-btn" id="backBtn">← Chapters</button>
+    <h2 id="subjectTitle">${chapter}</h2>
+  `;
+
+  $("#backBtn").onclick = () => history.back();
 }
 
 function formatDate(s) {
   if (!s) return "";
-  const d = new Date(s+"T00:00:00");
-  return d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+
+  const d = new Date(s + "T00:00:00");
+
+  return d.toLocaleDateString("en-IN", {
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  });
 }
 
 function openPlayer(item) {
   $("#playerTitle").textContent = item.title;
-  $("#playerMeta").textContent = `${item.subject} • ${item.chapter} • ${formatDate(item.date)}`;
+  $("#playerMeta").textContent =
+    `${item.subject} • ${item.chapter} • ${formatDate(item.date)}`;
+
   openOriginal.href = item.url;
+
   unsupported.classList.add("hidden");
   video.classList.remove("hidden");
+
   video.src = item.url;
   video.load();
-  video.play().catch(()=>{});
+  video.play().catch(() => {});
+
   player.classList.remove("hidden");
 }
 
@@ -156,8 +276,14 @@ function closePlayer() {
   video.pause();
   video.removeAttribute("src");
   video.load();
+
   const frame = $("#notesFrame");
-  if (frame) { frame.src = "about:blank"; frame.classList.add("hidden"); }
+
+  if (frame) {
+    frame.src = "about:blank";
+    frame.classList.add("hidden");
+  }
+
   player.classList.add("hidden");
 }
 
@@ -167,38 +293,64 @@ video.addEventListener("error", () => {
 });
 
 $("#closePlayer").onclick = closePlayer;
-player.addEventListener("click", e => { if(e.target === player) closePlayer(); });
 
-$("#backBtn").onclick = () => {
-  if (activeLectureSubject) history.back();
-  else showSubjects();
-};
+player.addEventListener("click", e => {
+  if (e.target === player) closePlayer();
+});
 
 searchInput.addEventListener("input", () => {
-  activeLectureSubject ? showLectures(activeLectureSubject) : showSubjects();
+  if (activeChapter && activeLectureSubject) {
+    showChapterLectures(activeLectureSubject, activeChapter, false);
+  } else if (activeLectureSubject) {
+    showChapters(activeLectureSubject, false);
+  } else {
+    showSubjects();
+  }
 });
 
 window.addEventListener("popstate", (event) => {
   const state = event.state;
-  if (state && state.view === "lectures" && state.subject) {
+
+  if (state && state.view === "chapterLectures" && state.subject && state.chapter) {
     activeSubject = "All";
-    showLectures(state.subject, false);
+    showChapterLectures(state.subject, state.chapter, false);
     renderFilters();
-  } else {
-    activeLectureSubject = null;
-    showSubjects();
-    renderFilters();
+    return;
   }
+
+  if (state && state.view === "chapters" && state.subject) {
+    activeSubject = "All";
+    showChapters(state.subject, false);
+    renderFilters();
+    return;
+  }
+
+  activeLectureSubject = null;
+  activeChapter = null;
+  showSubjects();
+  renderFilters();
 });
 
 if (!history.state || !history.state.studyLectures) {
-  history.replaceState({studyLectures:true, view:"subjects", subject:null}, "", location.href);
+  history.replaceState(
+    {studyLectures:true, view:"subjects", subject:null},
+    "",
+    location.href
+  );
 }
 
-$("#menuBtn").onclick = () => { $("#drawer").classList.remove("hidden"); $("#backdrop").classList.remove("hidden"); };
+$("#menuBtn").onclick = () => {
+  $("#drawer").classList.remove("hidden");
+  $("#backdrop").classList.remove("hidden");
+};
+
 $("#closeDrawer").onclick = closeDrawer;
 $("#backdrop").onclick = closeDrawer;
-function closeDrawer(){ $("#drawer").classList.add("hidden"); $("#backdrop").classList.add("hidden"); }
+
+function closeDrawer() {
+  $("#drawer").classList.add("hidden");
+  $("#backdrop").classList.add("hidden");
+}
 
 renderFilters();
 showSubjects();
