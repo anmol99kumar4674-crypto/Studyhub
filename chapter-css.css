@@ -1,0 +1,92 @@
+
+/* =========================================================
+   StudyHub: Subject -> Chapter -> Lectures
+   Chapter cards are NOT dropdowns.
+   Lectures appear only after a chapter is clicked.
+   ========================================================= */
+
+.chapter-list{
+  max-width:1180px;
+  margin:auto;
+}
+
+.chapter-card{
+  width:100%;
+  min-height:105px;
+  margin:0 0 14px;
+  padding:22px 20px;
+  border:1px solid #ececf0;
+  border-radius:20px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  text-align:left;
+  color:#17171b;
+  box-shadow:0 4px 15px #00000005;
+}
+
+.chapter-card:hover{
+  border-color:#d8d0ff;
+  box-shadow:0 7px 20px #0000000a;
+}
+
+.chapter-card-text{
+  display:block;
+  flex:1;
+}
+
+.chapter-card-text b{
+  display:block;
+  font-size:20px;
+  line-height:1.35;
+}
+
+.chapter-card-text small{
+  display:block;
+  color:#888;
+  font-size:14px;
+  margin-top:8px;
+}
+
+.chapter-card-arrow{
+  color:#777;
+  font-size:34px;
+  line-height:1;
+  margin-left:18px;
+}
+
+.lecture-list{
+  background:#fff;
+  border:1px solid #ececf0;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.chapter-list .lecture{
+  width:100%;
+}
+
+@media(max-width:800px){
+  .chapter-list{
+    margin:0 12px;
+  }
+
+  .chapter-card{
+    min-height:96px;
+    padding:20px;
+    border-radius:18px;
+  }
+
+  .chapter-card-text b{
+    font-size:18px;
+  }
+
+  .chapter-card-text small{
+    font-size:13px;
+  }
+
+  .chapter-card-arrow{
+    font-size:30px;
+  }
+}
