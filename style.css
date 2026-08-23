@@ -4,22 +4,3 @@
 .notes-btn:hover{background:#eeeaff}
 #notesFrame.hidden{display:none!important}
 
-/* Full-screen Notes viewer */
-body.notes-open{overflow:hidden}
-.notes-page{position:fixed;inset:0;background:#111;z-index:200;display:none;flex-direction:column}
-.notes-page.show{display:flex}
-.notes-topbar{height:62px;min-height:62px;background:#fff;display:flex;align-items:center;gap:12px;padding:0 14px;border-bottom:1px solid #ddd}
-.notes-back{border:0;background:transparent;font-size:30px;width:42px;height:42px;border-radius:50%;line-height:1}
-.notes-back:hover{background:#f1f1f1}
-.notes-heading{flex:1;min-width:0}
-.notes-heading b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.notes-heading small{display:block;color:#777;font-size:12px;margin-top:2px}
-.notes-external{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;text-decoration:none;color:#5b45d9;font-size:23px}
-.notes-content{flex:1;min-height:0;background:#222}
-.notes-content iframe{width:100%;height:100%;border:0;display:block;background:#fff}
-@media(max-width:600px){
-  .notes-topbar{height:58px;min-height:58px;padding:0 8px}
-  .notes-heading b{font-size:14px}
-  .notes-heading small{font-size:11px}
-  .notes-back{font-size:27px}
-}

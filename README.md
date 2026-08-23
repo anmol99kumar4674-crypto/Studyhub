@@ -61,3 +61,8 @@ If `notes` exists, a **📄 Notes** button appears beside that lecture. The PDF 
 ### Notes viewer
 
 The Notes button now opens the PDF in a full-screen viewer. The PDF is loaded only after clicking **Notes**. Use the ← button to return to the lecture list.
+
+
+### Notes behavior
+
+Clicking **📄 Notes** now navigates directly to the supplied Google PDF Viewer URL. There is no website popup or iframe around it. Use the browser/device Back button to return to the lecture list.
