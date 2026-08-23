@@ -40,3 +40,19 @@ History ke liye `history.js` me add karein:
 Website ka main code change nahi karna padega. Subject file me lecture add karte hi website par automatically show hoga.
 
 Aap baad me `science.js`, `current-affairs.js`, `maths.js` jaise files bhi add kar sakte hain; unhe `index.html` me ek script line aur `app.js` ke ALL_LECTURES array me connect karna hoga.
+
+
+## Notes
+
+A lecture can have an optional `notes` URL:
+
+```js
+{
+  id: "economy-01",
+  title: "Economic Lecture 1 : Introduction to Economy",
+  url: "VIDEO_URL",
+  notes: "GOOGLE_VIEWER_OR_OTHER_PDF_URL"
+}
+```
+
+If `notes` exists, a **📄 Notes** button appears beside that lecture. The PDF is loaded only when the user clicks Notes.

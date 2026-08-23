@@ -86,8 +86,18 @@ function showLectures(subject) {
       row.className = "lecture";
       row.innerHTML = `<span class="lecture-no">${String(i+1).padStart(2,"0")}</span>
         <span class="lecture-main"><b>${x.title}</b><small>${formatDate(x.date)}${x.duration ? " • "+x.duration : ""}</small></span>
-        <span class="play">▶</span>`;
-      row.onclick = () => openPlayer(x);
+        <span class="lecture-actions">
+          ${x.notes ? '<span class="notes-btn">📄 Notes</span>' : ''}
+          <span class="play">▶</span>
+        </span>`;
+      row.onclick = (e) => {
+        if (e.target.closest(".notes-btn")) {
+          e.stopPropagation();
+          openNotes(x);
+        } else {
+          openPlayer(x);
+        }
+      };
       ul.appendChild(row);
     });
     section.appendChild(ul);
@@ -111,7 +121,12 @@ function openPlayer(item) {
   player.classList.remove("hidden");
 }
 function closePlayer() {
-  video.pause(); video.removeAttribute("src"); video.load(); player.classList.add("hidden");
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+  const frame = $("#notesFrame");
+  if (frame) { frame.src = "about:blank"; frame.classList.add("hidden"); }
+  player.classList.add("hidden");
 }
 video.addEventListener("error", () => {
   video.classList.add("hidden");
@@ -129,3 +144,22 @@ function closeDrawer(){ $("#drawer").classList.add("hidden"); $("#backdrop").cla
 
 renderFilters();
 showSubjects();
+function openNotes(item) {
+  if (!item.notes) return;
+  $("#playerTitle").textContent = item.title + " — Notes";
+  $("#playerMeta").textContent = `${item.subject} • ${item.chapter}`;
+  video.pause();
+  video.classList.add("hidden");
+  unsupported.classList.add("hidden");
+  let frame = document.querySelector("#notesFrame");
+  if (!frame) {
+    frame = document.createElement("iframe");
+    frame.id = "notesFrame";
+    frame.title = "Lecture Notes";
+    frame.style.cssText = "width:100%;height:100%;border:0;background:#fff;";
+    document.querySelector(".video-frame").appendChild(frame);
+  }
+  frame.src = item.notes;
+  frame.classList.remove("hidden");
+  player.classList.remove("hidden");
+}
