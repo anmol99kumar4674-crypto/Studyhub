@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Study Lectures</title>
+  <meta name="description" content="Daily subject-wise lecture website">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark">S</span><span>Study Lectures</span></div>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">DAILY CLASSES</p>
+      <h1>Learn. Revise. Repeat.</h1>
+      <p class="hero-text">All lectures arranged subject-wise and lecture-wise, just like a learning app.</p>
+    </div>
+    <div class="hero-badge">LIVE<br><b>DAILY</b></div>
+  </section>
+
+  <section class="search-wrap">
+    <input id="searchInput" type="search" placeholder="Search lectures, subjects or topics..." autocomplete="off">
+  </section>
+
+  <nav class="filters" id="subjectFilters"></nav>
+
+  <section id="subjectsView">
+    <div class="section-head">
+      <h2>Subjects</h2><span id="countLabel"></span>
+    </div>
+    <div class="subject-grid" id="subjectGrid"></div>
+  </section>
+
+  <section id="lecturesView" class="hidden">
+    <div class="section-head">
+      <button class="back-btn" id="backBtn">← Subjects</button>
+      <h2 id="subjectTitle">Subject</h2>
+    </div>
+    <div class="chapter-list" id="chapterList"></div>
+  </section>
+</main>
+
+<div class="player hidden" id="player">
+  <div class="player-box">
+    <button class="close-player" id="closePlayer">×</button>
+    <div class="video-frame">
+      <video id="video" controls playsinline preload="metadata"></video>
+      <div class="unsupported hidden" id="unsupported">
+        <h3>Video cannot be played directly</h3>
+        <p>This lecture link may use a protected/player URL. Open the original lecture page instead.</p>
+        <a id="openOriginal" href="#" target="_blank" rel="noopener">Open lecture link ↗</a>
+      </div>
+    </div>
+    <div class="player-info">
+      <h2 id="playerTitle"></h2>
+      <p id="playerMeta"></p>
+    </div>
+  </div>
+</div>
+
+<aside class="drawer hidden" id="drawer">
+  <div class="drawer-head"><b>Menu</b><button id="closeDrawer">×</button></div>
+  <a href="index.html">Home</a>
+  <a href="README.md">How to add lectures</a>
+</aside>
+<div class="drawer-backdrop hidden" id="backdrop"></div>
+
+<script src="lectures.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
