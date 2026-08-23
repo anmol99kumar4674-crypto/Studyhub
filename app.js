@@ -144,22 +144,48 @@ function closeDrawer(){ $("#drawer").classList.add("hidden"); $("#backdrop").cla
 
 renderFilters();
 showSubjects();
+
 function openNotes(item) {
   if (!item.notes) return;
-  $("#playerTitle").textContent = item.title + " — Notes";
-  $("#playerMeta").textContent = `${item.subject} • ${item.chapter}`;
-  video.pause();
-  video.classList.add("hidden");
-  unsupported.classList.add("hidden");
-  let frame = document.querySelector("#notesFrame");
-  if (!frame) {
-    frame = document.createElement("iframe");
-    frame.id = "notesFrame";
-    frame.title = "Lecture Notes";
-    frame.style.cssText = "width:100%;height:100%;border:0;background:#fff;";
-    document.querySelector(".video-frame").appendChild(frame);
+
+  let notesPage = document.querySelector("#notesPage");
+  if (!notesPage) {
+    notesPage = document.createElement("div");
+    notesPage.id = "notesPage";
+    notesPage.className = "notes-page";
+    notesPage.innerHTML = `
+      <div class="notes-topbar">
+        <button class="notes-back" id="notesBack">←</button>
+        <div class="notes-heading">
+          <b id="notesPageTitle">Notes</b>
+          <small id="notesPageMeta"></small>
+        </div>
+        <a id="notesExternal" class="notes-external" target="_blank" rel="noopener">↗</a>
+      </div>
+      <div class="notes-content">
+        <iframe id="notesFullFrame" title="Lecture Notes"></iframe>
+      </div>`;
+    document.body.appendChild(notesPage);
+
+    document.querySelector("#notesBack").onclick = closeNotes;
   }
-  frame.src = item.notes;
-  frame.classList.remove("hidden");
-  player.classList.remove("hidden");
+
+  document.querySelector("#notesPageTitle").textContent = item.title + " — Notes";
+  document.querySelector("#notesPageMeta").textContent = `${item.subject} • ${item.chapter}`;
+  document.querySelector("#notesExternal").href = item.notes;
+  document.querySelector("#notesFullFrame").src = item.notes;
+
+  notesPage.classList.add("show");
+  document.body.classList.add("notes-open");
 }
+
+function closeNotes() {
+  const notesPage = document.querySelector("#notesPage");
+  if (!notesPage) return;
+  const frame = document.querySelector("#notesFullFrame");
+  if (frame) frame.src = "about:blank";
+  notesPage.classList.remove("show");
+  document.body.classList.remove("notes-open");
+}
+
+window.closeNotes = closeNotes;

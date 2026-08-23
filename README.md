@@ -56,3 +56,8 @@ A lecture can have an optional `notes` URL:
 ```
 
 If `notes` exists, a **📄 Notes** button appears beside that lecture. The PDF is loaded only when the user clicks Notes.
+
+
+### Notes viewer
+
+The Notes button now opens the PDF in a full-screen viewer. The PDF is loaded only after clicking **Notes**. Use the ← button to return to the lecture list.
