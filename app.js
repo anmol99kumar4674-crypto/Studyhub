@@ -95,7 +95,7 @@ function showLectures(subject) {
           e.stopPropagation();
           openNotes(x);
         } else {
-          openPlayer(x);
+          openLectureDirect(x);
         }
       };
       ul.appendChild(row);
@@ -145,9 +145,15 @@ function closeDrawer(){ $("#drawer").classList.add("hidden"); $("#backdrop").cla
 renderFilters();
 showSubjects();
 
+function openLectureDirect(item) {
+  if (!item.url) return;
+  // Protected/player lecture URLs are opened directly in the browser.
+  // This avoids the "Video cannot be played directly" popup.
+  window.location.href = item.url;
+}
+
 function openNotes(item) {
   if (!item.notes) return;
   // Open the Google PDF Viewer directly as a new browser page.
-  // This avoids nesting Google Viewer inside the website modal.
   window.location.href = item.notes;
 }

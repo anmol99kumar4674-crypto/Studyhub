@@ -66,3 +66,8 @@ The Notes button now opens the PDF in a full-screen viewer. The PDF is loaded on
 ### Notes behavior
 
 Clicking **📄 Notes** now navigates directly to the supplied Google PDF Viewer URL. There is no website popup or iframe around it. Use the browser/device Back button to return to the lecture list.
+
+
+### Lecture video behavior
+
+Lecture URLs are now opened directly in the browser instead of being forced into an HTML5 video element. This removes the **"Video cannot be played directly"** popup for protected/player URLs.
