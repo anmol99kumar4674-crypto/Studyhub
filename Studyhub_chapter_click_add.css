@@ -1,0 +1,51 @@
+
+/* Chapter screen: Subject → Chapter → Lectures */
+.chapter-card{
+  width:100%;
+  min-height:105px;
+  margin-bottom:14px;
+  padding:22px;
+  border:1px solid #ececf0;
+  border-radius:20px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  text-align:left;
+  box-shadow:0 4px 15px #00000005;
+  transition:transform .15s, box-shadow .15s, border-color .15s;
+}
+.chapter-card:hover{
+  transform:translateY(-1px);
+  border-color:#d8d0ff;
+  box-shadow:0 7px 20px #0000000a;
+}
+.chapter-card-main b{
+  display:block;
+  font-size:20px;
+  line-height:1.35;
+  color:#17171b;
+}
+.chapter-card-main small{
+  display:block;
+  margin-top:8px;
+  color:#888;
+  font-size:14px;
+}
+.chapter-arrow{
+  color:#777;
+  font-size:32px;
+  line-height:1;
+  margin-left:15px;
+}
+.chapter-lecture-list{
+  background:#fff;
+  border:1px solid #ececf0;
+  border-radius:20px;
+  overflow:hidden;
+}
+@media(max-width:800px){
+  .chapter-list{margin:0 12px}
+  .chapter-card{min-height:98px;padding:20px}
+  .chapter-card-main b{font-size:18px}
+}

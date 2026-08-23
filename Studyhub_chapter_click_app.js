@@ -1,0 +1,366 @@
+const ALL_LECTURES = [
+  ...ECONOMIC_LECTURES.map(x => ({...x, subject:"Economics"})),
+  ...HISTORY_LECTURES.map(x => ({...x, subject:"History"})),
+  ...GEOGRAPHY_LECTURES.map(x => ({...x, subject:"Geography"})),
+  ...POLITY_LECTURES.map(x => ({...x, subject:"Polity & Governance"})),
+  ...ART_CULTURE_LECTURES.map(x => ({...x, subject:"Art & Culture"})),
+  ...GENERAL_SCIENCE_LECTURES.map(x => ({...x, subject:"General Science"}))
+];
+
+const LECTURES = ALL_LECTURES;
+const $ = (s) => document.querySelector(s);
+
+const subjectsView = $("#subjectsView");
+const lecturesView = $("#lecturesView");
+const subjectGrid = $("#subjectGrid");
+const chapterList = $("#chapterList");
+const filters = $("#subjectFilters");
+const searchInput = $("#searchInput");
+const player = $("#player");
+const video = $("#video");
+const unsupported = $("#unsupported");
+const openOriginal = $("#openOriginal");
+
+const iconMap = {
+  Economics:"📈",
+  History:"📜",
+  Geography:"🌍",
+  "Art & Culture":"🏺",
+  "Polity & Governance":"⚖️",
+  "Maths / DI":"∑",
+  "General Science":"🔬",
+  "Current Affairs":"📰",
+  "General Studies":"📚"
+};
+
+let activeSubject = "All";
+let activeLectureSubject = null;
+let activeChapter = null;
+
+function subjects() {
+  return [...new Set(LECTURES.map(x => x.subject))].sort();
+}
+
+function filteredLectures() {
+  const q = searchInput.value.trim().toLowerCase();
+
+  return LECTURES
+    .filter(x =>
+      (activeSubject === "All" || x.subject === activeSubject) &&
+      (!q || [x.title, x.subject, x.chapter].join(" ").toLowerCase().includes(q))
+    )
+    .sort((a,b) =>
+      (b.date || "").localeCompare(a.date || "") ||
+      b.id.localeCompare(a.id)
+    );
+}
+
+function renderFilters() {
+  filters.innerHTML = "";
+
+  ["All", ...subjects()].forEach(s => {
+    const b = document.createElement("button");
+    b.className = "filter " + (activeSubject === s ? "active" : "");
+    b.textContent = s;
+
+    b.onclick = () => {
+      activeSubject = s;
+      activeLectureSubject = null;
+      activeChapter = null;
+
+      history.pushState(
+        {studyLectures:true, view:"subjects", subject:s},
+        "",
+        location.href
+      );
+
+      showSubjects();
+      renderFilters();
+    };
+
+    filters.appendChild(b);
+  });
+}
+
+function showSubjects() {
+  subjectsView.classList.remove("hidden");
+  lecturesView.classList.add("hidden");
+
+  activeLectureSubject = null;
+  activeChapter = null;
+
+  const data = filteredLectures();
+  const grouped = {};
+
+  data.forEach(x => {
+    grouped[x.subject] = (grouped[x.subject] || 0) + 1;
+  });
+
+  subjectGrid.innerHTML = "";
+
+  Object.keys(grouped).sort().forEach(subject => {
+    const card = document.createElement("button");
+    card.className = "subject-card";
+
+    card.innerHTML = `
+      <span class="subject-icon">${iconMap[subject] || "📘"}</span>
+      <span>
+        <b>${subject}</b>
+        <small>${grouped[subject]} lecture${grouped[subject] === 1 ? "" : "s"}</small>
+      </span>
+      <span class="arrow">›</span>
+    `;
+
+    card.onclick = () => showChapters(subject, true);
+    subjectGrid.appendChild(card);
+  });
+
+  $("#countLabel").textContent =
+    `${data.length} lecture${data.length === 1 ? "" : "s"}`;
+}
+
+/* Subject → Chapter list */
+function showChapters(subject, pushHistory = false) {
+  activeLectureSubject = subject;
+  activeChapter = null;
+
+  if (pushHistory) {
+    history.pushState(
+      {studyLectures:true, view:"chapters", subject},
+      "",
+      location.href
+    );
+  }
+
+  subjectsView.classList.add("hidden");
+  lecturesView.classList.remove("hidden");
+
+  renderChapterHeader(subject);
+
+  const data = filteredLectures().filter(x => x.subject === subject);
+  const chapters = {};
+
+  data.forEach(x => {
+    const key = x.chapter || "General";
+    (chapters[key] ||= []).push(x);
+  });
+
+  chapterList.innerHTML = "";
+
+  Object.entries(chapters).forEach(([chapter, list]) => {
+    const card = document.createElement("button");
+    card.className = "chapter-card";
+
+    card.innerHTML = `
+      <span class="chapter-card-main">
+        <b>${chapter}</b>
+        <small>${list.length} lecture${list.length === 1 ? "" : "s"}</small>
+      </span>
+      <span class="chapter-arrow">›</span>
+    `;
+
+    card.onclick = () => showChapterLectures(subject, chapter, true);
+    chapterList.appendChild(card);
+  });
+}
+
+/* Chapter → Lecture list */
+function showChapterLectures(subject, chapter, pushHistory = false) {
+  activeLectureSubject = subject;
+  activeChapter = chapter;
+
+  if (pushHistory) {
+    history.pushState(
+      {studyLectures:true, view:"chapterLectures", subject, chapter},
+      "",
+      location.href
+    );
+  }
+
+  subjectsView.classList.add("hidden");
+  lecturesView.classList.remove("hidden");
+
+  renderChapterLectureHeader(subject, chapter);
+
+  const data = filteredLectures()
+    .filter(x => x.subject === subject && (x.chapter || "General") === chapter);
+
+  chapterList.innerHTML = "";
+
+  const ul = document.createElement("div");
+  ul.className = "lecture-list chapter-lecture-list";
+
+  data.forEach((x, i) => {
+    const row = document.createElement("button");
+    row.className = "lecture";
+
+    row.innerHTML = `
+      <span class="lecture-no">${String(i + 1).padStart(2, "0")}</span>
+      <span class="lecture-main">
+        <b>${x.title}</b>
+        <small>${formatDate(x.date)}${x.duration ? " • " + x.duration : ""}</small>
+      </span>
+      <span class="lecture-actions">
+        ${x.notes ? '<span class="notes-btn">📄 Notes</span>' : ""}
+        <span class="play">▶</span>
+      </span>
+    `;
+
+    row.onclick = (e) => {
+      if (e.target.closest(".notes-btn")) {
+        e.stopPropagation();
+        openNotes(x);
+      } else {
+        openLectureDirect(x);
+      }
+    };
+
+    ul.appendChild(row);
+  });
+
+  chapterList.appendChild(ul);
+}
+
+function renderChapterHeader(subject) {
+  const head = lecturesView.querySelector(".section-head");
+
+  head.innerHTML = `
+    <button class="back-btn" id="backBtn">← Subjects</button>
+    <h2 id="subjectTitle">${subject}</h2>
+  `;
+
+  $("#backBtn").onclick = () => history.back();
+}
+
+function renderChapterLectureHeader(subject, chapter) {
+  const head = lecturesView.querySelector(".section-head");
+
+  head.innerHTML = `
+    <button class="back-btn" id="backBtn">← Chapters</button>
+    <h2 id="subjectTitle">${chapter}</h2>
+  `;
+
+  $("#backBtn").onclick = () => history.back();
+}
+
+function formatDate(s) {
+  if (!s) return "";
+
+  const d = new Date(s + "T00:00:00");
+
+  return d.toLocaleDateString("en-IN", {
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  });
+}
+
+function openPlayer(item) {
+  $("#playerTitle").textContent = item.title;
+  $("#playerMeta").textContent =
+    `${item.subject} • ${item.chapter} • ${formatDate(item.date)}`;
+
+  openOriginal.href = item.url;
+
+  unsupported.classList.add("hidden");
+  video.classList.remove("hidden");
+
+  video.src = item.url;
+  video.load();
+  video.play().catch(() => {});
+
+  player.classList.remove("hidden");
+}
+
+function closePlayer() {
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+
+  const frame = $("#notesFrame");
+
+  if (frame) {
+    frame.src = "about:blank";
+    frame.classList.add("hidden");
+  }
+
+  player.classList.add("hidden");
+}
+
+video.addEventListener("error", () => {
+  video.classList.add("hidden");
+  unsupported.classList.remove("hidden");
+});
+
+$("#closePlayer").onclick = closePlayer;
+
+player.addEventListener("click", e => {
+  if (e.target === player) closePlayer();
+});
+
+searchInput.addEventListener("input", () => {
+  if (activeChapter && activeLectureSubject) {
+    showChapterLectures(activeLectureSubject, activeChapter, false);
+  } else if (activeLectureSubject) {
+    showChapters(activeLectureSubject, false);
+  } else {
+    showSubjects();
+  }
+});
+
+window.addEventListener("popstate", (event) => {
+  const state = event.state;
+
+  if (state && state.view === "chapterLectures" && state.subject && state.chapter) {
+    activeSubject = "All";
+    showChapterLectures(state.subject, state.chapter, false);
+    renderFilters();
+    return;
+  }
+
+  if (state && state.view === "chapters" && state.subject) {
+    activeSubject = "All";
+    showChapters(state.subject, false);
+    renderFilters();
+    return;
+  }
+
+  activeLectureSubject = null;
+  activeChapter = null;
+  showSubjects();
+  renderFilters();
+});
+
+if (!history.state || !history.state.studyLectures) {
+  history.replaceState(
+    {studyLectures:true, view:"subjects", subject:null},
+    "",
+    location.href
+  );
+}
+
+$("#menuBtn").onclick = () => {
+  $("#drawer").classList.remove("hidden");
+  $("#backdrop").classList.remove("hidden");
+};
+
+$("#closeDrawer").onclick = closeDrawer;
+$("#backdrop").onclick = closeDrawer;
+
+function closeDrawer() {
+  $("#drawer").classList.add("hidden");
+  $("#backdrop").classList.add("hidden");
+}
+
+renderFilters();
+showSubjects();
+
+function openLectureDirect(item) {
+  if (!item.url) return;
+  window.location.href = item.url;
+}
+
+function openNotes(item) {
+  if (!item.notes) return;
+  window.location.href = item.notes;
+}
