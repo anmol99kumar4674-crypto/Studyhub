@@ -45,7 +45,13 @@ function renderFilters() {
     const b = document.createElement("button");
     b.className = "filter " + (activeSubject === s ? "active" : "");
     b.textContent = s;
-    b.onclick = () => { activeSubject=s; activeLectureSubject=null; showSubjects(); renderFilters(); };
+    b.onclick = () => {
+      activeSubject = s;
+      activeLectureSubject = null;
+      history.pushState({studyLectures:true, view:"subjects", subject:s}, "", location.href);
+      showSubjects();
+      renderFilters();
+    };
     filters.appendChild(b);
   });
 }
@@ -61,13 +67,16 @@ function showSubjects() {
     card.className = "subject-card";
     card.innerHTML = `<span class="subject-icon">${iconMap[subject] || "📘"}</span>
       <span><b>${subject}</b><small>${grouped[subject]} lecture${grouped[subject]===1?"":"s"}</small></span><span class="arrow">›</span>`;
-    card.onclick = () => showLectures(subject);
+    card.onclick = () => showLectures(subject, true);
     subjectGrid.appendChild(card);
   });
   $("#countLabel").textContent = `${data.length} lecture${data.length===1?"":"s"}`;
 }
-function showLectures(subject) {
+function showLectures(subject, pushHistory = false) {
   activeLectureSubject = subject;
+  if (pushHistory) {
+    history.pushState({studyLectures:true, view:"lectures", subject}, "", location.href);
+  }
   subjectsView.classList.add("hidden");
   lecturesView.classList.remove("hidden");
   $("#subjectTitle").textContent = subject;
@@ -134,8 +143,37 @@ video.addEventListener("error", () => {
 });
 $("#closePlayer").onclick = closePlayer;
 player.addEventListener("click", e => { if(e.target === player) closePlayer(); });
-$("#backBtn").onclick = showSubjects;
-searchInput.addEventListener("input", () => activeLectureSubject ? showLectures(activeLectureSubject) : showSubjects());
+$("#backBtn").onclick = () => {
+  if (activeLectureSubject) {
+    history.back();
+  } else {
+    showSubjects();
+  }
+};
+
+searchInput.addEventListener("input", () => {
+  activeLectureSubject ? showLectures(activeLectureSubject) : showSubjects();
+});
+
+// Browser Back/Forward navigation stays inside the website when moving
+// between the subject list and a subject's lecture list.
+window.addEventListener("popstate", (event) => {
+  const state = event.state;
+  if (state && state.view === "lectures" && state.subject) {
+    activeSubject = "All";
+    showLectures(state.subject, false);
+    renderFilters();
+  } else {
+    activeLectureSubject = null;
+    showSubjects();
+    renderFilters();
+  }
+});
+
+// Create a history entry for the initial subject-list screen.
+if (!history.state || !history.state.studyLectures) {
+  history.replaceState({studyLectures:true, view:"subjects", subject:null}, "", location.href);
+}
 
 $("#menuBtn").onclick = () => { $("#drawer").classList.remove("hidden"); $("#backdrop").classList.remove("hidden"); };
 $("#closeDrawer").onclick = closeDrawer;

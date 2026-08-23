@@ -71,3 +71,8 @@ Clicking **📄 Notes** now navigates directly to the supplied Google PDF Viewer
 ### Lecture video behavior
 
 Lecture URLs are now opened directly in the browser instead of being forced into an HTML5 video element. This removes the **"Video cannot be played directly"** popup for protected/player URLs.
+
+
+### Browser Back navigation
+
+Subject opening now uses browser history. Pressing the phone/browser **Back** button from a subject returns to the Subjects screen instead of leaving the website.
