@@ -1,39 +1,42 @@
-# Study Lectures — GitHub Pages
+# Study Lectures — Separate Subject Files
 
-A responsive lecture website inspired by the layout shown in the screenshots.
+Ab har subject ka data alag JavaScript file me hai:
 
-## Daily lecture upload
+- `economic.js` → Economics
+- `history.js` → History
+- `geography.js` → Geography
+- `polity.js` → Polity & Governance
+- `art-culture.js` → Art & Culture
+- `general-science.js` → General Science
 
-All lecture data is inside `lectures.js`.
+## Daily lecture add karna
 
-Add a new object like:
+Example: Economics ke liye sirf `economic.js` open karein:
 
 ```js
 {
   id: "economy-03",
-  subject: "Economics",
   chapter: "Introduction to Economy",
   title: "Economic Lecture 3 : Introduction to Economy Part 3",
   date: "2026-08-24",
-  duration: "",
+  duration: "01:20:00",
   url: "YOUR-AUTHORIZED-LECTURE-URL"
 }
 ```
 
-Then commit and push the file to GitHub. GitHub Pages will automatically show the new lecture after deployment.
+History ke liye `history.js` me add karein:
 
-## Important
+```js
+{
+  id: "history-02",
+  chapter: "Ancient History",
+  title: "History Lecture 2 : Buddhism",
+  date: "2026-08-24",
+  duration: "01:21:52",
+  url: "YOUR-AUTHORIZED-LECTURE-URL"
+}
+```
 
-Use only lecture/video URLs that you are authorized to publish or link to. Some protected player URLs cannot be played by a normal HTML5 `<video>` element because of CORS, DRM, authentication, or the provider's player restrictions. The site automatically shows an **Open lecture link** fallback in that case.
+Website ka main code change nahi karna padega. Subject file me lecture add karte hi website par automatically show hoga.
 
-## GitHub Pages
-
-1. Create a GitHub repository.
-2. Upload `index.html`, `style.css`, `app.js`, `lectures.js`, and `README.md`.
-3. Repository → Settings → Pages.
-4. Select **Deploy from a branch**.
-5. Select `main` and `/root`.
-6. Save.
-7. Your website will get a GitHub Pages URL.
-
-No database is required for the basic version. Daily updates are made by editing only `lectures.js`.
+Aap baad me `science.js`, `current-affairs.js`, `maths.js` jaise files bhi add kar sakte hain; unhe `index.html` me ek script line aur `app.js` ke ALL_LECTURES array me connect karna hoga.

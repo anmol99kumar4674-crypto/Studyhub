@@ -1,3 +1,13 @@
+const ALL_LECTURES = [
+  ...ECONOMIC_LECTURES.map(x => ({...x, subject:"Economics"})),
+  ...HISTORY_LECTURES.map(x => ({...x, subject:"History"})),
+  ...GEOGRAPHY_LECTURES.map(x => ({...x, subject:"Geography"})),
+  ...POLITY_LECTURES.map(x => ({...x, subject:"Polity & Governance"})),
+  ...ART_CULTURE_LECTURES.map(x => ({...x, subject:"Art & Culture"})),
+  ...GENERAL_SCIENCE_LECTURES.map(x => ({...x, subject:"General Science"}))
+];
+
+const LECTURES = ALL_LECTURES;
 const $ = (s) => document.querySelector(s);
 const subjectsView = $("#subjectsView");
 const lecturesView = $("#lecturesView");
