@@ -6,7 +6,6 @@ const ALL_LECTURES = [
   ...ART_CULTURE_LECTURES.map(x => ({...x, subject:"Art & Culture"})),
   ...GENERAL_SCIENCE_LECTURES.map(x => ({...x, subject:"General Science"}))
 ];
-
 const LECTURES = ALL_LECTURES;
 const $ = (s) => document.querySelector(s);
 const subjectsView = $("#subjectsView");
@@ -19,7 +18,6 @@ const player = $("#player");
 const video = $("#video");
 const unsupported = $("#unsupported");
 const openOriginal = $("#openOriginal");
-
 const iconMap = {
   Economics:"📈", History:"📜", Geography:"🌍", "Art & Culture":"🏺",
   "Polity & Governance":"⚖️", "Maths / DI":"∑", "General Science":"🔬",
@@ -32,6 +30,7 @@ let activeLectureSubject = null;
 function subjects() {
   return [...new Set(LECTURES.map(x => x.subject))].sort();
 }
+
 function filteredLectures() {
   const q = searchInput.value.trim().toLowerCase();
   return LECTURES.filter(x =>
@@ -39,6 +38,7 @@ function filteredLectures() {
     (!q || [x.title,x.subject,x.chapter].join(" ").toLowerCase().includes(q))
   ).sort((a,b) => (b.date || "").localeCompare(a.date || "") || b.id.localeCompare(a.id));
 }
+
 function renderFilters() {
   filters.innerHTML = "";
   ["All", ...subjects()].forEach(s => {
@@ -55,6 +55,7 @@ function renderFilters() {
     filters.appendChild(b);
   });
 }
+
 function showSubjects() {
   subjectsView.classList.remove("hidden");
   lecturesView.classList.add("hidden");
@@ -72,6 +73,7 @@ function showSubjects() {
   });
   $("#countLabel").textContent = `${data.length} lecture${data.length===1?"":"s"}`;
 }
+
 function showLectures(subject, pushHistory = false) {
   activeLectureSubject = subject;
   if (pushHistory) {
@@ -80,16 +82,24 @@ function showLectures(subject, pushHistory = false) {
   subjectsView.classList.add("hidden");
   lecturesView.classList.remove("hidden");
   $("#subjectTitle").textContent = subject;
+
   const data = filteredLectures().filter(x => x.subject === subject);
   const chapters = {};
   data.forEach(x => (chapters[x.chapter] ||= []).push(x));
   chapterList.innerHTML = "";
+
   Object.entries(chapters).forEach(([chapter, list]) => {
     const section = document.createElement("section");
     section.className = "chapter";
-    section.innerHTML = `<div class="chapter-head"><div><h3>${chapter}</h3><span>${list.length} lecture${list.length===1?"":"s"}</span></div></div>`;
+
+    const head = document.createElement("div");
+    head.className = "chapter-head";
+    head.innerHTML = `<div><h3>${chapter}</h3><span>${list.length} lecture${list.length===1?"":"s"}</span></div>
+      <span class="chapter-arrow">›</span>`;
+
     const ul = document.createElement("div");
-    ul.className = "lecture-list";
+    ul.className = "lecture-list hidden";
+
     list.forEach((x,i) => {
       const row = document.createElement("button");
       row.className = "lecture";
@@ -109,15 +119,27 @@ function showLectures(subject, pushHistory = false) {
       };
       ul.appendChild(row);
     });
+
+    head.onclick = () => {
+      const open = !ul.classList.contains("hidden");
+      ul.classList.toggle("hidden");
+      head.classList.toggle("open", !open);
+      const arrow = head.querySelector(".chapter-arrow");
+      if (arrow) arrow.textContent = open ? "›" : "⌄";
+    };
+
+    section.appendChild(head);
     section.appendChild(ul);
     chapterList.appendChild(section);
   });
 }
+
 function formatDate(s) {
   if (!s) return "";
   const d = new Date(s+"T00:00:00");
   return d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
 }
+
 function openPlayer(item) {
   $("#playerTitle").textContent = item.title;
   $("#playerMeta").textContent = `${item.subject} • ${item.chapter} • ${formatDate(item.date)}`;
@@ -129,6 +151,7 @@ function openPlayer(item) {
   video.play().catch(()=>{});
   player.classList.remove("hidden");
 }
+
 function closePlayer() {
   video.pause();
   video.removeAttribute("src");
@@ -137,26 +160,24 @@ function closePlayer() {
   if (frame) { frame.src = "about:blank"; frame.classList.add("hidden"); }
   player.classList.add("hidden");
 }
+
 video.addEventListener("error", () => {
   video.classList.add("hidden");
   unsupported.classList.remove("hidden");
 });
+
 $("#closePlayer").onclick = closePlayer;
 player.addEventListener("click", e => { if(e.target === player) closePlayer(); });
+
 $("#backBtn").onclick = () => {
-  if (activeLectureSubject) {
-    history.back();
-  } else {
-    showSubjects();
-  }
+  if (activeLectureSubject) history.back();
+  else showSubjects();
 };
 
 searchInput.addEventListener("input", () => {
   activeLectureSubject ? showLectures(activeLectureSubject) : showSubjects();
 });
 
-// Browser Back/Forward navigation stays inside the website when moving
-// between the subject list and a subject's lecture list.
 window.addEventListener("popstate", (event) => {
   const state = event.state;
   if (state && state.view === "lectures" && state.subject) {
@@ -170,7 +191,6 @@ window.addEventListener("popstate", (event) => {
   }
 });
 
-// Create a history entry for the initial subject-list screen.
 if (!history.state || !history.state.studyLectures) {
   history.replaceState({studyLectures:true, view:"subjects", subject:null}, "", location.href);
 }
@@ -185,13 +205,10 @@ showSubjects();
 
 function openLectureDirect(item) {
   if (!item.url) return;
-  // Protected/player lecture URLs are opened directly in the browser.
-  // This avoids the "Video cannot be played directly" popup.
   window.location.href = item.url;
 }
 
 function openNotes(item) {
   if (!item.notes) return;
-  // Open the Google PDF Viewer directly as a new browser page.
   window.location.href = item.notes;
 }
