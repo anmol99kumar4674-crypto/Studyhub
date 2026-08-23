@@ -4,3 +4,64 @@
 .notes-btn:hover{background:#eeeaff}
 #notesFrame.hidden{display:none!important}
 
+
+/* ===== Chapter UI: subject -> chapter -> lectures ===== */
+.chapter-list{
+  width:min(1180px, calc(100% - 24px));
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.chapter-card{
+  width:100%;
+  min-height:92px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:20px 22px;
+  border:1px solid #ececf0;
+  border-radius:18px;
+  background:#fff;
+  color:#17171b;
+  text-align:left;
+  box-shadow:0 4px 15px #00000008;
+  appearance:none;
+  -webkit-appearance:none;
+}
+.chapter-card:hover{background:#faf9ff;border-color:#ddd7f7}
+.chapter-card-text{display:block;min-width:0}
+.chapter-card-text b{
+  display:block;
+  font-size:18px;
+  line-height:1.35;
+  white-space:normal;
+}
+.chapter-card-text small{
+  display:block;
+  color:#888;
+  margin-top:6px;
+  font-size:13px;
+}
+.chapter-card-arrow{
+  flex:0 0 auto;
+  font-size:30px;
+  line-height:1;
+  color:#777;
+}
+.lecture-list{
+  width:100%;
+  overflow:hidden;
+  border:1px solid #ececf0;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 4px 15px #00000005;
+}
+.lecture-list .lecture{background:#fff}
+@media(max-width:800px){
+  .chapter-list{width:calc(100% - 24px);gap:12px}
+  .chapter-card{min-height:86px;padding:18px}
+  .chapter-card-text b{font-size:17px}
+  .chapter-card-arrow{font-size:28px}
+}
