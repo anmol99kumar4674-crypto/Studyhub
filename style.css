@@ -65,13 +65,3 @@
   .chapter-card-text b{font-size:17px}
   .chapter-card-arrow{font-size:28px}
 }
-
-.empty-state{
-  background:#fff;
-  border:1px solid #ececf0;
-  border-radius:20px;
-  padding:24px 20px;
-  box-shadow:0 4px 15px #00000005;
-}
-.empty-state b{display:block;font-size:18px}
-.empty-state small{display:block;color:#888;margin-top:7px}
