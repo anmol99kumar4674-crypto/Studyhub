@@ -34,7 +34,7 @@ const ALL_LECTURES = [
   ...NCERT_LECTURES.map(x => ({...x, subject:"NCERT"}))
 ];
 
-const LECTURES = ALL_LECTURES;
+const LECTURES = Array.isArray(ALL_LECTURES) ? ALL_LECTURES : [];
 const $ = (s) => document.querySelector(s);
 
 const subjectsView = $("#subjectsView");
@@ -102,9 +102,6 @@ function compareLecturesLatestFirst(a, b) {
   const addedDiff = lectureAddedValue(b) - lectureAddedValue(a);
   if (addedDiff) return addedDiff;
 
-  // If both records have no timestamp-style ID, preserve their original
-  // order. This keeps the original order of older/static lectures while
-  // timestamped admin-added lectures still appear newest-first above them.
   return 0;
 }
 
@@ -123,9 +120,10 @@ function getFilteredLectures() {
 }
 
 function chapterCount(subject) {
+  const rows = Array.isArray(LECTURES) ? LECTURES : [];
   return new Set(
-    LECTURES
-      .filter(x => x.subject === subject)
+    rows
+      .filter(x => x && x.subject === subject)
       .map(x => x.chapter || "General")
   ).size;
 }
