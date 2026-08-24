@@ -1,3 +1,16 @@
+(async function () {
+  // Always load lecture data fresh. This prevents normal-browser cache
+  // from showing old lectures after the admin panel updates GitHub.
+  const DATA_FILES = ["economic.js", "history.js", "geography.js", "polity.js", "art-culture.js", "general-science.js", "notices.js", "current-affairs.js", "bihar-special.js", "environment.js", "essay.js", "hindi.js", "maths-di.js", "bihar-current-wallah-monthly-compilation.js", "ncert.js"];
+
+  await Promise.all(DATA_FILES.map(file => new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = `${file}?v=${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Failed to load ${file}`));
+    document.head.appendChild(script);
+  })));
+
 const SUBJECTS = [
   "Notices",
   "Current Affairs",
@@ -418,3 +431,5 @@ function openNotes(item) {
 /* Start */
 renderFilters();
 showSubjects();
+
+})();
