@@ -252,7 +252,7 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
     row.className = "lecture";
 
     row.innerHTML = `
-      <span class="lecture-no">${String(index + 1).padStart(2,"0")}</span>
+      <span class="lecture-no">${String(data.length - index).padStart(2,"0")}</span>
 
       <span class="lecture-main">
         <b>${item.title}</b>
