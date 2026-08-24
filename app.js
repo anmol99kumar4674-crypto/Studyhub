@@ -72,6 +72,40 @@ function subjects() {
   return [...new Set(SUBJECTS)].sort((a,b) => a.localeCompare(b));
 }
 
+function lectureDateValue(item) {
+  const raw = String(item?.date || "").trim();
+  if (!raw) return 0;
+
+  // Supports YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY and normal ISO dates.
+  let m = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (m) return Date.UTC(+m[1], +m[2]-1, +m[3]);
+
+  m = raw.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if (m) return Date.UTC(+m[3], +m[2]-1, +m[1]);
+
+  const t = Date.parse(raw);
+  return Number.isNaN(t) ? 0 : t;
+}
+
+function lectureAddedValue(item) {
+  const id = String(item?.id || "");
+  // Admin IDs end with Date.now(), so this gives exact insertion order
+  // when multiple lectures have the same date.
+  const m = id.match(/(\d{10,})$/);
+  return m ? Number(m[1]) : 0;
+}
+
+function compareLecturesLatestFirst(a, b) {
+  const dateDiff = lectureDateValue(b) - lectureDateValue(a);
+  if (dateDiff) return dateDiff;
+
+  const addedDiff = lectureAddedValue(b) - lectureAddedValue(a);
+  if (addedDiff) return addedDiff;
+
+  // Final deterministic fallback.
+  return String(b.id || "").localeCompare(String(a.id || ""));
+}
+
 function getFilteredLectures() {
   const q = (searchInput?.value || "").trim().toLowerCase();
 
@@ -83,10 +117,7 @@ function getFilteredLectures() {
         .toLowerCase()
         .includes(q))
     )
-    .sort((a,b) =>
-      (b.date || "").localeCompare(a.date || "") ||
-      String(b.id || "").localeCompare(String(a.id || ""))
-    );
+    .sort(compareLecturesLatestFirst);
 }
 
 function chapterCount(subject) {
@@ -197,21 +228,29 @@ function showChapters(subject, pushHistory = false) {
     return;
   }
 
-  Object.entries(chapters).forEach(([chapter, list]) => {
-    const card = document.createElement("button");
-    card.className = "chapter-card";
+  // Latest chapter first. Within each chapter, the latest lecture
+  // determines the chapter's position.
+  Object.entries(chapters)
+    .sort((a,b) => {
+      const latestA = [...a[1]].sort(compareLecturesLatestFirst)[0];
+      const latestB = [...b[1]].sort(compareLecturesLatestFirst)[0];
+      return compareLecturesLatestFirst(latestA, latestB);
+    })
+    .forEach(([chapter, list]) => {
+      const card = document.createElement("button");
+      card.className = "chapter-card";
 
-    card.innerHTML = `
-      <span class="chapter-card-text">
-        <b>${chapter}</b>
-        <small>${list.length} Lecture${list.length === 1 ? "" : "s"}</small>
-      </span>
-      <span class="chapter-card-arrow">›</span>
-    `;
+      card.innerHTML = `
+        <span class="chapter-card-text">
+          <b>${chapter}</b>
+          <small>${list.length} Lecture${list.length === 1 ? "" : "s"}</small>
+        </span>
+        <span class="chapter-card-arrow">›</span>
+      `;
 
-    card.onclick = () => showChapterLectures(subject, chapter, true);
-    chapterList.appendChild(card);
-  });
+      card.onclick = () => showChapterLectures(subject, chapter, true);
+      chapterList.appendChild(card);
+    });
 }
 
 /* Chapter -> Lectures / PDFs */
@@ -237,10 +276,7 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
       x.subject === subject &&
       (x.chapter || "General") === chapter
     )
-    .sort((a,b) =>
-      (b.date || "").localeCompare(a.date || "") ||
-      String(b.id || "").localeCompare(String(a.id || ""))
-    );
+    .sort(compareLecturesLatestFirst);
 
   chapterList.innerHTML = "";
 
