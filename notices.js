@@ -53,4 +53,13 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://s2-cdn.studyratna.cc/play.php?video_url=https%3A%2F%2Fd1d34p8vz63oiq.cloudfront.net%2F75a3d86c-41e3-4e06-93f1-7e5fc8c6b4ab%2Fmaster.mpd&title=Deepak%20Sir%20%3A%20History&poster=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fa53e857e-dd91-4eb4-b6ac-fb593af7ddeb.png&video_id=6a6f174332c74ea5e8da9cb0&video_key=6a51322724b81be77a5ed078&batch_id=6a6e52a94c78e4bba3681386&subject_id=%5Bobject%20Object%5D&video_type=pw&subject_id_original=6a6ef6a5b29c1086b4c51f59&topic_id=6a6f045ad61e1761b9ec4755&subject_slug=notices-985231&topic_slug=batch-demo-videos-988798",
   }
+,
+  {
+    id: "notices-1787575183394",
+    chapter: "Batch Demo Videos",
+    title: "Rahul sir (Essay)",
+    date: "2026-08-01",
+    duration: "",
+    url: "https://s2-cdn.studyratna.cc/play.php?video_url=https%3A%2F%2Fd1d34p8vz63oiq.cloudfront.net%2Fee9d6392-c2e4-461f-9a9b-036b62a226eb%2Fmaster.mpd&title=Rahul%20sir%20(Essay)&poster=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F9e9f4317-049f-48a7-b2ea-870c7c138a77.png&video_id=6a6f17378f62df2aa9cbbdc8&video_key=675ad47009188ce52570cc50&batch_id=6a6e52a94c78e4bba3681386&subject_id=%5Bobject%20Object%5D&video_type=pw&subject_id_original=6a6ef6a5b29c1086b4c51f59&topic_id=6a6f045ad61e1761b9ec4755&subject_slug=notices-985231&topic_slug=batch-demo-videos-988798",
+  }
 ];
