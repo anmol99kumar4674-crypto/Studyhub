@@ -13,37 +13,26 @@ export default {
 
     // Subject -> GitHub JavaScript file
     const SUBJECT_FILES = {
-      "Economics": {
-        file: "economic.js",
-        array: "ECONOMIC_LECTURES",
-        idPrefix: "economy"
-      },
-      "History": {
-        file: "history.js",
-        array: "HISTORY_LECTURES",
-        idPrefix: "history"
-      },
-      "Geography": {
-        file: "geography.js",
-        array: "GEOGRAPHY_LECTURES",
-        idPrefix: "geography"
-      },
-      "Polity": {
-        file: "polity.js",
-        array: "POLITY_LECTURES",
-        idPrefix: "polity"
-      },
-      "Art & Culture": {
-        file: "art-culture.js",
-        array: "ART_CULTURE_LECTURES",
-        idPrefix: "art-culture"
-      },
-      "General Science": {
-        file: "general-science.js",
-        array: "GENERAL_SCIENCE_LECTURES",
-        idPrefix: "science"
-      }
+      "Notices": { file:"notices.js", array:"NOTICES_LECTURES", idPrefix:"notices" },
+      "Current Affairs": { file:"current-affairs.js", array:"CURRENT_AFFAIRS_LECTURES", idPrefix:"current-affairs" },
+      "Polity": { file:"polity.js", array:"POLITY_LECTURES", idPrefix:"polity" },
+      "History": { file:"history.js", array:"HISTORY_LECTURES", idPrefix:"history" },
+      "Bihar Special": { file:"bihar-special.js", array:"BIHAR_SPECIAL_LECTURES", idPrefix:"bihar-special" },
+      "Science": { file:"general-science.js", array:"GENERAL_SCIENCE_LECTURES", idPrefix:"science" },
+      "Environment": { file:"environment.js", array:"ENVIRONMENT_LECTURES", idPrefix:"environment" },
+      "Economics": { file:"economic.js", array:"ECONOMIC_LECTURES", idPrefix:"economy" },
+      "Essay": { file:"essay.js", array:"ESSAY_LECTURES", idPrefix:"essay" },
+      "Hindi (हिन्दी)": { file:"hindi.js", array:"HINDI_LECTURES", idPrefix:"hindi" },
+      "Maths/DI": { file:"maths-di.js", array:"MATHS_DI_LECTURES", idPrefix:"maths-di" },
+      "Bihar Current Wallah Monthly Compilation": { file:"bihar-current-wallah-monthly-compilation.js", array:"BIHAR_CURRENT_WALLAH_LECTURES", idPrefix:"bihar-current-wallah" },
+      "NCERT": { file:"ncert.js", array:"NCERT_LECTURES", idPrefix:"ncert" },
+      "Geography": { file:"geography.js", array:"GEOGRAPHY_LECTURES", idPrefix:"geography" },
+      "Art & Culture": { file:"art-culture.js", array:"ART_CULTURE_LECTURES", idPrefix:"art-culture" }
     };
+
+    const PDF_ONLY_SUBJECTS = new Set([
+      "Bihar Current Wallah Monthly Compilation"
+    ]);
 
     // Admin panel
     if (request.method === "GET" && url.pathname === "/") {
@@ -71,13 +60,18 @@ export default {
         const chapter = String(data.chapter || "").trim();
         const title = String(data.title || "").trim();
         const video = String(data.video || "").trim();
+        const pdf = String(data.pdf || "").trim();
         const notes = String(data.notes || "").trim();
         const date = String(data.date || "").trim();
         const duration = String(data.duration || "").trim();
+        const pdfOnly = PDF_ONLY_SUBJECTS.has(subject);
+        const contentUrl = pdfOnly ? pdf : video;
 
-        if (!subject || !chapter || !title || !video || !date) {
+        if (!subject || !chapter || !title || !contentUrl || !date) {
           return reply(
-            "Subject, Chapter, Title, Video URL aur Date bharna zaroori hai.",
+            pdfOnly
+              ? "Subject, Chapter, Title, PDF URL aur Date bharna zaroori hai."
+              : "Subject, Chapter, Title, Video URL aur Date bharna zaroori hai.",
             400
           );
         }
@@ -146,12 +140,16 @@ export default {
           `    chapter: ${jsString(chapter)},`,
           `    title: ${jsString(title)},`,
           `    date: ${jsString(date)},`,
-          `    duration: ${jsString(duration)},`,
-          `    url: ${jsString(video)}${notes ? "," : ""}`
+          `    duration: ${jsString(pdfOnly ? "" : duration)},`,
+          `    url: ${jsString(contentUrl)},`
         ];
 
-        if (notes) {
-          lectureLines.push(`    notes: ${jsString(notes)}`);
+        if (pdfOnly) {
+          lectureLines.push(`    type: "pdf"`);
+        } else {
+          lectureLines[lectureLines.length - 1] =
+            `    url: ${jsString(contentUrl)}${notes ? "," : ""}`;
+          if (notes) lectureLines.push(`    notes: ${jsString(notes)}`);
         }
 
         lectureLines.push("  }");
@@ -346,12 +344,21 @@ button:disabled{
 
 <label>Subject</label>
 <select id="subject">
-  <option>Economics</option>
-  <option>History</option>
-  <option>Geography</option>
+  <option>Notices</option>
+  <option>Current Affairs</option>
   <option>Polity</option>
+  <option>History</option>
+  <option>Bihar Special</option>
+  <option>Science</option>
+  <option>Environment</option>
+  <option>Economics</option>
+  <option>Essay</option>
+  <option>Hindi (हिन्दी)</option>
+  <option>Maths/DI</option>
+  <option>Bihar Current Wallah Monthly Compilation</option>
+  <option>NCERT</option>
+  <option>Geography</option>
   <option>Art & Culture</option>
-  <option>General Science</option>
 </select>
 
 <label>Chapter</label>
@@ -360,6 +367,7 @@ button:disabled{
 <label>Lecture Title</label>
 <input id="title" placeholder="Economic Lecture 3 : Introduction to Economy">
 
+<div id="videoFields">
 <label>Video URL</label>
 <input id="video" placeholder="https://...">
 
@@ -371,6 +379,23 @@ button:disabled{
 
 <label>Duration (Optional)</label>
 <input id="duration" placeholder="01:20:00">
+</div>
+
+<div id="pdfFields" style="display:none">
+<label>PDF URL</label>
+<input id="pdf" placeholder="https://...pdf">
+</div>
+
+<script>
+const subjectEl = document.getElementById("subject");
+function updateContentFields(){
+  const pdfOnly = subjectEl.value === "Bihar Current Wallah Monthly Compilation";
+  document.getElementById("videoFields").style.display = pdfOnly ? "none" : "block";
+  document.getElementById("pdfFields").style.display = pdfOnly ? "block" : "none";
+}
+subjectEl.addEventListener("change", updateContentFields);
+updateContentFields();
+</script>
 
 <button id="btn" type="button" onclick="save()">Add Lecture</button>
 
@@ -390,14 +415,18 @@ async function save(){
     chapter: document.getElementById("chapter").value.trim(),
     title: document.getElementById("title").value.trim(),
     video: document.getElementById("video").value.trim(),
+    pdf: document.getElementById("pdf").value.trim(),
     notes: document.getElementById("notes").value.trim(),
     date: document.getElementById("date").value,
     duration: document.getElementById("duration").value.trim()
   };
 
-  if(!data.chapter || !data.title || !data.video || !data.date){
+  const pdfOnly = data.subject === "Bihar Current Wallah Monthly Compilation";
+  if(!data.chapter || !data.title || !(pdfOnly ? data.pdf : data.video) || !data.date){
     msg.className = "err";
-    msg.innerText = "Chapter, Title, Video URL aur Date bharna zaroori hai.";
+    msg.innerText = pdfOnly
+      ? "Chapter, Title, PDF URL aur Date bharna zaroori hai."
+      : "Chapter, Title, Video URL aur Date bharna zaroori hai.";
     return;
   }
 
@@ -420,6 +449,7 @@ async function save(){
       msg.innerText = result.message;
       document.getElementById("title").value = "";
       document.getElementById("video").value = "";
+      document.getElementById("pdf").value = "";
       document.getElementById("notes").value = "";
     }else{
       msg.className = "err";

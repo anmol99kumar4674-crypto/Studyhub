@@ -1,94 +1,367 @@
-/* StudyHub: Subject → Chapter → Lecture/PDF */
-const SUBJECTS=[
-"Notices","Current Affairs","Polity","History","Bihar Special","Science",
-"Environment","Economics","Essay","Hindi (हिन्दी)","Maths/DI",
-"Bihar Current Wallah Monthly Compilation","NCERT"
+const SUBJECTS = [
+  "Notices",
+  "Current Affairs",
+  "Polity",
+  "History",
+  "Bihar Special",
+  "Science",
+  "Environment",
+  "Economics",
+  "Essay",
+  "Hindi (हिन्दी)",
+  "Maths/DI",
+  "Bihar Current Wallah Monthly Compilation",
+  "NCERT",
+  "Geography",
+  "Art & Culture"
 ];
 
-const ALL_LECTURES=[
- ...(typeof ECONOMIC_LECTURES!=="undefined"?ECONOMIC_LECTURES.map(x=>({...x,subject:"Economics"})):[]),
- ...(typeof HISTORY_LECTURES!=="undefined"?HISTORY_LECTURES.map(x=>({...x,subject:"History"})):[]),
- ...(typeof GEOGRAPHY_LECTURES!=="undefined"?GEOGRAPHY_LECTURES.map(x=>({...x,subject:"Geography"})):[]),
- ...(typeof POLITY_LECTURES!=="undefined"?POLITY_LECTURES.map(x=>({...x,subject:"Polity"})):[]),
- ...(typeof GENERAL_SCIENCE_LECTURES!=="undefined"?GENERAL_SCIENCE_LECTURES.map(x=>({...x,subject:"Science"})):[]),
- ...(typeof CURRENT_AFFAIRS_LECTURES!=="undefined"?CURRENT_AFFAIRS_LECTURES.map(x=>({...x,subject:"Current Affairs"})):[]),
- ...(typeof NOTICES_LECTURES!=="undefined"?NOTICES_LECTURES.map(x=>({...x,subject:"Notices"})):[]),
- ...(typeof BIHAR_SPECIAL_LECTURES!=="undefined"?BIHAR_SPECIAL_LECTURES.map(x=>({...x,subject:"Bihar Special"})):[]),
- ...(typeof ENVIRONMENT_LECTURES!=="undefined"?ENVIRONMENT_LECTURES.map(x=>({...x,subject:"Environment"})):[]),
- ...(typeof ESSAY_LECTURES!=="undefined"?ESSAY_LECTURES.map(x=>({...x,subject:"Essay"})):[]),
- ...(typeof HINDI_LECTURES!=="undefined"?HINDI_LECTURES.map(x=>({...x,subject:"Hindi (हिन्दी)"})):[]),
- ...(typeof MATHS_DI_LECTURES!=="undefined"?MATHS_DI_LECTURES.map(x=>({...x,subject:"Maths/DI"})):[]),
- ...(typeof NCERT_LECTURES!=="undefined"?NCERT_LECTURES.map(x=>({...x,subject:"NCERT"})):[]),
- ...(typeof BIHAR_CURRENT_WALLAH_LECTURES!=="undefined"?BIHAR_CURRENT_WALLAH_LECTURES.map(x=>({...x,subject:"Bihar Current Wallah Monthly Compilation"})):[])
+const ALL_LECTURES = [
+  ...ECONOMIC_LECTURES.map(x => ({...x, subject:"Economics"})),
+  ...HISTORY_LECTURES.map(x => ({...x, subject:"History"})),
+  ...GEOGRAPHY_LECTURES.map(x => ({...x, subject:"Geography"})),
+  ...POLITY_LECTURES.map(x => ({...x, subject:"Polity"})),
+  ...ART_CULTURE_LECTURES.map(x => ({...x, subject:"Art & Culture"})),
+  ...GENERAL_SCIENCE_LECTURES.map(x => ({...x, subject:"Science"})),
+  ...NOTICES_LECTURES.map(x => ({...x, subject:"Notices"})),
+  ...CURRENT_AFFAIRS_LECTURES.map(x => ({...x, subject:"Current Affairs"})),
+  ...BIHAR_SPECIAL_LECTURES.map(x => ({...x, subject:"Bihar Special"})),
+  ...ENVIRONMENT_LECTURES.map(x => ({...x, subject:"Environment"})),
+  ...ESSAY_LECTURES.map(x => ({...x, subject:"Essay"})),
+  ...HINDI_LECTURES.map(x => ({...x, subject:"Hindi (हिन्दी)"})),
+  ...MATHS_DI_LECTURES.map(x => ({...x, subject:"Maths/DI"})),
+  ...BIHAR_CURRENT_WALLAH_LECTURES.map(x => ({...x, subject:"Bihar Current Wallah Monthly Compilation"})),
+  ...NCERT_LECTURES.map(x => ({...x, subject:"NCERT"}))
 ];
-const LECTURES=ALL_LECTURES,$=s=>document.querySelector(s);
-const subjectsView=$("#subjectsView"),lecturesView=$("#lecturesView"),subjectGrid=$("#subjectGrid"),
-chapterList=$("#chapterList"),filters=$("#subjectFilters"),searchInput=$("#searchInput");
-const iconMap={"Notices":"📢","Current Affairs":"📰","Polity":"⚖️","History":"📜","Bihar Special":"🧪",
-"Science":"🔬","Environment":"🌱","Economics":"📈","Essay":"📝","Hindi (हिन्दी)":"ॐ",
-"Maths/DI":"∑","Bihar Current Wallah Monthly Compilation":"🧪","NCERT":"📚"};
-const pdfOnly=s=>s==="Bihar Current Wallah Monthly Compilation";
-let activeSubject="All",activeLectureSubject=null,activeChapter=null;
 
-function subjects(){return [...new Set([...SUBJECTS,...LECTURES.map(x=>x.subject).filter(Boolean)])].sort()}
-function filteredLectures(){
- const q=(searchInput?.value||"").trim().toLowerCase();
- return LECTURES.filter(x=>(activeSubject==="All"||x.subject===activeSubject)&&
- (!q||[x.title,x.subject,x.chapter].join(" ").toLowerCase().includes(q)))
- .sort((a,b)=>(b.date||"").localeCompare(a.date||"")||String(b.id||"").localeCompare(String(a.id||"")));
+const LECTURES = ALL_LECTURES;
+const $ = (s) => document.querySelector(s);
+
+const subjectsView = $("#subjectsView");
+const lecturesView = $("#lecturesView");
+const subjectGrid = $("#subjectGrid");
+const chapterList = $("#chapterList");
+const filters = $("#subjectFilters");
+const searchInput = $("#searchInput");
+
+const iconMap = {
+  Notices:"📢",
+  "Current Affairs":"📰",
+  Polity:"⚖️",
+  History:"📜",
+  "Bihar Special":"🧪",
+  Science:"🔬",
+  Environment:"🌱",
+  Economics:"📈",
+  Essay:"📝",
+  "Hindi (हिन्दी)":"ॐ",
+  "Maths/DI":"🧪",
+  "Bihar Current Wallah Monthly Compilation":"🧪",
+  NCERT:"📚",
+  Geography:"🌍",
+  "Art & Culture":"🏺"
+};
+
+const PDF_ONLY_SUBJECT = "Bihar Current Wallah Monthly Compilation";
+
+let activeSubject = "All";
+let activeLectureSubject = null;
+let activeChapter = null;
+
+function subjects() {
+  return [...new Set(SUBJECTS)].sort((a,b) => a.localeCompare(b));
 }
-function renderFilters(){
- filters.innerHTML="";
- ["All",...subjects()].forEach(s=>{
-  const b=document.createElement("button");b.className="filter "+(activeSubject===s?"active":"");b.textContent=s;
-  b.onclick=()=>{activeSubject=s;activeLectureSubject=null;activeChapter=null;
-   history.pushState({studyLectures:true,view:"subjects",subject:s},"",location.href);showSubjects();renderFilters()};
-  filters.appendChild(b);
- });
+
+function getFilteredLectures() {
+  const q = (searchInput?.value || "").trim().toLowerCase();
+
+  return LECTURES
+    .filter(x =>
+      (activeSubject === "All" || x.subject === activeSubject) &&
+      (!q || [x.title, x.subject, x.chapter]
+        .join(" ")
+        .toLowerCase()
+        .includes(q))
+    )
+    .sort((a,b) =>
+      (b.date || "").localeCompare(a.date || "") ||
+      String(b.id || "").localeCompare(String(a.id || ""))
+    );
 }
-function showSubjects(){
- subjectsView.classList.remove("hidden");lecturesView.classList.add("hidden");
- activeLectureSubject=null;activeChapter=null;subjectGrid.innerHTML="";
- subjects().forEach(subject=>{
-  const n=filteredLectures().filter(x=>x.subject===subject).length;
-  const card=document.createElement("button");card.className="subject-card";
-  card.innerHTML=`<span class="subject-icon">${iconMap[subject]||"📘"}</span>
-  <span><b>${subject}</b><small>${n} lecture${n===1?"":"s"}</small></span><span class="arrow">›</span>`;
-  card.onclick=()=>showChapters(subject,true);subjectGrid.appendChild(card);
- });
+
+function chapterCount(subject) {
+  return new Set(
+    LECTURES
+      .filter(x => x.subject === subject)
+      .map(x => x.chapter || "General")
+  ).size;
 }
-function showChapters(subject,push=true){
- activeLectureSubject=subject;activeChapter=null;
- if(push)history.pushState({studyLectures:true,view:"chapters",subject},"",location.href);
- subjectsView.classList.add("hidden");lecturesView.classList.remove("hidden");
- renderChapterHeader(subject);
- const data=filteredLectures().filter(x=>x.subject===subject),groups={};
- data.forEach(x=>(groups[x.chapter||"General"]||=[]).push(x));chapterList.innerHTML="";
- if(!Object.keys(groups).length){chapterList.innerHTML='<div class="empty-state"><b>No chapters added yet.</b><small>Is subject me admin se content add kar sakte hain.</small></div>';return}
- Object.entries(groups).forEach(([chapter,list])=>{
-  const c=document.createElement("button");c.className="chapter-card";
-  c.innerHTML=`<span class="chapter-card-main"><b>${chapter}</b><small>${list.length} lecture${list.length===1?"":"s"}</small></span><span class="chapter-arrow">›</span>`;
-  c.onclick=()=>showChapterLectures(subject,chapter,true);chapterList.appendChild(c);
- });
+
+function renderFilters() {
+  filters.innerHTML = "";
+
+  ["All", ...subjects()].forEach(subject => {
+    const button = document.createElement("button");
+    button.className = "filter " + (activeSubject === subject ? "active" : "");
+    button.textContent = subject;
+
+    button.onclick = () => {
+      activeSubject = subject;
+      activeLectureSubject = null;
+      activeChapter = null;
+      history.pushState(
+        {studyLectures:true, view:"subjects", subject},
+        "",
+        location.href
+      );
+      showSubjects();
+      renderFilters();
+    };
+
+    filters.appendChild(button);
+  });
 }
-function showChapterLectures(subject,chapter,push=true){
- activeLectureSubject=subject;activeChapter=chapter;
- if(push)history.pushState({studyLectures:true,view:"chapterLectures",subject,chapter},"",location.href);
- subjectsView.classList.add("hidden");lecturesView.classList.remove("hidden");renderChapterLectureHeader(subject,chapter);
- const data=filteredLectures().filter(x=>x.subject===subject&&(x.chapter||"General")===chapter);
- chapterList.innerHTML="";const ul=document.createElement("div");ul.className="lecture-list chapter-lecture-list";
- data.forEach((x,i)=>{
-  const row=document.createElement("button");row.className="lecture";const pdf=x.type==="pdf"||pdfOnly(subject);
-  row.innerHTML=`<span class="lecture-no">${String(i+1).padStart(2,"0")}</span><span class="lecture-main"><b>${x.title}</b><small>${formatDate(x.date)}${x.duration?" • "+x.duration:""}</small></span><span class="lecture-actions"><span class="play">${pdf?"📄":"▶"}</span></span>`;
-  row.onclick=()=>pdf?openPdf(x):openLectureDirect(x);ul.appendChild(row);
- });chapterList.appendChild(ul);
+
+/* Subject screen: every subject is visible, even when it has 0 chapters. */
+function showSubjects() {
+  activeLectureSubject = null;
+  activeChapter = null;
+
+  subjectsView.classList.remove("hidden");
+  lecturesView.classList.add("hidden");
+
+  const visibleSubjects = activeSubject === "All"
+    ? subjects()
+    : subjects().filter(s => s === activeSubject);
+
+  subjectGrid.innerHTML = "";
+
+  visibleSubjects.forEach(subject => {
+    const chapters = chapterCount(subject);
+    const card = document.createElement("button");
+    card.className = "subject-card";
+
+    card.innerHTML = `
+      <span class="subject-icon">${iconMap[subject] || "📘"}</span>
+      <span>
+        <b>${subject}</b>
+        <small>${chapters} Chapter${chapters === 1 ? "" : "s"}</small>
+      </span>
+      <span class="arrow">›</span>
+    `;
+
+    card.onclick = () => showChapters(subject, true);
+    subjectGrid.appendChild(card);
+  });
+
+  $("#countLabel").textContent =
+    `${visibleSubjects.length} subject${visibleSubjects.length === 1 ? "" : "s"}`;
 }
-function renderChapterHeader(subject){const h=lecturesView.querySelector(".section-head");h.innerHTML=`<button class="back-btn" id="backBtn">← Subjects</button><h2 id="subjectTitle">${subject}</h2>`;$("#backBtn").onclick=()=>history.back()}
-function renderChapterLectureHeader(subject,chapter){const h=lecturesView.querySelector(".section-head");h.innerHTML=`<button class="back-btn" id="backBtn">← Chapters</button><h2 id="subjectTitle">${chapter}</h2>`;$("#backBtn").onclick=()=>history.back()}
-function formatDate(s){if(!s)return "";return new Date(s+"T00:00:00").toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})}
-function openPdf(x){if(x.url)location.href=x.url}
-function openLectureDirect(x){if(x.url)location.href=x.url}
-if(searchInput)searchInput.addEventListener("input",()=>activeChapter?showChapterLectures(activeLectureSubject,activeChapter,false):activeLectureSubject?showChapters(activeLectureSubject,false):showSubjects());
-window.addEventListener("popstate",e=>{const s=e.state;if(s?.view==="chapterLectures")showChapterLectures(s.subject,s.chapter,false);else if(s?.view==="chapters")showChapters(s.subject,false);else showSubjects();renderFilters()});
-if(!history.state?.studyLectures)history.replaceState({studyLectures:true,view:"subjects"},"",location.href);
-renderFilters();showSubjects();
+
+/* Subject -> Chapter */
+function showChapters(subject, pushHistory = false) {
+  activeLectureSubject = subject;
+  activeChapter = null;
+
+  if (pushHistory) {
+    history.pushState(
+      {studyLectures:true, view:"chapters", subject},
+      "",
+      location.href
+    );
+  }
+
+  subjectsView.classList.add("hidden");
+  lecturesView.classList.remove("hidden");
+
+  setHeader("← Subjects", subject, () => history.back());
+
+  const data = LECTURES.filter(x => x.subject === subject);
+  const chapters = {};
+
+  data.forEach(item => {
+    const chapter = item.chapter || "General";
+    if (!chapters[chapter]) chapters[chapter] = [];
+    chapters[chapter].push(item);
+  });
+
+  chapterList.innerHTML = "";
+
+  if (!Object.keys(chapters).length) {
+    chapterList.innerHTML = `
+      <div class="empty-state">
+        <b>No chapters added yet</b>
+        <small>Is subject me admin se chapter/lecture add kar sakte hain.</small>
+      </div>
+    `;
+    return;
+  }
+
+  Object.entries(chapters).forEach(([chapter, list]) => {
+    const card = document.createElement("button");
+    card.className = "chapter-card";
+
+    card.innerHTML = `
+      <span class="chapter-card-text">
+        <b>${chapter}</b>
+        <small>${list.length} Lecture${list.length === 1 ? "" : "s"}</small>
+      </span>
+      <span class="chapter-card-arrow">›</span>
+    `;
+
+    card.onclick = () => showChapterLectures(subject, chapter, true);
+    chapterList.appendChild(card);
+  });
+}
+
+/* Chapter -> Lectures / PDFs */
+function showChapterLectures(subject, chapter, pushHistory = false) {
+  activeLectureSubject = subject;
+  activeChapter = chapter;
+
+  if (pushHistory) {
+    history.pushState(
+      {studyLectures:true, view:"chapterLectures", subject, chapter},
+      "",
+      location.href
+    );
+  }
+
+  subjectsView.classList.add("hidden");
+  lecturesView.classList.remove("hidden");
+
+  setHeader("← Chapters", chapter, () => history.back());
+
+  const data = LECTURES
+    .filter(x =>
+      x.subject === subject &&
+      (x.chapter || "General") === chapter
+    );
+
+  chapterList.innerHTML = "";
+
+  const list = document.createElement("div");
+  list.className = "lecture-list";
+
+  data.forEach((item, index) => {
+    const row = document.createElement("button");
+    row.className = "lecture";
+
+    const isPdf = subject === PDF_ONLY_SUBJECT || item.type === "pdf";
+
+    row.innerHTML = `
+      <span class="lecture-no">${String(index + 1).padStart(2,"0")}</span>
+      <span class="lecture-main">
+        <b>${item.title}</b>
+        <small>
+          ${formatDate(item.date)}
+          ${item.duration ? " • " + item.duration : ""}
+        </small>
+      </span>
+      <span class="lecture-actions">
+        ${item.notes && !isPdf ? '<span class="notes-btn">📄 Notes</span>' : ""}
+        <span class="play">${isPdf ? "📄" : "▶"}</span>
+      </span>
+    `;
+
+    row.onclick = (event) => {
+      if (event.target.closest(".notes-btn")) {
+        event.stopPropagation();
+        openNotes(item);
+        return;
+      }
+      openLectureDirect(item);
+    };
+
+    list.appendChild(row);
+  });
+
+  chapterList.appendChild(list);
+}
+
+function setHeader(backText, title, backAction) {
+  const head = lecturesView.querySelector(".section-head");
+
+  head.innerHTML = `
+    <button class="back-btn" id="backBtn">${backText}</button>
+    <h2 id="subjectTitle">${title}</h2>
+  `;
+
+  $("#backBtn").onclick = backAction;
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  return new Date(value + "T00:00:00").toLocaleDateString("en-IN", {
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  });
+}
+
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    if (activeLectureSubject && activeChapter) {
+      showChapterLectures(activeLectureSubject, activeChapter, false);
+    } else if (activeLectureSubject) {
+      showChapters(activeLectureSubject, false);
+    } else {
+      showSubjects();
+    }
+  });
+}
+
+window.addEventListener("popstate", event => {
+  const state = event.state;
+
+  if (state?.view === "chapterLectures") {
+    showChapterLectures(state.subject, state.chapter, false);
+    renderFilters();
+    return;
+  }
+
+  if (state?.view === "chapters") {
+    showChapters(state.subject, false);
+    renderFilters();
+    return;
+  }
+
+  activeLectureSubject = null;
+  activeChapter = null;
+  showSubjects();
+  renderFilters();
+});
+
+if (!history.state || !history.state.studyLectures) {
+  history.replaceState(
+    {studyLectures:true, view:"subjects", subject:null},
+    "",
+    location.href
+  );
+}
+
+/* Menu */
+$("#menuBtn").onclick = () => {
+  $("#drawer").classList.remove("hidden");
+  $("#backdrop").classList.remove("hidden");
+};
+$("#closeDrawer").onclick = closeDrawer;
+$("#backdrop").onclick = closeDrawer;
+
+function closeDrawer() {
+  $("#drawer").classList.add("hidden");
+  $("#backdrop").classList.add("hidden");
+}
+
+function openLectureDirect(item) {
+  if (!item.url) return;
+  window.location.href = item.url;
+}
+
+function openNotes(item) {
+  if (!item.notes) return;
+  window.location.href = item.notes;
+}
+
+renderFilters();
+showSubjects();
