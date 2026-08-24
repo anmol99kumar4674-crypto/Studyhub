@@ -1,78 +1,30 @@
-# Study Lectures — Separate Subject Files
+# Study Lectures — StudyHub
 
-Ab har subject ka data alag JavaScript file me hai:
+Updated structure:
 
-- `economic.js` → Economics
-- `history.js` → History
-- `geography.js` → Geography
-- `polity.js` → Polity & Governance
-- `art-culture.js` → Art & Culture
-- `general-science.js` → General Science
+Subject → Chapter → Lectures/PDF
 
-## Daily lecture add karna
+Subjects:
+- Notices
+- Current Affairs
+- Polity
+- History
+- Bihar Special
+- Science
+- Environment
+- Economics
+- Essay
+- Hindi (हिन्दी)
+- Maths/DI
+- Bihar Current Wallah Monthly Compilation
+- NCERT
+- Geography
+- Art & Culture
 
-Example: Economics ke liye sirf `economic.js` open karein:
+Subjects with no content still appear and show `0 Chapters`.
 
-```js
-{
-  id: "economy-03",
-  chapter: "Introduction to Economy",
-  title: "Economic Lecture 3 : Introduction to Economy Part 3",
-  date: "2026-08-24",
-  duration: "01:20:00",
-  url: "YOUR-AUTHORIZED-LECTURE-URL"
-}
-```
+**Bihar Current Wallah Monthly Compilation is PDF-only.**
+In StudyHub Admin, selecting this subject shows `PDF URL` instead of Video URL / Notes / Duration.
 
-History ke liye `history.js` me add karein:
-
-```js
-{
-  id: "history-02",
-  chapter: "Ancient History",
-  title: "History Lecture 2 : Buddhism",
-  date: "2026-08-24",
-  duration: "01:21:52",
-  url: "YOUR-AUTHORIZED-LECTURE-URL"
-}
-```
-
-Website ka main code change nahi karna padega. Subject file me lecture add karte hi website par automatically show hoga.
-
-Aap baad me `science.js`, `current-affairs.js`, `maths.js` jaise files bhi add kar sakte hain; unhe `index.html` me ek script line aur `app.js` ke ALL_LECTURES array me connect karna hoga.
-
-
-## Notes
-
-A lecture can have an optional `notes` URL:
-
-```js
-{
-  id: "economy-01",
-  title: "Economic Lecture 1 : Introduction to Economy",
-  url: "VIDEO_URL",
-  notes: "GOOGLE_VIEWER_OR_OTHER_PDF_URL"
-}
-```
-
-If `notes` exists, a **📄 Notes** button appears beside that lecture. The PDF is loaded only when the user clicks Notes.
-
-
-### Notes viewer
-
-The Notes button now opens the PDF in a full-screen viewer. The PDF is loaded only after clicking **Notes**. Use the ← button to return to the lecture list.
-
-
-### Notes behavior
-
-Clicking **📄 Notes** now navigates directly to the supplied Google PDF Viewer URL. There is no website popup or iframe around it. Use the browser/device Back button to return to the lecture list.
-
-
-### Lecture video behavior
-
-Lecture URLs are now opened directly in the browser instead of being forced into an HTML5 video element. This removes the **"Video cannot be played directly"** popup for protected/player URLs.
-
-
-### Browser Back navigation
-
-Subject opening now uses browser history. Pressing the phone/browser **Back** button from a subject returns to the Subjects screen instead of leaving the website.
+The three-dot menu keeps:
+`https://studyhub-admin.molkitofficial.workers.dev/`
