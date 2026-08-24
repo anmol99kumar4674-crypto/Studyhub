@@ -1,1 +1,3 @@
-const NOTICES_LECTURES = [];
+const NOTICES_LECTURES = [
+  // Add content here from StudyHub Admin.
+];

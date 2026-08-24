@@ -11,7 +11,9 @@ const SUBJECTS = [
   "Hindi (हिन्दी)",
   "Maths/DI",
   "Bihar Current Wallah Monthly Compilation",
-  "NCERT"
+  "NCERT",
+  "Geography",
+  "Art & Culture"
 ];
 
 const ALL_LECTURES = [
@@ -43,24 +45,71 @@ const filters = $("#subjectFilters");
 const searchInput = $("#searchInput");
 
 const iconMap = {
-  Economics:"📈",
+  Notices:"📢",
+  "Current Affairs":"📰",
+  Polity:"⚖️",
   History:"📜",
+  "Bihar Special":"🧪",
+  Science:"🔬",
+  Environment:"🌱",
+  Economics:"📈",
+  Essay:"📝",
+  "Hindi (हिन्दी)":"ॐ",
+  "Maths/DI":"🧪",
+  "Bihar Current Wallah Monthly Compilation":"🧪",
+  NCERT:"📚",
   Geography:"🌍",
-  "Art & Culture":"🏺",
-  "Polity & Governance":"⚖️",
-  "General Science":"🔬"
+  "Art & Culture":"🏺"
 };
+
+const PDF_ONLY_SUBJECT = "Bihar Current Wallah Monthly Compilation";
 
 let activeSubject = "All";
 let activeLectureSubject = null;
 let activeChapter = null;
 
 function subjects() {
-  return [...new Set([...SUBJECTS, ...LECTURES.map(x => x.subject)])].sort();
+  return [...new Set(SUBJECTS)].sort((a,b) => a.localeCompare(b));
+}
+
+function lectureDateValue(item) {
+  const raw = String(item?.date || "").trim();
+  if (!raw) return 0;
+
+  // Supports YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY and normal ISO dates.
+  let m = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (m) return Date.UTC(+m[1], +m[2]-1, +m[3]);
+
+  m = raw.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if (m) return Date.UTC(+m[3], +m[2]-1, +m[1]);
+
+  const t = Date.parse(raw);
+  return Number.isNaN(t) ? 0 : t;
+}
+
+function lectureAddedValue(item) {
+  const id = String(item?.id || "");
+  // Admin IDs end with Date.now(), so this gives exact insertion order
+  // when multiple lectures have the same date.
+  const m = id.match(/(\d{10,})$/);
+  return m ? Number(m[1]) : 0;
+}
+
+function compareLecturesLatestFirst(a, b) {
+  const dateDiff = lectureDateValue(b) - lectureDateValue(a);
+  if (dateDiff) return dateDiff;
+
+  const addedDiff = lectureAddedValue(b) - lectureAddedValue(a);
+  if (addedDiff) return addedDiff;
+
+  // If both records have no timestamp-style ID, preserve their original
+  // order. This keeps the original order of older/static lectures while
+  // timestamped admin-added lectures still appear newest-first above them.
+  return 0;
 }
 
 function getFilteredLectures() {
-  const q = searchInput.value.trim().toLowerCase();
+  const q = (searchInput?.value || "").trim().toLowerCase();
 
   return LECTURES
     .filter(x =>
@@ -70,10 +119,15 @@ function getFilteredLectures() {
         .toLowerCase()
         .includes(q))
     )
-    .sort((a,b) =>
-      (b.date || "").localeCompare(a.date || "") ||
-      String(b.id).localeCompare(String(a.id))
-    );
+    .sort(compareLecturesLatestFirst);
+}
+
+function chapterCount(subject) {
+  return new Set(
+    LECTURES
+      .filter(x => x.subject === subject)
+      .map(x => x.chapter || "General")
+  ).size;
 }
 
 function renderFilters() {
@@ -88,13 +142,11 @@ function renderFilters() {
       activeSubject = subject;
       activeLectureSubject = null;
       activeChapter = null;
-
       history.pushState(
         {studyLectures:true, view:"subjects", subject},
         "",
         location.href
       );
-
       showSubjects();
       renderFilters();
     };
@@ -103,6 +155,7 @@ function renderFilters() {
   });
 }
 
+/* Subject screen: every subject is visible, even when it has 0 chapters. */
 function showSubjects() {
   activeLectureSubject = null;
   activeChapter = null;
@@ -110,20 +163,14 @@ function showSubjects() {
   subjectsView.classList.remove("hidden");
   lecturesView.classList.add("hidden");
 
-  const data = getFilteredLectures();
-  const grouped = {};
-
-  subjects().forEach(subject => {
-    grouped[subject] = 0;
-  });
-
-  data.forEach(item => {
-    grouped[item.subject] = (grouped[item.subject] || 0) + 1;
-  });
+  const visibleSubjects = activeSubject === "All"
+    ? subjects()
+    : subjects().filter(s => s === activeSubject);
 
   subjectGrid.innerHTML = "";
 
-  Object.keys(grouped).sort().forEach(subject => {
+  visibleSubjects.forEach(subject => {
+    const chapters = chapterCount(subject);
     const card = document.createElement("button");
     card.className = "subject-card";
 
@@ -131,7 +178,7 @@ function showSubjects() {
       <span class="subject-icon">${iconMap[subject] || "📘"}</span>
       <span>
         <b>${subject}</b>
-        <small>${grouped[subject]} lecture${grouped[subject] === 1 ? "" : "s"}</small>
+        <small>${chapters} Chapter${chapters === 1 ? "" : "s"}</small>
       </span>
       <span class="arrow">›</span>
     `;
@@ -141,10 +188,10 @@ function showSubjects() {
   });
 
   $("#countLabel").textContent =
-    `${data.length} lecture${data.length === 1 ? "" : "s"}`;
+    `${visibleSubjects.length} subject${visibleSubjects.length === 1 ? "" : "s"}`;
 }
 
-/* STEP 2: Subject ke andar sirf CHAPTERS dikhte hain */
+/* Subject -> Chapter */
 function showChapters(subject, pushHistory = false) {
   activeLectureSubject = subject;
   activeChapter = null;
@@ -160,13 +207,9 @@ function showChapters(subject, pushHistory = false) {
   subjectsView.classList.add("hidden");
   lecturesView.classList.remove("hidden");
 
-  setHeader(
-    "← Subjects",
-    subject,
-    () => history.back()
-  );
+  setHeader("← Subjects", subject, () => history.back());
 
-  const data = getFilteredLectures().filter(x => x.subject === subject);
+  const data = LECTURES.filter(x => x.subject === subject);
   const chapters = {};
 
   data.forEach(item => {
@@ -177,38 +220,49 @@ function showChapters(subject, pushHistory = false) {
 
   chapterList.innerHTML = "";
 
-  Object.entries(chapters).forEach(([chapter, list]) => {
-    const card = document.createElement("button");
-    card.className = "chapter-card";
-
-    card.innerHTML = `
-      <span class="chapter-card-text">
-        <b>${chapter}</b>
-        <small>${list.length} lecture${list.length === 1 ? "" : "s"}</small>
-      </span>
-      <span class="chapter-card-arrow">›</span>
+  if (!Object.keys(chapters).length) {
+    chapterList.innerHTML = `
+      <div class="empty-state">
+        <b>No chapters added yet</b>
+        <small>Is subject me admin se chapter/lecture add kar sakte hain.</small>
+      </div>
     `;
+    return;
+  }
 
-    /* Chapter par click karne ke baad hi lectures khulenge */
-    card.onclick = () => showChapterLectures(subject, chapter, true);
+  // Latest chapter first. Within each chapter, the latest lecture
+  // determines the chapter's position.
+  Object.entries(chapters)
+    .sort((a,b) => {
+      const latestA = [...a[1]].sort(compareLecturesLatestFirst)[0];
+      const latestB = [...b[1]].sort(compareLecturesLatestFirst)[0];
+      return compareLecturesLatestFirst(latestA, latestB);
+    })
+    .forEach(([chapter, list]) => {
+      const card = document.createElement("button");
+      card.className = "chapter-card";
 
-    chapterList.appendChild(card);
-  });
+      card.innerHTML = `
+        <span class="chapter-card-text">
+          <b>${chapter}</b>
+          <small>${list.length} Lecture${list.length === 1 ? "" : "s"}</small>
+        </span>
+        <span class="chapter-card-arrow">›</span>
+      `;
+
+      card.onclick = () => showChapterLectures(subject, chapter, true);
+      chapterList.appendChild(card);
+    });
 }
 
-/* STEP 3: Chapter ke andar lectures */
+/* Chapter -> Lectures / PDFs */
 function showChapterLectures(subject, chapter, pushHistory = false) {
   activeLectureSubject = subject;
   activeChapter = chapter;
 
   if (pushHistory) {
     history.pushState(
-      {
-        studyLectures:true,
-        view:"chapterLectures",
-        subject,
-        chapter
-      },
+      {studyLectures:true, view:"chapterLectures", subject, chapter},
       "",
       location.href
     );
@@ -217,17 +271,14 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
   subjectsView.classList.add("hidden");
   lecturesView.classList.remove("hidden");
 
-  setHeader(
-    "← " + subject,
-    chapter,
-    () => history.back()
-  );
+  setHeader("← Chapters", chapter, () => history.back());
 
-  const data = getFilteredLectures()
+  const data = LECTURES
     .filter(x =>
       x.subject === subject &&
       (x.chapter || "General") === chapter
-    );
+    )
+    .sort(compareLecturesLatestFirst);
 
   chapterList.innerHTML = "";
 
@@ -238,9 +289,10 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
     const row = document.createElement("button");
     row.className = "lecture";
 
+    const isPdf = subject === PDF_ONLY_SUBJECT || item.type === "pdf";
+
     row.innerHTML = `
       <span class="lecture-no">${String(index + 1).padStart(2,"0")}</span>
-
       <span class="lecture-main">
         <b>${item.title}</b>
         <small>
@@ -248,10 +300,9 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
           ${item.duration ? " • " + item.duration : ""}
         </small>
       </span>
-
       <span class="lecture-actions">
-        ${item.notes ? '<span class="notes-btn">📄 Notes</span>' : ""}
-        <span class="play">▶</span>
+        ${item.notes && !isPdf ? '<span class="notes-btn">📄 Notes</span>' : ""}
+        <span class="play">${isPdf ? "📄" : "▶"}</span>
       </span>
     `;
 
@@ -261,7 +312,6 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
         openNotes(item);
         return;
       }
-
       openLectureDirect(item);
     };
 
@@ -284,44 +334,35 @@ function setHeader(backText, title, backAction) {
 
 function formatDate(value) {
   if (!value) return "";
-
-  const date = new Date(value + "T00:00:00");
-
-  return date.toLocaleDateString("en-IN", {
+  return new Date(value + "T00:00:00").toLocaleDateString("en-IN", {
     day:"2-digit",
     month:"short",
     year:"numeric"
   });
 }
 
-/* Search current screen ko hi update karega */
-searchInput.addEventListener("input", () => {
-  if (activeLectureSubject && activeChapter) {
-    showChapterLectures(activeLectureSubject, activeChapter, false);
-  } else if (activeLectureSubject) {
-    showChapters(activeLectureSubject, false);
-  } else {
-    showSubjects();
-  }
-});
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    if (activeLectureSubject && activeChapter) {
+      showChapterLectures(activeLectureSubject, activeChapter, false);
+    } else if (activeLectureSubject) {
+      showChapters(activeLectureSubject, false);
+    } else {
+      showSubjects();
+    }
+  });
+}
 
-/* Browser Back/Forward */
 window.addEventListener("popstate", event => {
   const state = event.state;
 
-  if (state && state.view === "chapterLectures") {
-    activeSubject = "All";
-    showChapterLectures(
-      state.subject,
-      state.chapter,
-      false
-    );
+  if (state?.view === "chapterLectures") {
+    showChapterLectures(state.subject, state.chapter, false);
     renderFilters();
     return;
   }
 
-  if (state && state.view === "chapters") {
-    activeSubject = "All";
+  if (state?.view === "chapters") {
     showChapters(state.subject, false);
     renderFilters();
     return;
@@ -335,11 +376,7 @@ window.addEventListener("popstate", event => {
 
 if (!history.state || !history.state.studyLectures) {
   history.replaceState(
-    {
-      studyLectures:true,
-      view:"subjects",
-      subject:null
-    },
+    {studyLectures:true, view:"subjects", subject:null},
     "",
     location.href
   );
@@ -350,59 +387,12 @@ $("#menuBtn").onclick = () => {
   $("#drawer").classList.remove("hidden");
   $("#backdrop").classList.remove("hidden");
 };
-
 $("#closeDrawer").onclick = closeDrawer;
 $("#backdrop").onclick = closeDrawer;
 
 function closeDrawer() {
   $("#drawer").classList.add("hidden");
   $("#backdrop").classList.add("hidden");
-}
-
-/* Existing player support */
-function openPlayer(item) {
-  const player = $("#player");
-  const video = $("#video");
-
-  if (!player || !video) return;
-
-  $("#playerTitle").textContent = item.title;
-  $("#playerMeta").textContent =
-    `${item.subject} • ${item.chapter} • ${formatDate(item.date)}`;
-
-  $("#openOriginal").href = item.url;
-
-  $("#unsupported").classList.add("hidden");
-  video.classList.remove("hidden");
-
-  video.src = item.url;
-  video.load();
-  video.play().catch(() => {});
-
-  player.classList.remove("hidden");
-}
-
-function closePlayer() {
-  const player = $("#player");
-  const video = $("#video");
-
-  if (!player || !video) return;
-
-  video.pause();
-  video.removeAttribute("src");
-  video.load();
-
-  player.classList.add("hidden");
-}
-
-if ($("#closePlayer")) {
-  $("#closePlayer").onclick = closePlayer;
-}
-
-if ($("#player")) {
-  $("#player").addEventListener("click", event => {
-    if (event.target === $("#player")) closePlayer();
-  });
 }
 
 function openLectureDirect(item) {
@@ -415,6 +405,5 @@ function openNotes(item) {
   window.location.href = item.notes;
 }
 
-/* Start */
 renderFilters();
 showSubjects();

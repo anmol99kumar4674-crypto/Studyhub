@@ -1,1 +1,3 @@
-const HINDI_LECTURES = [];
+const HINDI_LECTURES = [
+  // Add content here from StudyHub Admin.
+];
