@@ -62,4 +62,13 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://s2-cdn.studyratna.cc/play.php?video_url=https%3A%2F%2Fd1d34p8vz63oiq.cloudfront.net%2Fee9d6392-c2e4-461f-9a9b-036b62a226eb%2Fmaster.mpd&title=Rahul%20sir%20(Essay)&poster=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F9e9f4317-049f-48a7-b2ea-870c7c138a77.png&video_id=6a6f17378f62df2aa9cbbdc8&video_key=675ad47009188ce52570cc50&batch_id=6a6e52a94c78e4bba3681386&subject_id=%5Bobject%20Object%5D&video_type=pw&subject_id_original=6a6ef6a5b29c1086b4c51f59&topic_id=6a6f045ad61e1761b9ec4755&subject_slug=notices-985231&topic_slug=batch-demo-videos-988798",
   }
+,
+  {
+    id: "notices-1787575199483",
+    chapter: "Batch Demo Videos",
+    title: "Rahul Sir : Economics",
+    date: "2026-08-01",
+    duration: "",
+    url: "https://s2-cdn.studyratna.cc/play.php?video_url=https%3A%2F%2Fd1d34p8vz63oiq.cloudfront.net%2Fafb046ea-75a7-497a-bb10-5f13b5978e79%2Fmaster.mpd&title=Rahul%20Sir%20%3A%20Economics%20&poster=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F5968a2e8-1875-42b6-b739-98f02102fd95.png&video_id=6a6f17223d38a1b361d16e6f&video_key=6a5120fec8cc9141e399efaa&batch_id=6a6e52a94c78e4bba3681386&subject_id=%5Bobject%20Object%5D&video_type=pw&subject_id_original=6a6ef6a5b29c1086b4c51f59&topic_id=6a6f045ad61e1761b9ec4755&subject_slug=notices-985231&topic_slug=batch-demo-videos-988798",
+  }
 ];
