@@ -69,7 +69,7 @@ let activeLectureSubject = null;
 let activeChapter = null;
 
 function subjects() {
-  return [...new Set([...SUBJECTS, ...LECTURES.map(x => x.subject)])].sort();
+  return [...new Set([...SUBJECTS, ...LECTURES.map(x => x.subject)])];
 }
 
 function getFilteredLectures() {
@@ -136,7 +136,7 @@ function showSubjects() {
 
   subjectGrid.innerHTML = "";
 
-  Object.keys(grouped).sort().forEach(subject => {
+  Object.keys(grouped).forEach(subject => {
     const card = document.createElement("button");
     card.className = "subject-card";
 
