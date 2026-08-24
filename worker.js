@@ -359,11 +359,16 @@ button:disabled{
 <label>Lecture Title</label>
 <input id="title" placeholder="Economic Lecture 3 : Introduction to Economy">
 
+<div id="videoFields">
 <label>Video URL</label>
 <input id="video" placeholder="https://...">
 
 <label>Notes URL (Optional)</label>
 <input id="notes" placeholder="https://...">
+
+<label>Duration (Optional)</label>
+<input id="duration" placeholder="01:20:00">
+</div>
 
 <div id="pdfFields" style="display:none">
 <label>PDF URL</label>
@@ -372,9 +377,6 @@ button:disabled{
 
 <label>Date</label>
 <input id="date" type="date">
-
-<label>Duration (Optional)</label>
-<input id="duration" placeholder="01:20:00">
 
 <button id="btn" type="button" onclick="save()">Add Lecture</button>
 
@@ -411,9 +413,19 @@ async function save(){
     duration: document.getElementById("duration").value.trim()
   };
 
-  if(!data.chapter || !data.title || !data.video || !data.date){
+  const pdfOnly = data.subject === "Bihar Current Wallah Monthly Compilation";
+
+  if(
+    !data.chapter ||
+    !data.title ||
+    (!pdfOnly && !data.video) ||
+    (pdfOnly && !data.pdf) ||
+    !data.date
+  ){
     msg.className = "err";
-    msg.innerText = "Chapter, Title, Video URL aur Date bharna zaroori hai.";
+    msg.innerText = pdfOnly
+      ? "Chapter, Title, PDF URL aur Date bharna zaroori hai."
+      : "Chapter, Title, Video URL aur Date bharna zaroori hai.";
     return;
   }
 
@@ -437,6 +449,7 @@ async function save(){
       document.getElementById("title").value = "";
       document.getElementById("video").value = "";
       document.getElementById("notes").value = "";
+      if(document.getElementById("pdf")) document.getElementById("pdf").value = "";
     }else{
       msg.className = "err";
       msg.innerText = result.message || "Lecture add nahi hua.";
