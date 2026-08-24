@@ -1,3 +1,1 @@
-const NCERT_LECTURES = [
-  // Add content here from StudyHub Admin.
-];
+const NCERT_LECTURES = [];

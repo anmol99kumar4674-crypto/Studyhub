@@ -25,9 +25,7 @@ export default {
       "Hindi (हिन्दी)": { file:"hindi.js", array:"HINDI_LECTURES", idPrefix:"hindi" },
       "Maths/DI": { file:"maths-di.js", array:"MATHS_DI_LECTURES", idPrefix:"maths-di" },
       "Bihar Current Wallah Monthly Compilation": { file:"bihar-current-wallah-monthly-compilation.js", array:"BIHAR_CURRENT_WALLAH_LECTURES", idPrefix:"bihar-current-wallah" },
-      "NCERT": { file:"ncert.js", array:"NCERT_LECTURES", idPrefix:"ncert" },
-      "Geography": { file:"geography.js", array:"GEOGRAPHY_LECTURES", idPrefix:"geography" },
-      "Art & Culture": { file:"art-culture.js", array:"ART_CULTURE_LECTURES", idPrefix:"art-culture" }
+      "NCERT": { file:"ncert.js", array:"NCERT_LECTURES", idPrefix:"ncert" }
     };
 
     const PDF_ONLY_SUBJECTS = new Set([
@@ -141,30 +139,22 @@ export default {
           `    title: ${jsString(title)},`,
           `    date: ${jsString(date)},`,
           `    duration: ${jsString(pdfOnly ? "" : duration)},`,
-          `    url: ${jsString(contentUrl)},`
+          `    url: ${jsString(contentUrl)}${(!pdfOnly && notes) ? "," : ""}`
         ];
 
         if (pdfOnly) {
           lectureLines.push(`    type: "pdf"`);
-        } else {
-          lectureLines[lectureLines.length - 1] =
-            `    url: ${jsString(contentUrl)}${notes ? "," : ""}`;
-          if (notes) lectureLines.push(`    notes: ${jsString(notes)}`);
+        } else if (notes) {
+          lectureLines.push(`    notes: ${jsString(notes)}`);
         }
 
         lectureLines.push("  }");
 
         // Existing array may or may not already contain items.
-        // Ignore comments/whitespace: a placeholder comment must NOT
-        // make an empty array look non-empty, otherwise the first upload
-        // becomes `[, { ... }]` and breaks the entire website JavaScript.
         const beforeClose = source.slice(arrayStart, arrayEnd);
-        const arrayBody = beforeClose
-          .slice(beforeClose.indexOf("[") + 1)
-          .replace(/\/\*[\s\S]*?\*\//g, "")
-          .replace(/(^|\s)\/\/.*$/gm, "")
-          .trim();
-        const hasItems = arrayBody.length > 0;
+        const hasItems = /[^\s\[]/.test(
+          beforeClose.slice(beforeClose.indexOf("[") + 1)
+        );
 
         const insertion =
           (hasItems ? ",\n" : "\n") +
@@ -349,8 +339,7 @@ button:disabled{
 <h1>📚 StudyHub Admin</h1>
 
 <label>Subject</label>
-<select id="subject">
-  <option>Notices</option>
+<select id="subject"><option>Notices</option>
   <option>Current Affairs</option>
   <option>Polity</option>
   <option>History</option>
@@ -362,10 +351,7 @@ button:disabled{
   <option>Hindi (हिन्दी)</option>
   <option>Maths/DI</option>
   <option>Bihar Current Wallah Monthly Compilation</option>
-  <option>NCERT</option>
-  <option>Geography</option>
-  <option>Art & Culture</option>
-</select>
+  <option>NCERT</option></select>
 
 <label>Chapter</label>
 <input id="chapter" placeholder="Introduction to Economy">
@@ -373,16 +359,11 @@ button:disabled{
 <label>Lecture Title</label>
 <input id="title" placeholder="Economic Lecture 3 : Introduction to Economy">
 
-<div id="videoFields">
 <label>Video URL</label>
 <input id="video" placeholder="https://...">
 
 <label>Notes URL (Optional)</label>
 <input id="notes" placeholder="https://...">
-
-<label>Duration (Optional)</label>
-<input id="duration" placeholder="01:20:00">
-</div>
 
 <div id="pdfFields" style="display:none">
 <label>PDF URL</label>
@@ -391,6 +372,17 @@ button:disabled{
 
 <label>Date</label>
 <input id="date" type="date">
+
+<label>Duration (Optional)</label>
+<input id="duration" placeholder="01:20:00">
+
+<button id="btn" type="button" onclick="save()">Add Lecture</button>
+
+<div id="msg"></div>
+<div class="small">
+Lecture save hone par selected subject ki GitHub file automatically update hogi.
+</div>
+</div>
 
 <script>
 const subjectEl = document.getElementById("subject");
@@ -403,14 +395,6 @@ subjectEl.addEventListener("change", updateContentFields);
 updateContentFields();
 </script>
 
-<button id="btn" type="button" onclick="save()">Add Lecture</button>
-
-<div id="msg"></div>
-<div class="small">
-Lecture save hone par selected subject ki GitHub file automatically update hogi.
-</div>
-</div>
-
 <script>
 async function save(){
   const msg = document.getElementById("msg");
@@ -421,18 +405,15 @@ async function save(){
     chapter: document.getElementById("chapter").value.trim(),
     title: document.getElementById("title").value.trim(),
     video: document.getElementById("video").value.trim(),
-    pdf: document.getElementById("pdf").value.trim(),
+    pdf: document.getElementById("pdf") ? document.getElementById("pdf").value.trim() : "",
     notes: document.getElementById("notes").value.trim(),
     date: document.getElementById("date").value,
     duration: document.getElementById("duration").value.trim()
   };
 
-  const pdfOnly = data.subject === "Bihar Current Wallah Monthly Compilation";
-  if(!data.chapter || !data.title || !(pdfOnly ? data.pdf : data.video) || !data.date){
+  if(!data.chapter || !data.title || !data.video || !data.date){
     msg.className = "err";
-    msg.innerText = pdfOnly
-      ? "Chapter, Title, PDF URL aur Date bharna zaroori hai."
-      : "Chapter, Title, Video URL aur Date bharna zaroori hai.";
+    msg.innerText = "Chapter, Title, Video URL aur Date bharna zaroori hai.";
     return;
   }
 
@@ -455,7 +436,6 @@ async function save(){
       msg.innerText = result.message;
       document.getElementById("title").value = "";
       document.getElementById("video").value = "";
-      document.getElementById("pdf").value = "";
       document.getElementById("notes").value = "";
     }else{
       msg.className = "err";
