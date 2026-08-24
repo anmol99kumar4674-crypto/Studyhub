@@ -236,6 +236,10 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
     .filter(x =>
       x.subject === subject &&
       (x.chapter || "General") === chapter
+    )
+    .sort((a,b) =>
+      (b.date || "").localeCompare(a.date || "") ||
+      String(b.id || "").localeCompare(String(a.id || ""))
     );
 
   chapterList.innerHTML = "";
