@@ -374,9 +374,6 @@ button:disabled{
 <label>Notes URL (Optional)</label>
 <input id="notes" placeholder="https://...">
 
-<label>Date</label>
-<input id="date" type="date">
-
 <label>Duration (Optional)</label>
 <input id="duration" placeholder="01:20:00">
 </div>
@@ -385,6 +382,9 @@ button:disabled{
 <label>PDF URL</label>
 <input id="pdf" placeholder="https://...pdf">
 </div>
+
+<label>Date</label>
+<input id="date" type="date">
 
 <script>
 const subjectEl = document.getElementById("subject");
