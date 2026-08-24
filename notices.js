@@ -98,4 +98,13 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://s2-cdn.studyratna.cc/play.php?video_url=https%3A%2F%2Fd1d34p8vz63oiq.cloudfront.net%2Fc2a670d1-07cc-4e68-b52f-e15a8bd3a1fd%2Fmaster.mpd&title=Nishit%20Sir%20%3A%20Maths&poster=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F62e93f59-0c28-450d-b4f1-872a31117e16.png&video_id=6a6f1708973e8f4a5d30e430&video_key=675a8bc346509df56a255aaf&batch_id=6a6e52a94c78e4bba3681386&subject_id=%5Bobject%20Object%5D&video_type=pw&subject_id_original=6a6ef6a5b29c1086b4c51f59&topic_id=6a6f045ad61e1761b9ec4755&subject_slug=notices-985231&topic_slug=batch-demo-videos-988798",
   }
+,
+  {
+    id: "notices-1787575275756",
+    chapter: "Batch Demo Videos",
+    title: "Abhay Sir : Geography",
+    date: "2026-08-01",
+    duration: "",
+    url: "https://s2-cdn.studyratna.cc/play.php?video_url=https%3A%2F%2Fd1d34p8vz63oiq.cloudfront.net%2Fca3642a6-a0af-43a0-a44d-99a0512bb433%2Fmaster.mpd&title=Abhay%20Sir%20%3A%20Geography&poster=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2F3a629785-c8b2-4346-b5a3-b2e0188f7e7c.png&video_id=6a6f16fbd82014b6691b6586&video_key=6560c1d4104e6b001817d1ed&batch_id=6a6e52a94c78e4bba3681386&subject_id=%5Bobject%20Object%5D&video_type=pw&subject_id_original=6a6ef6a5b29c1086b4c51f59&topic_id=6a6f045ad61e1761b9ec4755&subject_slug=notices-985231&topic_slug=batch-demo-videos-988798",
+  }
 ];
