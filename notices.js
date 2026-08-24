@@ -15,7 +15,6 @@ const NOTICES_LECTURES = [
     title: "Lecture Planner || Pdf Only",
     date: "2026-08-24",
     duration: "",
-    url: ".",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F29faa166-ae32-4cc7-adc1-d4ae4bb09169.pdf&embedded=true"
   }
 ];
