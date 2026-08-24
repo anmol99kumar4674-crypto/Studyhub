@@ -70,21 +70,46 @@
 </aside>
 <div class="drawer-backdrop hidden" id="backdrop"></div>
 
-<script src="economic.js"></script>
-<script src="history.js"></script>
-<script src="geography.js"></script>
-<script src="polity.js"></script>
-<script src="art-culture.js"></script>
-<script src="general-science.js"></script>
-<script src="notices.js"></script>
-<script src="current-affairs.js"></script>
-<script src="bihar-special.js"></script>
-<script src="environment.js"></script>
-<script src="essay.js"></script>
-<script src="hindi.js"></script>
-<script src="maths-di.js"></script>
-<script src="bihar-current-wallah-monthly-compilation.js"></script>
-<script src="ncert.js"></script>
-<script src="app.js"></script>
+<script>
+/* Load the latest subject data directly from the GitHub source.
+   Cache-busting prevents normal browser visits from showing an old lecture list. */
+(function () {
+  const files = [
+    "economic.js",
+    "history.js",
+    "geography.js",
+    "polity.js",
+    "art-culture.js",
+    "general-science.js",
+    "notices.js",
+    "current-affairs.js",
+    "bihar-special.js",
+    "environment.js",
+    "essay.js",
+    "hindi.js",
+    "maths-di.js",
+    "bihar-current-wallah-monthly-compilation.js",
+    "ncert.js"
+  ];
+  const base = "https://raw.githubusercontent.com/anmol99kumar4674-crypto/Studyhub/main/";
+  let i = 0;
+
+  function loadNext() {
+    if (i >= files.length) {
+      const app = document.createElement("script");
+      app.src = "app.js?v=" + Date.now();
+      document.body.appendChild(app);
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = base + files[i++] + "?v=" + Date.now();
+    s.onload = loadNext;
+    s.onerror = loadNext;
+    document.body.appendChild(s);
+  }
+
+  loadNext();
+})();
+</script>
 </body>
 </html>

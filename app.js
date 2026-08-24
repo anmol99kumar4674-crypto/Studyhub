@@ -70,10 +70,18 @@ function getFilteredLectures() {
         .toLowerCase()
         .includes(q))
     )
-    .sort((a,b) =>
-      (b.date || "").localeCompare(a.date || "") ||
-      String(b.id).localeCompare(String(a.id))
-    );
+    .sort((a,b) => {
+      const dateCompare = String(b.date || "").localeCompare(String(a.date || ""));
+      if (dateCompare) return dateCompare;
+
+      // Admin-created IDs end with Date.now(), so newest added item wins
+      // when two lectures have the same date.
+      const aTime = Number(String(a.id || "").match(/(\\d{10,})$/)?.[1] || 0);
+      const bTime = Number(String(b.id || "").match(/(\\d{10,})$/)?.[1] || 0);
+      if (aTime !== bTime) return bTime - aTime;
+
+      return 0;
+    });
 }
 
 function renderFilters() {

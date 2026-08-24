@@ -388,8 +388,11 @@ Lecture save hone par selected subject ki GitHub file automatically update hogi.
 const subjectEl = document.getElementById("subject");
 function updateContentFields(){
   const pdfOnly = subjectEl.value === "Bihar Current Wallah Monthly Compilation";
-  document.getElementById("videoFields").style.display = pdfOnly ? "none" : "block";
+  document.getElementById("video").parentElement.previousElementSibling.style.display = pdfOnly ? "none" : "block";
+  document.getElementById("video").style.display = pdfOnly ? "none" : "block";
   document.getElementById("pdfFields").style.display = pdfOnly ? "block" : "none";
+  document.getElementById("duration").parentElement.previousElementSibling.style.display = pdfOnly ? "none" : "block";
+  document.getElementById("duration").style.display = pdfOnly ? "none" : "block";
 }
 subjectEl.addEventListener("change", updateContentFields);
 updateContentFields();
@@ -411,9 +414,13 @@ async function save(){
     duration: document.getElementById("duration").value.trim()
   };
 
-  if(!data.chapter || !data.title || !data.video || !data.date){
+  const pdfOnly = data.subject === "Bihar Current Wallah Monthly Compilation";
+
+  if(!data.chapter || !data.title || !data.date || (pdfOnly ? !data.pdf : !data.video)){
     msg.className = "err";
-    msg.innerText = "Chapter, Title, Video URL aur Date bharna zaroori hai.";
+    msg.innerText = pdfOnly
+      ? "Chapter, Title, PDF URL aur Date bharna zaroori hai."
+      : "Chapter, Title, Video URL aur Date bharna zaroori hai.";
     return;
   }
 
