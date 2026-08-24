@@ -139,7 +139,7 @@ export default {
           `    title: ${jsString(title)},`,
           `    date: ${jsString(date)},`,
           `    duration: ${jsString(pdfOnly ? "" : duration)},`,
-          `    url: ${jsString(contentUrl)}${(!pdfOnly && notes) ? "," : ""}`
+          `    url: ${jsString(contentUrl)},`
         ];
 
         if (pdfOnly) {
