@@ -118,4 +118,14 @@ const BIHAR_CURRENT_WALLAH_LECTURES = [
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fba4bc81e-c4fe-4c53-975e-47fbb61279e2.pdf&embedded=true",
     type: "pdf"
   }
+,
+  {
+    id: "bihar-current-wallah-1787717565153",
+    chapter: "Monthly Compilation || Pdf Only",
+    title: "Bihar Current Wallah Monthly Compilation : January 2026 (Hindi) || PDF Only ~ Bihar Current Wallah Monthly Compilation",
+    date: "2026-08-02",
+    duration: "",
+    url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fe703901b-d747-4981-960c-c95d630e3501.pdf&embedded=true",
+    type: "pdf"
+  }
 ];
