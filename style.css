@@ -65,36 +65,3 @@
   .chapter-card-text b{font-size:17px}
   .chapter-card-arrow{font-size:28px}
 }
-
-
-/* ===== Attendance ===== */
-.attendance-wrap{
-  width:min(1180px,calc(100% - 24px));
-  margin:10px auto 16px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.attendance-btn{
-  border:1px solid #d9d3f5;
-  background:#fff;
-  color:#5b45d9;
-  border-radius:14px;
-  padding:10px 16px;
-  font-weight:800;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  box-shadow:0 3px 12px #00000006;
-}
-.attendance-btn:hover{background:#f7f5ff}
-.attendance-btn.marked{background:#5b45d9;color:#fff;border-color:#5b45d9}
-.attendance-btn:disabled{opacity:.65;cursor:wait}
-.attendance-count{
-  color:#777;
-  font-size:14px;
-  font-weight:700;
-}
-@media(max-width:800px){
-  .attendance-wrap{margin:8px 12px 13px}
-}
