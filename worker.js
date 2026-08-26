@@ -1,3 +1,10 @@
+
+function cumulativeSeconds(existing, incoming) {
+  const oldValue = Number(existing || 0);
+  const newValue = Number(incoming || 0);
+  return Math.max(0, Math.floor(oldValue)) + Math.max(0, Math.floor(newValue));
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -7,6 +14,7 @@ export default {
     const REPO = env.GITHUB_REPO || "Studyhub";
     const BRANCH = env.GITHUB_BRANCH || "main";
     const ATTENDANCE_FILE = "attendance.json";
+    const TIME_FILE = "user-time.json";
 
     // Use the secret you already created in Cloudflare.
     // STUDYHUB_TOKEN is preferred; GITHUB_TOKEN also works.
@@ -149,6 +157,173 @@ export default {
         return reply("Attendance list", 200, { ok: true, records: Array.isArray(records) ? records : [] });
       } catch (error) {
         return reply(`Attendance error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
+    // Track how long an attended student stays on the website.
+    // Time is aggregated centrally in GitHub, one record per student per IST date.
+    if (request.method === "POST" && url.pathname === "/api/time") {
+      try {
+        if (!TOKEN) return reply("Time tracking server configured nahi hai.", 500);
+
+        const data = await request.json();
+        const name = String(data.name || "").trim().replace(/\s+/g, " ");
+        const seconds = Math.floor(Number(data.seconds || 0));
+
+        if (!name || name.length < 2 || name.length > 80) {
+          return reply("Valid name bharna zaroori hai.", 400);
+        }
+
+        if (!Number.isFinite(seconds) || seconds < 1 || seconds > 300) {
+          return reply("Invalid time value.", 400);
+        }
+
+        const now = new Date();
+        const date = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }).format(now);
+
+        const lastSeen = new Intl.DateTimeFormat("en-IN", {
+          timeZone: "Asia/Kolkata",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true
+        }).format(now);
+
+        const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${TIME_FILE}`;
+        const headers = {
+          "Authorization": `Bearer ${TOKEN}`,
+          "Accept": "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "StudyHub-Time-Tracking"
+        };
+
+        const getResponse = await fetch(
+          `${api}?ref=${encodeURIComponent(BRANCH)}`,
+          { headers }
+        );
+
+        let records = [];
+        let sha;
+
+        if (getResponse.ok) {
+          const oldFile = await getResponse.json();
+          sha = oldFile.sha;
+          try {
+            const parsed = JSON.parse(decodeBase64(oldFile.content));
+            records = Array.isArray(parsed) ? parsed : [];
+          } catch (_) {
+            records = [];
+          }
+        } else if (getResponse.status !== 404) {
+          const err = await getResponse.json().catch(() => ({}));
+          return reply(
+            `Time file read failed: ${err.message || getResponse.status}`,
+            502
+          );
+        }
+
+        const existing = records.find(x =>
+          String(x.name || "").toLowerCase() === name.toLowerCase() &&
+          x.date === date
+        );
+
+        if (existing) {
+          existing.seconds = Math.max(0, Number(existing.seconds) || 0) + seconds;
+          existing.lastSeen = lastSeen;
+        } else {
+          records.push({
+            name,
+            date,
+            seconds,
+            lastSeen
+          });
+        }
+
+        const body = {
+          message: `Website time: ${name} - ${date}`,
+          content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
+          branch: BRANCH
+        };
+        if (sha) body.sha = sha;
+
+        const putResponse = await fetch(api, {
+          method: "PUT",
+          headers: { ...headers, "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+
+        const result = await putResponse.json().catch(() => ({}));
+
+        if (!putResponse.ok) {
+          return reply(
+            `Time save failed: ${result.message || putResponse.status}`,
+            502
+          );
+        }
+
+        return reply("Website time saved.", 200, {
+          ok: true,
+          date,
+          seconds
+        });
+      } catch (error) {
+        return reply(
+          `Time tracking error: ${error?.message || "Unknown error"}`,
+          500
+        );
+      }
+    }
+
+    // Admin can see the centrally stored website-time list.
+    if (request.method === "GET" && url.pathname === "/api/time") {
+      try {
+        if (!TOKEN) return reply("Time tracking server configured nahi hai.", 500);
+
+        const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${TIME_FILE}`;
+        const response = await fetch(
+          `${api}?ref=${encodeURIComponent(BRANCH)}`,
+          {
+            headers: {
+              "Authorization": `Bearer ${TOKEN}`,
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+              "User-Agent": "StudyHub-Time-Tracking"
+            }
+          }
+        );
+
+        if (response.status === 404) {
+          return reply("Website time abhi empty hai.", 200, {
+            ok: true,
+            records: []
+          });
+        }
+
+        const file = await response.json();
+
+        if (!response.ok) {
+          return reply(
+            `Time read failed: ${file.message || response.status}`,
+            502
+          );
+        }
+
+        const records = JSON.parse(decodeBase64(file.content));
+
+        return reply("Website time list", 200, {
+          ok: true,
+          records: Array.isArray(records) ? records : []
+        });
+      } catch (error) {
+        return reply(
+          `Time tracking error: ${error?.message || "Unknown error"}`,
+          500
+        );
       }
     }
 
@@ -508,6 +683,89 @@ Lecture save hone par selected subject ki GitHub file automatically update hogi.
 </table>
 </div>
 </div>
+
+<div class="box" style="margin-top:20px">
+<h2>⏱️ Website Time</h2>
+<button type="button" onclick="loadWebsiteTime()">Refresh Website Time</button>
+<div id="timeAdminMsg" class="small">Website par users ne kitna time diya hai dekhne ke liye Refresh Website Time dabaye.</div>
+<div style="overflow:auto;margin-top:12px">
+<table id="timeTable" style="width:100%;border-collapse:collapse;display:none">
+<thead>
+<tr>
+<th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Name</th>
+<th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Date</th>
+<th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Time</th>
+<th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Last Seen</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+
+<script>
+function formatTrackedTime(totalSeconds){
+  const seconds = Math.max(0, Number(totalSeconds) || 0);
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  if(hours) return hours + "h " + String(minutes).padStart(2,"0") + "m";
+  if(minutes) return minutes + "m " + String(secs).padStart(2,"0") + "s";
+  return secs + "s";
+}
+
+async function loadWebsiteTime(){
+  const msg = document.getElementById("timeAdminMsg");
+  const table = document.getElementById("timeTable");
+  const body = table.querySelector("tbody");
+
+  msg.textContent = "Loading...";
+  table.style.display = "none";
+
+  try{
+    const response = await fetch("/api/time", { cache:"no-store" });
+    const result = await response.json();
+
+    if(!response.ok || !result.ok){
+      throw new Error(result.message || "Website time load nahi hua.");
+    }
+
+    const records = [...(result.records || [])].sort((a,b) =>
+      String(b.date || "").localeCompare(String(a.date || "")) ||
+      (Number(b.seconds) || 0) - (Number(a.seconds) || 0)
+    );
+
+    body.innerHTML = "";
+
+    records.forEach(item => {
+      const tr = document.createElement("tr");
+
+      [
+        item.name,
+        item.date,
+        formatTrackedTime(item.seconds),
+        item.lastSeen || ""
+      ].forEach(value => {
+        const td = document.createElement("td");
+        td.textContent = value;
+        td.style.padding = "10px";
+        td.style.borderBottom = "1px solid #eee";
+        tr.appendChild(td);
+      });
+
+      body.appendChild(tr);
+    });
+
+    table.style.display = records.length ? "table" : "none";
+    msg.textContent = records.length
+      ? records.length + " time entries."
+      : "Abhi website time record nahi hai.";
+  }catch(error){
+    msg.textContent = error.message || "Website time load failed.";
+  }
+}
+</script>
 
 <script>
 const subjectEl = document.getElementById("subject");

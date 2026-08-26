@@ -46,6 +46,22 @@ const ALL_LECTURES = [
 ];
 
 const LECTURES = ALL_LECTURES;
+
+function studyhubTimeKey(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function studyhubSessionStoreKey(name){
+  return "studyhub_time_" + studyhubTimeKey() + "_" + String(name||"").trim().toLowerCase();
+}
+function studyhubGetAccumulated(name){
+  const v = Number(localStorage.getItem(studyhubSessionStoreKey(name)) || 0);
+  return Number.isFinite(v) ? v : 0;
+}
+function studyhubSaveAccumulated(name, seconds){
+  localStorage.setItem(studyhubSessionStoreKey(name), String(Math.max(0, Math.floor(seconds))));
+}
+
 const $ = (s) => document.querySelector(s);
 
 // Attendance is required before any study content can be opened.
@@ -115,6 +131,7 @@ async function markAttendance() {
       name, date: attendanceTodayKey()
     }));
     lockContentForAttendance();
+    startWebsiteTimeTracking();
   } catch (error) {
     msg.textContent = error.message || "Attendance server se connect nahi hua.";
   } finally {
@@ -126,6 +143,89 @@ async function markAttendance() {
 $("#attendanceBtn")?.addEventListener("click", markAttendance);
 $("#attendanceName")?.addEventListener("keydown", e => {
   if (e.key === "Enter") markAttendance();
+});
+
+/*
+ * Website time tracking:
+ * - Starts only after today's attendance is marked.
+ * - Counts only while this page is visible.
+ * - Sends small periodic heartbeats to the Worker.
+ * - Does not change the existing lecture/theme logic.
+ */
+const TIME_API = "https://studyhub-admin.molkitofficial.workers.dev/api/time";
+let timeTrackingTimer = null;
+let timeLastTick = null;
+let timeSending = false;
+
+function startWebsiteTimeTracking() {
+  if (!hasTodayAttendance()) return;
+
+  timeLastTick = Date.now();
+
+  if (timeTrackingTimer) clearInterval(timeTrackingTimer);
+
+  timeTrackingTimer = setInterval(() => {
+    sendWebsiteTimeHeartbeat(false);
+  }, 60000);
+}
+
+async function sendWebsiteTimeHeartbeat(keepalive = false) {
+  if (!hasTodayAttendance() || document.visibilityState !== "visible" || timeSending) {
+    return;
+  }
+
+  const now = Date.now();
+
+  if (!timeLastTick) {
+    timeLastTick = now;
+    return;
+  }
+
+  const seconds = Math.floor((now - timeLastTick) / 1000);
+
+  if (seconds < 10) return;
+
+  timeSending = true;
+
+  try {
+    const data = {
+      name: JSON.parse(localStorage.getItem(ATTENDANCE_KEY) || "{}").name || "",
+      seconds: Math.min(seconds, 300)
+    };
+
+    if (!data.name) return;
+
+    const response = await fetch(TIME_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=UTF-8",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(data),
+      keepalive
+    });
+
+    if (response.ok) {
+      timeLastTick = now;
+    }
+  } catch (_) {
+    // Keep the unsent time so the next heartbeat can retry.
+  } finally {
+    timeSending = false;
+  }
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    timeLastTick = Date.now();
+    startWebsiteTimeTracking();
+  } else {
+    sendWebsiteTimeHeartbeat(true);
+  }
+});
+
+window.addEventListener("pagehide", () => {
+  sendWebsiteTimeHeartbeat(true);
 });
 
 const subjectsView = $("#subjectsView");
@@ -512,6 +612,7 @@ function openNotes(item) {
 
 /* Start */
 lockContentForAttendance();
+startWebsiteTimeTracking();
 renderFilters();
 showSubjects();
 
