@@ -15,6 +15,7 @@ export default {
     const BRANCH = env.GITHUB_BRANCH || "main";
     const ATTENDANCE_FILE = "attendance.json";
     const TIME_FILE = "user-time.json";
+    const VISITS_FILE = "user-visits.json";
 
     // Use the secret you already created in Cloudflare.
     // STUDYHUB_TOKEN is preferred; GITHUB_TOKEN also works.
@@ -157,6 +158,117 @@ export default {
         return reply("Attendance list", 200, { ok: true, records: Array.isArray(records) ? records : [] });
       } catch (error) {
         return reply(`Attendance error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
+
+    // Record each time an attended student arrives/returns to the website.
+    if (request.method === "POST" && url.pathname === "/api/visit") {
+      try {
+        if (!TOKEN) return reply("Visit tracking server configured nahi hai.", 500);
+
+        const data = await request.json();
+        const name = String(data.name || "").trim().replace(/\s+/g, " ");
+        if (!name || name.length < 2 || name.length > 80) {
+          return reply("Valid name bharna zaroori hai.", 400);
+        }
+
+        const now = new Date();
+        const date = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata",
+          year: "numeric", month: "2-digit", day: "2-digit"
+        }).format(now);
+
+        const time = new Intl.DateTimeFormat("en-IN", {
+          timeZone: "Asia/Kolkata",
+          hour: "2-digit", minute: "2-digit", second: "2-digit",
+          hour12: true
+        }).format(now);
+
+        const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${VISITS_FILE}`;
+        const headers = {
+          "Authorization": `Bearer ${TOKEN}`,
+          "Accept": "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "StudyHub-Visit-Tracking"
+        };
+
+        const getResponse = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, { headers });
+
+        let records = [];
+        let sha;
+
+        if (getResponse.ok) {
+          const oldFile = await getResponse.json();
+          sha = oldFile.sha;
+          try {
+            const parsed = JSON.parse(decodeBase64(oldFile.content));
+            records = Array.isArray(parsed) ? parsed : [];
+          } catch (_) {
+            records = [];
+          }
+        } else if (getResponse.status !== 404) {
+          const err = await getResponse.json().catch(() => ({}));
+          return reply(`Visit file read failed: ${err.message || getResponse.status}`, 502);
+        }
+
+        records.push({ name, date, time });
+
+        const body = {
+          message: `Website visit: ${name} - ${date} ${time}`,
+          content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
+          branch: BRANCH
+        };
+        if (sha) body.sha = sha;
+
+        const putResponse = await fetch(api, {
+          method: "PUT",
+          headers: { ...headers, "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+
+        const result = await putResponse.json().catch(() => ({}));
+        if (!putResponse.ok) {
+          return reply(`Visit save failed: ${result.message || putResponse.status}`, 502);
+        }
+
+        return reply("Website visit saved.", 200, { ok: true, date, time });
+      } catch (error) {
+        return reply(`Visit tracking error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
+    // Admin can see every recorded website visit.
+    if (request.method === "GET" && url.pathname === "/api/visits") {
+      try {
+        if (!TOKEN) return reply("Visit tracking server configured nahi hai.", 500);
+
+        const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${VISITS_FILE}`;
+        const response = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, {
+          headers: {
+            "Authorization": `Bearer ${TOKEN}`,
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "StudyHub-Visit-Tracking"
+          }
+        });
+
+        if (response.status === 404) {
+          return reply("Website visits abhi empty hain.", 200, { ok: true, records: [] });
+        }
+
+        const file = await response.json();
+        if (!response.ok) {
+          return reply(`Visit read failed: ${file.message || response.status}`, 502);
+        }
+
+        const records = JSON.parse(decodeBase64(file.content));
+        return reply("Website visits list", 200, {
+          ok: true,
+          records: Array.isArray(records) ? records : []
+        });
+      } catch (error) {
+        return reply(`Visit tracking error: ${error?.message || "Unknown error"}`, 500);
       }
     }
 
@@ -763,6 +875,65 @@ async function loadWebsiteTime(){
       : "Abhi website time record nahi hai.";
   }catch(error){
     msg.textContent = error.message || "Website time load failed.";
+  }
+}
+</script>
+
+
+<div class="box" style="margin-top:20px">
+<h2>🚶 Website Visits</h2>
+<button type="button" onclick="loadWebsiteVisits()">Refresh Website Visits</button>
+<div id="visitAdminMsg" class="small">Users website par kab-kab aaye dekhne ke liye Refresh Website Visits dabaye.</div>
+<div style="overflow:auto;margin-top:12px">
+<table id="visitTable" style="width:100%;border-collapse:collapse;display:none">
+<thead>
+<tr>
+<th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Name</th>
+<th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Date</th>
+<th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Time</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+
+<script>
+async function loadWebsiteVisits(){
+  const msg = document.getElementById("visitAdminMsg");
+  const table = document.getElementById("visitTable");
+  const body = table.querySelector("tbody");
+  msg.textContent = "Loading...";
+  table.style.display = "none";
+
+  try{
+    const response = await fetch("/api/visits", { cache:"no-store" });
+    const result = await response.json();
+    if(!response.ok || !result.ok){
+      throw new Error(result.message || "Website visits load nahi hue.");
+    }
+
+    const records = [...(result.records || [])].reverse();
+    body.innerHTML = "";
+
+    records.forEach(item => {
+      const tr = document.createElement("tr");
+      [item.name, item.date, item.time].forEach(value => {
+        const td = document.createElement("td");
+        td.textContent = value || "";
+        td.style.padding = "10px";
+        td.style.borderBottom = "1px solid #eee";
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+
+    table.style.display = records.length ? "table" : "none";
+    msg.textContent = records.length
+      ? records.length + " visit entries."
+      : "Abhi website visit record nahi hai.";
+  }catch(error){
+    msg.textContent = error.message || "Website visits load failed.";
   }
 }
 </script>

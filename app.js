@@ -131,6 +131,7 @@ async function markAttendance() {
       name, date: attendanceTodayKey()
     }));
     lockContentForAttendance();
+    recordWebsiteVisit();
     startWebsiteTimeTracking();
   } catch (error) {
     msg.textContent = error.message || "Attendance server se connect nahi hua.";
@@ -144,6 +145,46 @@ $("#attendanceBtn")?.addEventListener("click", markAttendance);
 $("#attendanceName")?.addEventListener("keydown", e => {
   if (e.key === "Enter") markAttendance();
 });
+
+
+const VISIT_API = "https://studyhub-admin.molkitofficial.workers.dev/api/visit";
+let visitSending = false;
+
+async function recordWebsiteVisit() {
+  if (!hasTodayAttendance() || document.visibilityState !== "visible" || visitSending) return;
+
+  const last = Number(sessionStorage.getItem("studyhub_visit_recorded") || 0);
+  // Avoid duplicate records caused by multiple startup calls in the same page load.
+  if (last && Date.now() - last < 15000) return;
+
+  let data;
+  try {
+    data = JSON.parse(localStorage.getItem(ATTENDANCE_KEY) || "{}");
+  } catch (_) {
+    data = {};
+  }
+  if (!data.name) return;
+
+  visitSending = true;
+  try {
+    const response = await fetch(VISIT_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=UTF-8",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ name: data.name })
+    });
+
+    if (response.ok) {
+      sessionStorage.setItem("studyhub_visit_recorded", String(Date.now()));
+    }
+  } catch (_) {
+    // A failed visit will be retried on the next visible return.
+  } finally {
+    visitSending = false;
+  }
+}
 
 /*
  * Website time tracking:
@@ -217,6 +258,7 @@ async function sendWebsiteTimeHeartbeat(keepalive = false) {
 
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
+    recordWebsiteVisit();
     timeLastTick = Date.now();
     startWebsiteTimeTracking();
   } else {
@@ -612,6 +654,7 @@ function openNotes(item) {
 
 /* Start */
 lockContentForAttendance();
+recordWebsiteVisit();
 startWebsiteTimeTracking();
 renderFilters();
 showSubjects();
