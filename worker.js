@@ -545,7 +545,7 @@ async function loadAttendance(){
       body.appendChild(tr);
     });
     table.style.display = records.length ? "table" : "none";
-    msg.textContent = records.length ? `\${records.length} attendance entries.` : "Abhi attendance nahi hai.";
+    msg.textContent = records.length ? (records.length + " attendance entries.") : "Abhi attendance nahi hai.";
   } catch (error) {
     msg.textContent = error.message || "Attendance load failed.";
   }
