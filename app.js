@@ -54,6 +54,12 @@ const subjectGrid = $("#subjectGrid");
 const chapterList = $("#chapterList");
 const filters = $("#subjectFilters");
 const searchInput = $("#searchInput");
+const attendanceView = $("#attendanceView");
+const attendanceName = $("#attendanceName");
+const attendanceBtn = $("#attendanceBtn");
+const attendanceMsg = $("#attendanceMsg");
+const attendanceDate = $("#attendanceDate");
+const attendanceHistory = $("#attendanceHistory");
 
 const iconMap = {
   Economics:"📈",
@@ -117,6 +123,7 @@ function renderFilters() {
 }
 
 function showSubjects() {
+  attendanceView.classList.add("hidden");
   activeLectureSubject = null;
   activeChapter = null;
 
@@ -159,6 +166,7 @@ function showSubjects() {
 
 /* STEP 2: Subject ke andar sirf CHAPTERS dikhte hain */
 function showChapters(subject, pushHistory = false) {
+  attendanceView.classList.add("hidden");
   activeLectureSubject = subject;
   activeChapter = null;
 
@@ -211,6 +219,7 @@ function showChapters(subject, pushHistory = false) {
 
 /* STEP 3: Chapter ke andar lectures */
 function showChapterLectures(subject, chapter, pushHistory = false) {
+  attendanceView.classList.add("hidden");
   activeLectureSubject = subject;
   activeChapter = chapter;
 
@@ -313,10 +322,38 @@ searchInput.addEventListener("input", () => {
     showChapterLectures(activeLectureSubject, activeChapter, false);
   } else if (activeLectureSubject) {
     showChapters(activeLectureSubject, false);
+  } else if (!attendanceView.classList.contains("hidden")) {
+    return;
   } else {
     showSubjects();
   }
 });
+
+/* Attendance: name only, one mark per name per day on this browser */
+const ATTENDANCE_KEY = "studyhub_attendance_v1";
+function todayKey(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+function attendanceRecords(){ try { const x=JSON.parse(localStorage.getItem(ATTENDANCE_KEY)||"[]"); return Array.isArray(x)?x:[]; } catch { return []; } }
+function saveAttendanceRecords(records){ localStorage.setItem(ATTENDANCE_KEY, JSON.stringify(records.slice(-500))); }
+function escapeHtml(value){ return String(value).replace(/[&<>\'\"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch])); }
+function renderAttendanceHistory(){
+  const records=attendanceRecords();
+  attendanceHistory.innerHTML=records.length ? `<h4>Recent Attendance</h4>` + records.slice().reverse().slice(0,10).map(x=>`<div class="attendance-item"><span><b>${escapeHtml(x.name)}</b></span><small>${x.date} • ${x.time}</small></div>`).join("") : "";
+}
+function showAttendance(){
+  subjectsView.classList.add("hidden"); lecturesView.classList.add("hidden"); attendanceView.classList.remove("hidden");
+  attendanceDate.textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+  attendanceMsg.className="attendance-msg hidden"; renderAttendanceHistory();
+}
+if(attendanceBtn){ attendanceBtn.onclick=()=>{
+  const name=attendanceName.value.trim().replace(/\s+/g," ");
+  if(!name){ attendanceMsg.textContent="Please enter your name."; attendanceMsg.className="attendance-msg err"; return; }
+  const date=todayKey(), records=attendanceRecords();
+  if(records.some(x=>x.date===date && x.name.toLowerCase()===name.toLowerCase())){ attendanceMsg.textContent="Attendance already marked for today."; attendanceMsg.className="attendance-msg"; return; }
+  const now=new Date(); records.push({name,date,time:now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}); saveAttendanceRecords(records);
+  attendanceName.value=""; attendanceMsg.textContent=`Attendance marked for ${name}.`; attendanceMsg.className="attendance-msg"; renderAttendanceHistory();
+}; }
+if($("#attendanceMenu")){ $("#attendanceMenu").onclick=e=>{e.preventDefault();closeDrawer();showAttendance();}; }
+if($("#attendanceBackBtn")){ $("#attendanceBackBtn").onclick=()=>{attendanceView.classList.add("hidden");showSubjects();renderFilters();}; }
 
 /* Browser Back/Forward */
 window.addEventListener("popstate", event => {
