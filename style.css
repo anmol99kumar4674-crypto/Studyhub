@@ -67,11 +67,14 @@
 }
 
 
-/* Attendance */
-.attendance-box{width:min(620px,calc(100% - 24px));margin:18px auto 0;background:#fff;border:1px solid #ececf0;border-radius:20px;padding:24px;box-shadow:0 4px 15px #00000008}
-.attendance-box h3{margin:0 0 6px;font-size:21px}.attendance-date{margin:0 0 20px;color:#777}
-.attendance-box label{display:block;font-weight:700;margin-bottom:7px}.attendance-box input{width:100%;height:50px;border:1px solid #ddd;border-radius:12px;padding:0 14px;outline:none;background:#fff}
-.attendance-box input:focus{border-color:#705be2}.attendance-box>button{width:100%;margin-top:14px;height:50px;border:0;border-radius:12px;background:#5b45d9;color:#fff;font-weight:700}
-.attendance-msg{margin-top:14px;padding:12px;border-radius:10px;background:#eaf8ef;color:#176b38;font-weight:600}.attendance-msg.err{background:#fdeaea;color:#a52222}
-.attendance-history{margin-top:22px;border-top:1px solid #eee;padding-top:16px}.attendance-history h4{margin:0 0 10px}.attendance-item{padding:10px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:12px}.attendance-item:last-child{border-bottom:0}.attendance-item small{color:#888}
-@media(max-width:800px){.attendance-box{padding:20px}}
+/* Attendance gate */
+.attendance-gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.72);backdrop-filter:blur(7px)}
+.attendance-gate.hidden{display:none}
+.attendance-card{width:min(420px,100%);background:#fff;border-radius:24px;padding:28px 22px;text-align:center;box-shadow:0 20px 70px rgba(0,0,0,.35)}
+.attendance-icon{width:58px;height:58px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;background:#5638d4;color:#fff;font-size:30px;font-weight:800}
+.attendance-card h2{margin:0 0 8px;font-size:26px}
+.attendance-card p{margin:0 0 20px;color:#666;line-height:1.5}
+.attendance-card input{width:100%;padding:14px 15px;border:1px solid #ddd;border-radius:12px;font-size:16px;outline:none;box-sizing:border-box}
+.attendance-card button{width:100%;margin-top:12px;padding:14px;border:0;border-radius:12px;background:#5638d4;color:#fff;font-size:16px;font-weight:700}
+.attendance-msg{min-height:20px;margin-top:10px;font-size:14px;color:#b22}
+body.attendance-locked{overflow:hidden}

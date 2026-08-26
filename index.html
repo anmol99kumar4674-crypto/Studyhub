@@ -36,22 +36,6 @@
     <div class="subject-grid" id="subjectGrid"></div>
   </section>
 
-  <section id="attendanceView" class="hidden">
-    <div class="section-head">
-      <button class="back-btn" id="attendanceBackBtn">← Subjects</button>
-      <h2>Attendance</h2>
-    </div>
-    <div class="attendance-box">
-      <h3>Mark Today's Attendance</h3>
-      <p class="attendance-date" id="attendanceDate"></p>
-      <label for="attendanceName">Your Name</label>
-      <input id="attendanceName" type="text" maxlength="60" autocomplete="name" placeholder="Enter your name">
-      <button id="attendanceBtn" type="button">Mark Attendance</button>
-      <div id="attendanceMsg" class="attendance-msg hidden"></div>
-      <div class="attendance-history" id="attendanceHistory"></div>
-    </div>
-  </section>
-
   <section id="lecturesView" class="hidden">
     <div class="section-head">
       <button class="back-btn" id="backBtn">← Subjects</button>
@@ -60,6 +44,17 @@
     <div class="chapter-list" id="chapterList"></div>
   </section>
 </main>
+
+<div class="attendance-gate" id="attendanceGate" aria-modal="true" role="dialog">
+  <div class="attendance-card">
+    <div class="attendance-icon">✓</div>
+    <h2>Attendance Lagao</h2>
+    <p>Content access karne ke liye pehle apni attendance lagaye.</p>
+    <input id="attendanceName" type="text" maxlength="80" placeholder="Apna naam likhiye" autocomplete="name">
+    <button id="attendanceBtn" type="button">Attendance Lagao</button>
+    <div id="attendanceMsg" class="attendance-msg"></div>
+  </div>
+</div>
 
 <div class="player hidden" id="player">
   <div class="player-box">
@@ -82,7 +77,6 @@
 <aside class="drawer hidden" id="drawer">
   <div class="drawer-head"><b>Menu</b><button id="closeDrawer">×</button></div>
   <a href="index.html">Home</a>
-  <a href="#" id="attendanceMenu">📋 Attendance</a>
   <a href="https://studyhub-admin.molkitofficial.workers.dev/" target="_blank" rel="noopener">How to add lectures</a>
 </aside>
 <div class="drawer-backdrop hidden" id="backdrop"></div>

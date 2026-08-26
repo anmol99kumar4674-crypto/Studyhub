@@ -6,10 +6,17 @@ export default {
     const OWNER = env.GITHUB_OWNER || "anmol99kumar4674-crypto";
     const REPO = env.GITHUB_REPO || "Studyhub";
     const BRANCH = env.GITHUB_BRANCH || "main";
+    const ATTENDANCE_FILE = "attendance.json";
 
     // Use the secret you already created in Cloudflare.
     // STUDYHUB_TOKEN is preferred; GITHUB_TOKEN also works.
     const TOKEN = env.STUDYHUB_TOKEN || env.GITHUB_TOKEN;
+
+    // Attendance is stored centrally in GitHub so the admin can see every
+    // student's attendance, while the student only needs to enter their name.
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: corsHeaders() });
+    }
 
     // Subject -> GitHub JavaScript file
     const SUBJECT_FILES = {
@@ -40,6 +47,109 @@ export default {
           "Cache-Control": "no-store"
         }
       });
+    }
+
+    // Mark student attendance. One attendance per name per day.
+    if (request.method === "POST" && url.pathname === "/api/attendance") {
+      try {
+        if (!TOKEN) return reply("Attendance server configured nahi hai.", 500);
+
+        const data = await request.json();
+        const name = String(data.name || "").trim().replace(/\s+/g, " ");
+        if (!name || name.length < 2 || name.length > 80) {
+          return reply("Valid name bharna zaroori hai.", 400);
+        }
+
+        const now = new Date();
+        const ist = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit"
+        }).format(now);
+        const time = new Intl.DateTimeFormat("en-IN", {
+          timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true
+        }).format(now);
+
+        const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${ATTENDANCE_FILE}`;
+        const headers = {
+          "Authorization": `Bearer ${TOKEN}`,
+          "Accept": "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "StudyHub-Attendance"
+        };
+
+        const getResponse = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, { headers });
+        let records = [];
+        let sha = undefined;
+
+        if (getResponse.ok) {
+          const oldFile = await getResponse.json();
+          sha = oldFile.sha;
+          try {
+            const decoded = decodeBase64(oldFile.content);
+            const parsed = JSON.parse(decoded);
+            records = Array.isArray(parsed) ? parsed : [];
+          } catch (_) {
+            records = [];
+          }
+        } else if (getResponse.status !== 404) {
+          const err = await getResponse.json().catch(() => ({}));
+          return reply(`Attendance file read failed: ${err.message || getResponse.status}`, 502);
+        }
+
+        const duplicate = records.some(x =>
+          String(x.name || "").toLowerCase() === name.toLowerCase() && x.date === ist
+        );
+
+        if (duplicate) {
+          return reply("Aaj ki attendance pehle hi lag chuki hai.", 200, { ok: true, alreadyMarked: true, date: ist });
+        }
+
+        records.push({ name, date: ist, time });
+
+        const body = {
+          message: `Attendance: ${name} - ${ist}`,
+          content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
+          branch: BRANCH
+        };
+        if (sha) body.sha = sha;
+
+        const putResponse = await fetch(api, {
+          method: "PUT",
+          headers: { ...headers, "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const result = await putResponse.json();
+
+        if (!putResponse.ok) {
+          return reply(`Attendance save failed: ${result.message || putResponse.status}`, 502);
+        }
+
+        return reply("Attendance successfully marked.", 200, { ok: true, date: ist, time });
+      } catch (error) {
+        return reply(`Attendance error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
+    // Admin can see the centrally stored attendance list.
+    if (request.method === "GET" && url.pathname === "/api/attendance") {
+      try {
+        if (!TOKEN) return reply("Attendance server configured nahi hai.", 500);
+        const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${ATTENDANCE_FILE}`;
+        const response = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, {
+          headers: {
+            "Authorization": `Bearer ${TOKEN}`,
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "StudyHub-Attendance"
+          }
+        });
+        if (response.status === 404) return reply("Attendance abhi empty hai.", 200, { ok: true, records: [] });
+        const file = await response.json();
+        if (!response.ok) return reply(`Attendance read failed: ${file.message || response.status}`, 502);
+        const records = JSON.parse(decodeBase64(file.content));
+        return reply("Attendance list", 200, { ok: true, records: Array.isArray(records) ? records : [] });
+      } catch (error) {
+        return reply(`Attendance error: ${error?.message || "Unknown error"}`, 500);
+      }
     }
 
     // Add a lecture to the selected GitHub subject file
@@ -222,7 +332,8 @@ function reply(message, status = 200, extra = {}) {
       status,
       headers: {
         "Content-Type": "application/json;charset=UTF-8",
-        "Cache-Control": "no-store"
+        "Cache-Control": "no-store",
+        ...corsHeaders()
       }
     }
   );
@@ -386,6 +497,18 @@ Lecture save hone par selected subject ki GitHub file automatically update hogi.
 </div>
 </div>
 
+<div class="box" style="margin-top:20px">
+<h2>📋 Student Attendance</h2>
+<button type="button" onclick="loadAttendance()">Refresh Attendance</button>
+<div id="attendanceAdminMsg" class="small">Attendance list load karne ke liye Refresh Attendance dabaye.</div>
+<div style="overflow:auto;margin-top:12px">
+<table id="attendanceTable" style="width:100%;border-collapse:collapse;display:none">
+<thead><tr><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Name</th><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Date</th><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Time</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+
 <script>
 const subjectEl = document.getElementById("subject");
 function updateContentFields(){
@@ -395,6 +518,38 @@ function updateContentFields(){
 }
 subjectEl.addEventListener("change", updateContentFields);
 updateContentFields();
+</script>
+
+<script>
+async function loadAttendance(){
+  const msg = document.getElementById("attendanceAdminMsg");
+  const table = document.getElementById("attendanceTable");
+  const body = table.querySelector("tbody");
+  msg.textContent = "Loading...";
+  table.style.display = "none";
+  try {
+    const response = await fetch("/api/attendance", { cache: "no-store" });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.message || "Attendance load nahi hui.");
+    body.innerHTML = "";
+    const records = [...(result.records || [])].reverse();
+    records.forEach(item => {
+      const tr = document.createElement("tr");
+      [item.name, item.date, item.time].forEach(value => {
+        const td = document.createElement("td");
+        td.textContent = value || "";
+        td.style.padding = "10px";
+        td.style.borderBottom = "1px solid #eee";
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+    table.style.display = records.length ? "table" : "none";
+    msg.textContent = records.length ? `\${records.length} attendance entries.` : "Abhi attendance nahi hai.";
+  } catch (error) {
+    msg.textContent = error.message || "Attendance load failed.";
+  }
+}
 </script>
 
 <script>
@@ -465,3 +620,12 @@ async function save(){
 </script>
 </body>
 </html>`;
+
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+  };
+}
