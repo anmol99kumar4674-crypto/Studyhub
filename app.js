@@ -433,3 +433,101 @@ renderFilters();
 showSubjects();
 
 })();
+
+
+/* ===== Anonymous daily attendance =====
+   No name/roll number is collected. A random browser ID is used only
+   to prevent the same browser from counting more than once per day.
+*/
+const ATTENDANCE_ID_KEY = "studyhub_attendance_browser_id";
+const ATTENDANCE_DONE_KEY = "studyhub_attendance_done_date";
+
+function getAttendanceBrowserId(){
+  let id = localStorage.getItem(ATTENDANCE_ID_KEY);
+  if(!id){
+    id = (crypto.randomUUID ? crypto.randomUUID() :
+      "sh-" + Date.now() + "-" + Math.random().toString(36).slice(2));
+    localStorage.setItem(ATTENDANCE_ID_KEY, id);
+  }
+  return id;
+}
+
+function getIndiaDate(){
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone:"Asia/Kolkata",
+    year:"numeric", month:"2-digit", day:"2-digit"
+  }).formatToParts(new Date());
+  const map = Object.fromEntries(parts.map(p => [p.type,p.value]));
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
+async function loadAttendance(){
+  const countEl = document.getElementById("attendanceCount");
+  const btn = document.getElementById("attendanceBtn");
+  const icon = document.getElementById("attendanceIcon");
+  if(!countEl || !btn) return;
+
+  const today = getIndiaDate();
+  const done = localStorage.getItem(ATTENDANCE_DONE_KEY) === today;
+
+  if(done){
+    btn.classList.add("marked");
+    if(icon) icon.textContent = "☑";
+  }
+
+  try{
+    const r = await fetch("/api/attendance", {
+      method:"GET",
+      cache:"no-store",
+      headers:{"Cache-Control":"no-cache"}
+    });
+    const data = await r.json();
+    if(r.ok) countEl.textContent = `Today: ${Number(data.count || 0)}`;
+  }catch(e){
+    countEl.textContent = "Today: —";
+  }
+}
+
+async function markAttendance(){
+  const btn = document.getElementById("attendanceBtn");
+  const icon = document.getElementById("attendanceIcon");
+  const countEl = document.getElementById("attendanceCount");
+  if(!btn) return;
+
+  const today = getIndiaDate();
+  if(localStorage.getItem(ATTENDANCE_DONE_KEY) === today){
+    return;
+  }
+
+  btn.disabled = true;
+
+  try{
+    const r = await fetch("/api/attendance", {
+      method:"POST",
+      cache:"no-store",
+      headers:{
+        "Content-Type":"application/json",
+        "Cache-Control":"no-cache"
+      },
+      body:JSON.stringify({visitorId:getAttendanceBrowserId()})
+    });
+
+    const data = await r.json();
+
+    if(!r.ok || !data.ok){
+      throw new Error(data.message || "Attendance failed");
+    }
+
+    localStorage.setItem(ATTENDANCE_DONE_KEY, data.date || today);
+    btn.classList.add("marked");
+    if(icon) icon.textContent = "☑";
+    if(countEl) countEl.textContent = `Today: ${Number(data.count || 0)}`;
+  }catch(e){
+    alert("Attendance save nahi ho paya. Please try again.");
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+document.getElementById("attendanceBtn")?.addEventListener("click", markAttendance);
+loadAttendance();

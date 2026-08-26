@@ -27,7 +27,16 @@
     <input id="searchInput" type="search" placeholder="Search lectures, subjects or topics..." autocomplete="off">
   </section>
 
-  <nav class="filters" id="subjectFilters"></nav>
+  
+<div class="attendance-wrap">
+  <button class="attendance-btn" id="attendanceBtn" type="button">
+    <span id="attendanceIcon">☐</span>
+    <span>Attendance</span>
+  </button>
+  <span class="attendance-count" id="attendanceCount">Today: 0</span>
+</div>
+
+<nav class="filters" id="subjectFilters"></nav>
 
   <section id="subjectsView">
     <div class="section-head">

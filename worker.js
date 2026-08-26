@@ -208,9 +208,162 @@ export default {
       }
     }
 
+
+    // ===== Anonymous daily attendance =====
+    // No name/roll number/IP is stored. Only a random browser ID is used
+    // to stop the same browser from being counted twice on the same day.
+    if ((request.method === "GET" || request.method === "POST") &&
+        url.pathname === "/api/attendance") {
+      try {
+        if (!TOKEN) {
+          return reply("STUDYHUB_TOKEN secret configure nahi hai.", 500);
+        }
+
+        const attendanceConfig = {
+          file: "attendance.js",
+          array: "ATTENDANCE"
+        };
+
+        const api =
+          `https://api.github.com/repos/${OWNER}/${REPO}/contents/${attendanceConfig.file}`;
+
+        const headers = {
+          "Authorization": `Bearer ${TOKEN}`,
+          "Accept": "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "StudyHub-Attendance"
+        };
+
+        const today = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }).format(new Date());
+
+        // GET = current count only.
+        if (request.method === "GET") {
+          const r = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, {headers});
+          const f = await r.json();
+
+          if (!r.ok) return reply(`Attendance file read failed: ${f.message || r.status}`, 502);
+
+          const source = decodeBase64(f.content);
+          const attendance = parseAttendanceObject(source);
+          return reply("", 200, {
+            ok: true,
+            date: today,
+            count: Array.isArray(attendance[today]) ? attendance[today].length : 0
+          });
+        }
+
+        const body = await request.json();
+        const visitorId = String(body.visitorId || "").trim();
+
+        if (!/^[a-zA-Z0-9-]{16,100}$/.test(visitorId)) {
+          return reply("Invalid attendance ID.", 400);
+        }
+
+        // Read current file.
+        const getR = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, {headers});
+        const oldFile = await getR.json();
+
+        if (!getR.ok) {
+          return reply(`Attendance file read failed: ${oldFile.message || getR.status}`, 502);
+        }
+
+        const source = decodeBase64(oldFile.content);
+        const attendance = parseAttendanceObject(source);
+
+        if (!Array.isArray(attendance[today])) attendance[today] = [];
+
+        // Already marked today = do not increment.
+        if (!attendance[today].includes(visitorId)) {
+          attendance[today].push(visitorId);
+        }
+
+        const updatedSource =
+          `// Central anonymous daily attendance.\n` +
+          `const ATTENDANCE = ${JSON.stringify(attendance, null, 2)};\n`;
+
+        const putR = await fetch(api, {
+          method: "PUT",
+          headers: {...headers, "Content-Type":"application/json"},
+          body: JSON.stringify({
+            message: `Attendance ${today}`,
+            content: encodeBase64(updatedSource),
+            sha: oldFile.sha,
+            branch: BRANCH
+          })
+        });
+
+        const result = await putR.json();
+
+        // If two students submitted at exactly the same time, retry once
+        // against the newest GitHub SHA so one attendance is not lost.
+        if (putR.status === 409) {
+          const retryR = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, {headers});
+          const retryFile = await retryR.json();
+          if (retryR.ok) {
+            const retrySource = decodeBase64(retryFile.content);
+            const retryAttendance = parseAttendanceObject(retrySource);
+            if (!Array.isArray(retryAttendance[today])) retryAttendance[today] = [];
+            if (!retryAttendance[today].includes(visitorId)) {
+              retryAttendance[today].push(visitorId);
+            }
+
+            const retrySourceText =
+              `// Central anonymous daily attendance.\n` +
+              `const ATTENDANCE = ${JSON.stringify(retryAttendance, null, 2)};\n`;
+
+            const retryPut = await fetch(api, {
+              method:"PUT",
+              headers:{...headers,"Content-Type":"application/json"},
+              body:JSON.stringify({
+                message:`Attendance ${today} retry`,
+                content:encodeBase64(retrySourceText),
+                sha:retryFile.sha,
+                branch:BRANCH
+              })
+            });
+
+            if (retryPut.ok) {
+              return reply("", 200, {
+                ok:true, date:today, count:retryAttendance[today].length
+              });
+            }
+          }
+        }
+
+        if (!putR.ok) {
+          return reply(`Attendance update failed: ${result.message || putR.status}`, 502);
+        }
+
+        return reply("", 200, {
+          ok:true,
+          date:today,
+          count:attendance[today].length
+        });
+      } catch (error) {
+        return reply(`Attendance error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
     return new Response("Not Found", { status: 404 });
   }
 };
+
+
+function parseAttendanceObject(source) {
+  const match = source.match(/const\s+ATTENDANCE\s*=\s*([\s\S]*?);/);
+  if (!match) return {};
+  try {
+    const value = JSON.parse(match[1]);
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  } catch {
+    return {};
+  }
+}
 
 function reply(message, status = 200, extra = {}) {
   return new Response(
