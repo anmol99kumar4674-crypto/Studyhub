@@ -94,9 +94,15 @@ async function markAttendance() {
   msg.textContent = "";
 
   try {
+    // Use a CORS-safelisted content type so mobile/Incognito browsers do not
+    // need a preflight request before sending the attendance request.
+    // The Worker still reads the body with request.json().
     const response = await fetch(ATTENDANCE_API, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "text/plain;charset=UTF-8",
+        "Accept": "application/json"
+      },
       body: JSON.stringify({ name })
     });
     const result = await response.json().catch(() => ({}));
