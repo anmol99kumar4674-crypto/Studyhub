@@ -28,4 +28,14 @@ const NCERT_LECTURES = [
     url: "https://s2-cdn.studyratna.cc/play.php?video_url=&title=Economics%2003%20%3A%20%E0%A4%AE%E0%A5%82%E0%A4%B2%E0%A4%AD%E0%A5%82%E0%A4%A4%20%E0%A4%85%E0%A4%B5%E0%A4%A7%E0%A4%BE%E0%A4%B0%E0%A4%A3%E0%A4%BE%2002&poster=undefined&video_id=6a8b1b1e3282bb409bf26b7d&video_key=6a8efab9511bff6779ff645b&batch_id=6a6e52a94c78e4bba3681386&subject_id=%5Bobject%20Object%5D&video_type=pw&subject_id_original=6a8ae00dd4181d228c8470ee&topic_id=6a8ae0809863981f5240908a&subject_slug=ncert-496964&topic_slug=economics-661166",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2F8f4f5b78-973d-4a65-a79d-8bc9cde23b32.pdf&embedded=true"
   }
+,
+  {
+    id: "ncert-1787853889097",
+    chapter: "Economics",
+    title: "Economics 04 : व्यष्टि अर्थशास्त्र की मूलभूत अवधारणा || Rescheduled @06:40 PM",
+    date: "2026-08-27",
+    duration: "",
+    url: "https://s2-cdn.studyratna.cc/play.php?video_id=6a8b1b300bcccc8cedfd62b5&video_key=6a904ddb44e872eb17bddf6d&batchSubjectId=6a8ae00dd4181d228c8470ee&title=Economics+04+%3A+%E0%A4%B5%E0%A5%8D%E0%A4%AF%E0%A4%B7%E0%A5%8D%E0%A4%9F%E0%A4%BF+%E0%A4%85%E0%A4%B0%E0%A5%8D%E0%A4%A5%E0%A4%B6%E0%A4%BE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%8D%E0%A4%B0+%E0%A4%95%E0%A5%80+%E0%A4%AE%E0%A5%82%E0%A4%B2%E0%A4%AD%E0%A5%82%E0%A4%A4+%E0%A4%85%E0%A4%B5%E0%A4%A7%E0%A4%BE%E0%A4%B0%E0%A4%A3%E0%A4%BE+%7C%7C+Rescheduled+%4006%3A40+PM+&bookingId=&slug=economics-04---%E0%A4%B5%E0%A5%8D%E0%A4%AF%E0%A4%B7%E0%A5%8D%E0%A4%9F%E0%A4%BF-%E0%A4%85%E0%A4%B0%E0%A5%8D%E0%A4%A5%E0%A4%B6%E0%A4%BE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%8D%E0%A4%B0-%E0%A4%95%E0%A5%80-%E0%A4%AE%E0%A5%82%E0%A4%B2%E0%A4%AD%E0%A5%82%E0%A4%A4-%E0%A4%85%E0%A4%B5%E0%A4%A7%E0%A4%BE%E0%A4%B0%E0%A4%A3%E0%A4%BE-%7C%7C-rescheduled--06-40-pm--417805&dRoomId=6a6e52a90fee9195b4bb19f0&conversationId=6a8b1b2fac4f4261e6de9e86&subject_id=64218109d408fd0018fd736b&batch_id=6a6e52a94c78e4bba3681386&tags_id=6a8ae0809863981f5240908a",
+    notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Ffa173306-98ce-434e-9343-9d1a151bfb5d.pdf&embedded=true"
+  }
 ];
