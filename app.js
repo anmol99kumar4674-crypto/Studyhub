@@ -274,7 +274,7 @@ const subjectsView = $("#subjectsView");
 const lecturesView = $("#lecturesView");
 const subjectGrid = $("#subjectGrid");
 const chapterList = $("#chapterList");
-const filters = $("#subjectFilters");
+const filters = document.createElement("div");
 const searchInput = $("#searchInput");
 
 const iconMap = {
