@@ -82,27 +82,30 @@ body.attendance-locked{overflow:hidden}
 /* Notice banner replacing the subject filter tabs */
 .notice-banner {
   width: 100%;
-  margin: 0 0 18px;
-  padding: 22px 24px;
+  margin: 0 0 22px;
+  padding: 20px 22px;
   box-sizing: border-box;
   border-radius: 18px;
   background: #00695c;
   color: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,.10);
 }
 .notice-title {
   font-size: 22px;
+  line-height: 1.2;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin: 0 0 12px;
 }
 .notice-text {
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.5;
   font-weight: 600;
+  margin: 0;
 }
 .notice-button {
   display: inline-block;
   margin-top: 16px;
-  padding: 10px 18px;
+  padding: 9px 17px;
   border-radius: 10px;
   background: #ffeb00;
   color: #111;
@@ -110,8 +113,8 @@ body.attendance-locked{overflow:hidden}
 }
 @media (max-width: 600px) {
   .notice-banner {
-    margin-bottom: 16px;
-    padding: 18px;
+    margin-bottom: 18px;
+    padding: 17px 16px;
     border-radius: 14px;
   }
   .notice-title {
@@ -119,5 +122,6 @@ body.attendance-locked{overflow:hidden}
   }
   .notice-text {
     font-size: 14px;
+    line-height: 1.45;
   }
 }
