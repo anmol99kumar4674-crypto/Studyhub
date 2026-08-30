@@ -69,10 +69,10 @@
   <div class="player-box">
     <button class="close-player" id="closePlayer">×</button>
     <div class="video-frame">
-      <video id="video" controls playsinline preload="metadata"></video>
+      <iframe id="video" title="Lecture player" allow="autoplay; fullscreen; encrypted-media" allowfullscreen referrerpolicy="no-referrer"></iframe>
       <div class="unsupported hidden" id="unsupported">
-        <h3>Video cannot be played directly</h3>
-        <p>This lecture link may use a protected/player URL. Open the original lecture page instead.</p>
+        <h3>Video cannot be opened</h3>
+        <p>Player load nahi hua. Original lecture page khol sakte hain.</p>
         <a id="openOriginal" href="#" target="_blank" rel="noopener">Open lecture link ↗</a>
       </div>
     </div>
