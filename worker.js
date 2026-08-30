@@ -48,7 +48,36 @@ export default {
       "Bihar Current Wallah Monthly Compilation"
     ]);
 
-    // HTML embed wrapper for the site player. The visible player remains an iframe,\n    // while the inner URL is served through the same Worker proxy.\n    if (request.method === "GET" && url.pathname === "/embed") {\n      const raw = url.searchParams.get("url");\n      if (!raw) return new Response("Missing url parameter", { status: 400 });\n      let target;\n      try { target = new URL(raw); } catch (_) {\n        return new Response("Invalid target URL", { status: 400 });\n      }\n      if (!["http:", "https:"].includes(target.protocol)) {\n        return new Response("Only HTTP/HTTPS targets are allowed", { status: 400 });\n      }\n      const configuredHosts = String(env.PROXY_ALLOWED_HOSTS || "s2-cdn.studyratna.cc")\n        .split(",").map(x => x.trim().toLowerCase()).filter(Boolean);\n      const allowed = configuredHosts.some(h => target.hostname.toLowerCase() === h);\n      if (!allowed) return new Response("Embed target is not allowed", { status: 403 });\n\n      const proxyUrl = `${url.origin}/proxy?url=${encodeURIComponent(target.toString())}`;\n      const esc = proxyUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;");\n      const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body,iframe{margin:0;width:100%;height:100%;border:0;background:#000}body{overflow:hidden}</style></head><body><iframe src="${esc}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>`;\n      return new Response(html, {\n        headers: {\n          "Content-Type": "text/html;charset=UTF-8",\n          "Content-Security-Policy": "default-src 'self' data: blob:; frame-src *; media-src * data: blob:;",\n          "Cache-Control": "no-store"\n        }\n      });\n    }\n\n    // Same-origin proxy for your own upstream player pages/media.
+    // HTML embed wrapper for the site player. The visible player remains an iframe,
+    // while the inner URL is served through the same Worker proxy.
+    if (request.method === "GET" && url.pathname === "/embed") {
+      const raw = url.searchParams.get("url");
+      if (!raw) return new Response("Missing url parameter", { status: 400 });
+      let target;
+      try { target = new URL(raw); } catch (_) {
+        return new Response("Invalid target URL", { status: 400 });
+      }
+      if (!["http:", "https:"].includes(target.protocol)) {
+        return new Response("Only HTTP/HTTPS targets are allowed", { status: 400 });
+      }
+      const configuredHosts = String(env.PROXY_ALLOWED_HOSTS || "s2-cdn.studyratna.cc")
+        .split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+      const allowed = configuredHosts.some(h => target.hostname.toLowerCase() === h);
+      if (!allowed) return new Response("Embed target is not allowed", { status: 403 });
+
+      const proxyUrl = `${url.origin}/proxy?url=${encodeURIComponent(target.toString())}`;
+      const esc = proxyUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+      const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body,iframe{margin:0;width:100%;height:100%;border:0;background:#000}body{overflow:hidden}</style></head><body><iframe src="${esc}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>`;
+      return new Response(html, {
+        headers: {
+          "Content-Type": "text/html;charset=UTF-8",
+          "Content-Security-Policy": "default-src 'self' data: blob:; frame-src *; media-src * data: blob:;",
+          "Cache-Control": "no-store"
+        }
+      });
+    }
+
+    // Same-origin proxy for your own upstream player pages/media.
     // Configure PROXY_ALLOWED_HOSTS in Cloudflare Variables if you want to
     // restrict this further. Comma-separated hostnames are supported.
     if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/proxy") {
@@ -199,7 +228,8 @@ export default {
 
         const body = {
           message: `Attendance: ${name} - ${ist}`,
-          content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
+          content: encodeBase64(JSON.stringify(records, null, 2) + "
+"),
           branch: BRANCH
         };
         if (sha) body.sha = sha;
@@ -299,7 +329,8 @@ export default {
 
         const body = {
           message: `Website visit: ${name} - ${date} ${time}`,
-          content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
+          content: encodeBase64(JSON.stringify(records, null, 2) + "
+"),
           branch: BRANCH
         };
         if (sha) body.sha = sha;
@@ -441,7 +472,8 @@ export default {
 
         const body = {
           message: `Website time: ${name} - ${date}`,
-          content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
+          content: encodeBase64(JSON.stringify(records, null, 2) + "
+"),
           branch: BRANCH
         };
         if (sha) body.sha = sha;
@@ -637,9 +669,13 @@ export default {
         );
 
         const insertion =
-          (hasItems ? ",\n" : "\n") +
-          lectureLines.join("\n") +
-          "\n";
+          (hasItems ? ",
+" : "
+") +
+          lectureLines.join("
+") +
+          "
+";
 
         const updatedSource =
           source.slice(0, arrayEnd) +
