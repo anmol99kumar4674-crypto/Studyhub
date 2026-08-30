@@ -595,33 +595,38 @@ function closeDrawer() {
 }
 
 /* Existing player support */
-const VIDEO_PROXY = "https://studyhub-admin.molkitofficial.workers.dev/proxy";
-
 function openPlayer(item) {
   const player = $("#player");
-  const frame = $("#video");
+  const video = $("#video");
 
-  if (!player || !frame) return;
+  if (!player || !video) return;
 
   $("#playerTitle").textContent = item.title;
   $("#playerMeta").textContent =
     `${item.subject} • ${item.chapter} • ${formatDate(item.date)}`;
 
   $("#openOriginal").href = item.url;
-  $("#unsupported").classList.add("hidden");
-  frame.classList.remove("hidden");
 
-  frame.src = `${VIDEO_PROXY}?url=${encodeURIComponent(item.url)}`;
+  $("#unsupported").classList.add("hidden");
+  video.classList.remove("hidden");
+
+  video.src = item.url;
+  video.load();
+  video.play().catch(() => {});
+
   player.classList.remove("hidden");
 }
 
 function closePlayer() {
   const player = $("#player");
-  const frame = $("#video");
+  const video = $("#video");
 
-  if (!player || !frame) return;
+  if (!player || !video) return;
 
-  frame.removeAttribute("src");
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+
   player.classList.add("hidden");
 }
 

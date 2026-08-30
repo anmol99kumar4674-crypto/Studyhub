@@ -48,118 +48,6 @@ export default {
       "Bihar Current Wallah Monthly Compilation"
     ]);
 
-    // HTML embed wrapper for the site player. The visible player remains an iframe,
-    // while the inner URL is served through the same Worker proxy.
-    if (request.method === "GET" && url.pathname === "/embed") {
-      const raw = url.searchParams.get("url");
-      if (!raw) return new Response("Missing url parameter", { status: 400 });
-      let target;
-      try { target = new URL(raw); } catch (_) {
-        return new Response("Invalid target URL", { status: 400 });
-      }
-      if (!["http:", "https:"].includes(target.protocol)) {
-        return new Response("Only HTTP/HTTPS targets are allowed", { status: 400 });
-      }
-      const configuredHosts = String(env.PROXY_ALLOWED_HOSTS || "s2-cdn.studyratna.cc")
-        .split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
-      const allowed = configuredHosts.some(h => target.hostname.toLowerCase() === h);
-      if (!allowed) return new Response("Embed target is not allowed", { status: 403 });
-
-      const proxyUrl = `${url.origin}/proxy?url=${encodeURIComponent(target.toString())}`;
-      const esc = proxyUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-      const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body,iframe{margin:0;width:100%;height:100%;border:0;background:#000}body{overflow:hidden}</style></head><body><iframe src="${esc}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>`;
-      return new Response(html, {
-        headers: {
-          "Content-Type": "text/html;charset=UTF-8",
-          "Content-Security-Policy": "default-src 'self' data: blob:; frame-src *; media-src * data: blob:;",
-          "Cache-Control": "no-store"
-        }
-      });
-    }
-
-    // Same-origin proxy for your own upstream player pages/media.
-    // Configure PROXY_ALLOWED_HOSTS in Cloudflare Variables if you want to
-    // restrict this further. Comma-separated hostnames are supported.
-    if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/proxy") {
-      try {
-        const raw = url.searchParams.get("url");
-        if (!raw) return new Response("Missing url parameter", { status: 400 });
-
-        let target;
-        try { target = new URL(raw); } catch (_) {
-          return new Response("Invalid target URL", { status: 400 });
-        }
-
-        if (!["http:", "https:"].includes(target.protocol)) {
-          return new Response("Only HTTP/HTTPS targets are allowed", { status: 400 });
-        }
-
-        const configuredHosts = String(env.PROXY_ALLOWED_HOSTS || "s2-cdn.studyratna.cc")
-          .split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
-        const hostname = target.hostname.toLowerCase();
-        const allowed = configuredHosts.some(h => hostname === h);
-        if (!allowed) {
-          return new Response("Proxy target is not allowed", { status: 403 });
-        }
-
-        const upstreamHeaders = new Headers();
-        const pass = [
-          "range", "if-range", "if-none-match", "if-modified-since",
-          "accept", "accept-language", "user-agent"
-        ];
-        for (const name of pass) {
-          const value = request.headers.get(name);
-          if (value) upstreamHeaders.set(name, value);
-        }
-
-        // For an upstream you control, this makes the request look like a
-        // normal direct navigation to that upstream rather than an iframe.
-        upstreamHeaders.set("Referer", target.origin + "/");
-        upstreamHeaders.set("Origin", target.origin);
-
-        const upstream = await fetch(target.toString(), {
-          method: request.method,
-          headers: upstreamHeaders,
-          redirect: "follow"
-        });
-
-        const out = new Headers(upstream.headers);
-        out.delete("x-frame-options");
-        out.delete("content-security-policy");
-        out.delete("content-security-policy-report-only");
-        out.delete("cross-origin-resource-policy");
-        out.delete("cross-origin-opener-policy");
-        out.delete("content-encoding");
-        out.set("Access-Control-Allow-Origin", "*");
-        out.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-        out.set("Access-Control-Allow-Headers", "Range, Content-Type");
-        out.set("Cache-Control", "no-store");
-
-        const contentType = (out.get("content-type") || "").toLowerCase();
-        if (contentType.includes("text/html") && request.method === "GET") {
-          let html = await upstream.text();
-          if (/<head\\b[^>]*>/i.test(html)) {
-            html = html.replace(/<head\\b[^>]*>/i, match =>
-              `${match}<base href="${target.origin}/">`);
-          }
-          out.delete("content-length");
-          return new Response(html, {
-            status: upstream.status,
-            statusText: upstream.statusText,
-            headers: out
-          });
-        }
-
-        return new Response(upstream.body, {
-          status: upstream.status,
-          statusText: upstream.statusText,
-          headers: out
-        });
-      } catch (error) {
-        return new Response(`Proxy error: ${error?.message || "Unknown error"}`, { status: 502 });
-      }
-    }
-
     // Admin panel
     if (request.method === "GET" && url.pathname === "/") {
       return new Response(HTML, {
@@ -228,8 +116,7 @@ export default {
 
         const body = {
           message: `Attendance: ${name} - ${ist}`,
-          content: encodeBase64(JSON.stringify(records, null, 2) + "
-"),
+          content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
           branch: BRANCH
         };
         if (sha) body.sha = sha;
@@ -329,8 +216,7 @@ export default {
 
         const body = {
           message: `Website visit: ${name} - ${date} ${time}`,
-          content: encodeBase64(JSON.stringify(records, null, 2) + "
-"),
+          content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
           branch: BRANCH
         };
         if (sha) body.sha = sha;
@@ -472,8 +358,7 @@ export default {
 
         const body = {
           message: `Website time: ${name} - ${date}`,
-          content: encodeBase64(JSON.stringify(records, null, 2) + "
-"),
+          content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
           branch: BRANCH
         };
         if (sha) body.sha = sha;
@@ -669,13 +554,9 @@ export default {
         );
 
         const insertion =
-          (hasItems ? ",
-" : "
-") +
-          lectureLines.join("
-") +
-          "
-";
+          (hasItems ? ",\n" : "\n") +
+          lectureLines.join("\n") +
+          "\n";
 
         const updatedSource =
           source.slice(0, arrayEnd) +
