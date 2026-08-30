@@ -595,7 +595,7 @@ function closeDrawer() {
 }
 
 /* Existing player support */
-const VIDEO_PROXY = "https://studyhub-admin.molkitofficial.workers.dev/proxy";
+const VIDEO_PROXY = "https://studyhub-admin.molkitofficial.workers.dev/embed";
 
 function openPlayer(item) {
   const player = $("#player");
