@@ -676,6 +676,71 @@ if ($("#player")) {
   });
 }
 
+
+/* Video fullscreen + rotate controls */
+async function toggleVideoFullscreen() {
+  const video = $("#video");
+  if (!video) return;
+
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      try { await screen.orientation.unlock(); } catch (_) {}
+      return;
+    }
+
+    const target = $(".player-box") || video;
+    if (target.requestFullscreen) {
+      await target.requestFullscreen();
+    } else if (video.webkitEnterFullscreen) {
+      video.webkitEnterFullscreen();
+      return;
+    }
+
+    try {
+      if (screen.orientation && screen.orientation.lock) {
+        await screen.orientation.lock("landscape");
+      }
+    } catch (_) {}
+  } catch (_) {}
+}
+
+async function rotateVideo() {
+  const playerBox = document.querySelector(".player-box");
+  const video = $("#video");
+  if (!playerBox || !video) return;
+
+  try {
+    if (!document.fullscreenElement && playerBox.requestFullscreen) {
+      await playerBox.requestFullscreen();
+    }
+
+    if (screen.orientation && screen.orientation.lock) {
+      const current = screen.orientation.type || "";
+      const next = current.includes("landscape") ? "portrait" : "landscape";
+      await screen.orientation.lock(next);
+    } else {
+      playerBox.classList.toggle("manual-landscape");
+    }
+  } catch (_) {
+    // If orientation locking is unavailable, still give a visible
+    // landscape-style player without affecting the lecture playback.
+    playerBox.classList.toggle("manual-landscape");
+  }
+}
+
+if ($("#fullscreenVideo")) {
+  $("#fullscreenVideo").onclick = toggleVideoFullscreen;
+}
+if ($("#rotateVideo")) {
+  $("#rotateVideo").onclick = rotateVideo;
+}
+
+document.addEventListener("fullscreenchange", () => {
+  const button = $("#fullscreenVideo");
+  if (button) button.textContent = document.fullscreenElement ? "⛶" : "⛶";
+});
+
 function openLectureDirect(item) {
   if (!hasTodayAttendance()) { lockContentForAttendance(); return; }
   if (!item.url) return;
