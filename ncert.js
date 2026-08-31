@@ -48,4 +48,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/12?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fa8b6d3f1-d46b-4244-b42a-38623e662932.pdf&embedded=true"
   }
+,
+  {
+    id: "ncert-1788196494217",
+    chapter: "Economics",
+    title: "Economics 06 : व्यष्टिअर्थशास्त्र की मूलभूत अवधारणा 03",
+    date: "2026-08-31",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2Fbd8c3ecc-08d8-4de7-8222-da11ee7e7b2a.pdf&embedded=true"
+  }
 ];
