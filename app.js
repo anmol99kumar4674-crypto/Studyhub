@@ -45,7 +45,28 @@ const ALL_LECTURES = [
   ...NCERT_LECTURES.map(x => ({...x, subject:"NCERT"}))
 ];
 
-const LECTURES = ALL_LECTURES;
+// Telegram stream shortcut: lecture data can now use only the Telegram
+// message/video ID, e.g. url: "3". Existing full URLs still work unchanged.
+const TELEGRAM_STREAM_BASE = "https://studyhub-telegram-stream.onrender.com/video/";
+const TELEGRAM_STREAM_CHAT = "@xjffjxzhfhfz";
+const TELEGRAM_STREAM_KEY = "@navinkumarraja";
+
+function resolveLectureUrl(url) {
+  if (url === null || url === undefined || url === "") return "";
+  const value = String(url).trim();
+
+  // A plain numeric value is treated as the Telegram message/video ID.
+  if (/^\d+$/.test(value)) {
+    return `${TELEGRAM_STREAM_BASE}${value}?chat=${encodeURIComponent(TELEGRAM_STREAM_CHAT)}&key=${encodeURIComponent(TELEGRAM_STREAM_KEY)}`;
+  }
+
+  return value;
+}
+
+const LECTURES = ALL_LECTURES.map(item => ({
+  ...item,
+  url: resolveLectureUrl(item.url)
+}));
 
 function studyhubTimeKey(){
   const d = new Date();
