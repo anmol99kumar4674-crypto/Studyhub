@@ -598,6 +598,7 @@ function closeDrawer() {
 function openPlayer(item) {
   const player = $("#player");
   const video = $("#video");
+  const unsupported = $("#unsupported");
 
   if (!player || !video) return;
 
@@ -607,12 +608,26 @@ function openPlayer(item) {
 
   $("#openOriginal").href = item.url;
 
-  $("#unsupported").classList.add("hidden");
+  unsupported.classList.add("hidden");
   video.classList.remove("hidden");
+
+  // Reset the previous lecture before loading the new one.
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
 
   video.src = item.url;
   video.load();
+
+  // Browser autoplay may be blocked; the controls remain available.
   video.play().catch(() => {});
+
+  // If the URL is not a directly playable media stream, keep the
+  // lecture inside the site and show the original-link fallback.
+  video.onerror = () => {
+    video.classList.add("hidden");
+    unsupported.classList.remove("hidden");
+  };
 
   player.classList.remove("hidden");
 }
@@ -643,7 +658,10 @@ if ($("#player")) {
 function openLectureDirect(item) {
   if (!hasTodayAttendance()) { lockContentForAttendance(); return; }
   if (!item.url) return;
-  window.location.href = item.url;
+
+  // Open the lecture inside the website player instead of navigating
+  // the whole page to a new tab/window.
+  openPlayer(item);
 }
 
 function openNotes(item) {
