@@ -1,1 +1,11 @@
-const ECONOMIC_LECTURES = [];
+const ECONOMIC_LECTURES = [
+  {
+    id: "economy-1788153108323",
+    chapter: "Economic",
+    title: "Economic",
+    date: "2026-08-31",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/3?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://studyhub-telegram-stream.onrender.com/video/3?chat=@xjffjxzhfhfz&key=@navinkumarraja"
+  }
+];
