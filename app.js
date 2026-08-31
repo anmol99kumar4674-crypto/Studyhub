@@ -705,37 +705,9 @@ async function toggleVideoFullscreen() {
   } catch (_) {}
 }
 
-async function rotateVideo() {
-  const playerBox = document.querySelector(".player-box");
-  const video = $("#video");
-  if (!playerBox || !video) return;
-
-  try {
-    if (!document.fullscreenElement && playerBox.requestFullscreen) {
-      await playerBox.requestFullscreen();
-    }
-
-    if (screen.orientation && screen.orientation.lock) {
-      const current = screen.orientation.type || "";
-      const next = current.includes("landscape") ? "portrait" : "landscape";
-      await screen.orientation.lock(next);
-    } else {
-      playerBox.classList.toggle("manual-landscape");
-    }
-  } catch (_) {
-    // If orientation locking is unavailable, still give a visible
-    // landscape-style player without affecting the lecture playback.
-    playerBox.classList.toggle("manual-landscape");
-  }
-}
-
 if ($("#fullscreenVideo")) {
   $("#fullscreenVideo").onclick = toggleVideoFullscreen;
 }
-if ($("#rotateVideo")) {
-  $("#rotateVideo").onclick = rotateVideo;
-}
-
 document.addEventListener("fullscreenchange", () => {
   const button = $("#fullscreenVideo");
   if (button) button.textContent = document.fullscreenElement ? "⛶" : "⛶";
