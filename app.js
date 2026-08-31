@@ -45,28 +45,7 @@ const ALL_LECTURES = [
   ...NCERT_LECTURES.map(x => ({...x, subject:"NCERT"}))
 ];
 
-// Telegram stream shortcut: lecture data can now use only the Telegram
-// message/video ID, e.g. url: "3". Existing full URLs still work unchanged.
-const TELEGRAM_STREAM_BASE = "https://studyhub-telegram-stream.onrender.com/video/";
-const TELEGRAM_STREAM_CHAT = "@xjffjxzhfhfz";
-const TELEGRAM_STREAM_KEY = "@navinkumarraja";
-
-function resolveLectureUrl(url) {
-  if (url === null || url === undefined || url === "") return "";
-  const value = String(url).trim();
-
-  // A plain numeric value is treated as the Telegram message/video ID.
-  if (/^\d+$/.test(value)) {
-    return `${TELEGRAM_STREAM_BASE}${value}?chat=${encodeURIComponent(TELEGRAM_STREAM_CHAT)}&key=${encodeURIComponent(TELEGRAM_STREAM_KEY)}`;
-  }
-
-  return value;
-}
-
-const LECTURES = ALL_LECTURES.map(item => ({
-  ...item,
-  url: resolveLectureUrl(item.url)
-}));
+const LECTURES = ALL_LECTURES;
 
 function studyhubTimeKey(){
   const d = new Date();
@@ -675,43 +654,6 @@ if ($("#player")) {
     if (event.target === $("#player")) closePlayer();
   });
 }
-
-
-/* Video fullscreen + rotate controls */
-async function toggleVideoFullscreen() {
-  const video = $("#video");
-  if (!video) return;
-
-  try {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-      try { await screen.orientation.unlock(); } catch (_) {}
-      return;
-    }
-
-    const target = $(".player-box") || video;
-    if (target.requestFullscreen) {
-      await target.requestFullscreen();
-    } else if (video.webkitEnterFullscreen) {
-      video.webkitEnterFullscreen();
-      return;
-    }
-
-    try {
-      if (screen.orientation && screen.orientation.lock) {
-        await screen.orientation.lock("landscape");
-      }
-    } catch (_) {}
-  } catch (_) {}
-}
-
-if ($("#fullscreenVideo")) {
-  $("#fullscreenVideo").onclick = toggleVideoFullscreen;
-}
-document.addEventListener("fullscreenchange", () => {
-  const button = $("#fullscreenVideo");
-  if (button) button.textContent = document.fullscreenElement ? "⛶" : "⛶";
-});
 
 function openLectureDirect(item) {
   if (!hasTodayAttendance()) { lockContentForAttendance(); return; }
