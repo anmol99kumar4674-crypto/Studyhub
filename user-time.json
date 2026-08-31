@@ -40,35 +40,5 @@
     "date": "2026-08-29",
     "seconds": 115,
     "lastSeen": "03:02:20 pm"
-  },
-  {
-    "name": "Rajnish Kumar",
-    "date": "2026-08-30",
-    "seconds": 12,
-    "lastSeen": "11:15:39 pm"
-  },
-  {
-    "name": "Anmol Kumar",
-    "date": "2026-08-31",
-    "seconds": 81,
-    "lastSeen": "02:12:22 pm"
-  },
-  {
-    "name": "Navin",
-    "date": "2026-08-31",
-    "seconds": 20,
-    "lastSeen": "11:39:39 am"
-  },
-  {
-    "name": "Rajnish Kumar",
-    "date": "2026-08-31",
-    "seconds": 86,
-    "lastSeen": "12:35:48 pm"
-  },
-  {
-    "name": "Navin kumar",
-    "date": "2026-08-31",
-    "seconds": 25,
-    "lastSeen": "02:10:06 pm"
   }
 ]
