@@ -598,20 +598,23 @@ function closeDrawer() {
 function openPlayer(item) {
   const player = $("#player");
   const video = $("#video");
-  const unsupported = $("#unsupported");
-
+  const loading = $("#videoLoading");
   if (!player || !video) return;
 
   $("#playerTitle").textContent = item.title;
   $("#playerMeta").textContent =
-    `${item.subject} • ${item.chapter} • ${formatDate(item.date)}`;
+    [item.chapter, item.date].filter(Boolean).join(" • ");
 
-  $("#openOriginal").href = item.url;
+  const showLoading = () => {
+    if (loading) loading.classList.remove("hidden");
+  };
+  const hideLoading = () => {
+    if (loading) loading.classList.add("hidden");
+  };
 
-  unsupported.classList.add("hidden");
+  showLoading();
+
   video.classList.remove("hidden");
-
-  // Reset the previous lecture before loading the new one.
   video.pause();
   video.removeAttribute("src");
   video.load();
@@ -619,19 +622,19 @@ function openPlayer(item) {
   video.src = item.url;
   video.load();
 
-  // Browser autoplay may be blocked; the controls remain available.
-  video.play().catch(() => {});
-
-  // If the URL is not a directly playable media stream, keep the
-  // lecture inside the site and show the original-link fallback.
+  video.onwaiting = showLoading;
+  video.onstalled = showLoading;
+  video.onplaying = hideLoading;
+  video.oncanplay = hideLoading;
   video.onerror = () => {
+    hideLoading();
     video.classList.add("hidden");
-    unsupported.classList.remove("hidden");
   };
+
+  video.play().catch(() => {});
 
   player.classList.remove("hidden");
 }
-
 function closePlayer() {
   const player = $("#player");
   const video = $("#video");
