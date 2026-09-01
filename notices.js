@@ -43,4 +43,13 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://stream.srv-1.pimaxer.in/afb046ea-75a7-497a-bb10-5f13b5978e79/master.m3u8",
   }
+,
+  {
+    id: "notices-1788269271310",
+    chapter: "Batch Demo Videos",
+    title: "Shashi Sir : Polity Demo",
+    date: "2026-08-01",
+    duration: "",
+    url: "https://stream.srv-1.pimaxer.in/d37bdd88-398d-4d64-bfd6-34bf55432fa5/master.m3u8",
+  }
 ];
