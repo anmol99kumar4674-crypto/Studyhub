@@ -88,6 +88,16 @@
   </div>
 </div>
 
+<div class="pdf-viewer hidden" id="pdfViewer" aria-modal="true" role="dialog">
+  <div class="pdf-viewer-box">
+    <div class="pdf-viewer-head">
+      <div class="pdf-viewer-title" id="pdfTitle">PDF</div>
+      <button class="close-pdf" id="closePdf" type="button" aria-label="Close PDF">×</button>
+    </div>
+    <iframe id="pdfFrame" title="PDF viewer" src="about:blank"></iframe>
+  </div>
+</div>
+
 <aside class="drawer hidden" id="drawer">
   <div class="drawer-head"><b>Menu</b><button id="closeDrawer">×</button></div>
   <a href="index.html">Home</a>

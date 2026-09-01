@@ -519,7 +519,7 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
       if (event.target.closest(".pdf-btn")) {
         event.stopPropagation();
         if (item.type === "pdf") {
-          window.open(item.url, "_blank", "noopener");
+          openPdf(item.url, item.title);
         } else {
           openNotes(item);
         }
@@ -537,7 +537,7 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
         openLectureDirect(item);
       } else if (hasPdf) {
         if (item.type === "pdf") {
-          window.open(item.url, "_blank", "noopener");
+          openPdf(item.url, item.title);
         } else {
           openNotes(item);
         }
@@ -761,6 +761,37 @@ function openLectureDirect(item) {
   // Open the lecture inside the website player instead of navigating
   // the whole page to a new tab/window.
   openPlayer(item);
+}
+
+function openPdf(url, title = "PDF") {
+  const modal = $("#pdfViewer");
+  const frame = $("#pdfFrame");
+  const titleEl = $("#pdfTitle");
+  if (!modal || !frame) return;
+
+  if (titleEl) titleEl.textContent = title;
+  frame.src = url;
+  modal.classList.remove("hidden");
+  document.body.classList.add("pdf-open");
+}
+
+function closePdf() {
+  const modal = $("#pdfViewer");
+  const frame = $("#pdfFrame");
+  if (!modal || !frame) return;
+  frame.src = "about:blank";
+  modal.classList.add("hidden");
+  document.body.classList.remove("pdf-open");
+}
+
+if ($("#closePdf")) {
+  $("#closePdf").onclick = closePdf;
+}
+
+if ($("#pdfViewer")) {
+  $("#pdfViewer").addEventListener("click", event => {
+    if (event.target === $("#pdfViewer")) closePdf();
+  });
 }
 
 function openNotes(item) {
