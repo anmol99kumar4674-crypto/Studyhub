@@ -1001,17 +1001,18 @@ async function save(){
 
   const pdfOnly = data.subject === "Bihar Current Wallah Monthly Compilation";
 
+  // Video URL is optional for normal lectures.
+  // PDF URL remains required for PDF-only subjects.
   if(
     !data.chapter ||
     !data.title ||
-    (!pdfOnly && !data.video) ||
     (pdfOnly && !data.pdf) ||
     !data.date
   ){
     msg.className = "err";
     msg.innerText = pdfOnly
       ? "Chapter, Title, PDF URL aur Date bharna zaroori hai."
-      : "Chapter, Title, Video URL aur Date bharna zaroori hai.";
+      : "Chapter, Title aur Date bharna zaroori hai.";
     return;
   }
 
