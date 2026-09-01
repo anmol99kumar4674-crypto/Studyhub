@@ -88,4 +88,14 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://stream.srv-1.pimaxer.in/be020c27-4310-48e4-9afc-5ba37994faaa/master.m3u8",
   }
+,
+  {
+    id: "notices-1788269609282",
+    chapter: "Lecture Planner || PDF Only",
+    title: "Lecture Planner : NCERT Economy",
+    date: "2026-08-19",
+    duration: "",
+    url: "",
+    notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F29faa166-ae32-4cc7-adc1-d4ae4bb09169.pdf&embedded=true"
+  }
 ];
