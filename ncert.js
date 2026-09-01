@@ -26,7 +26,7 @@ const NCERT_LECTURES = [
     date: "2026-08-26",
     duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/10?chat=@xjffjxzhfhfz&key=@navinkumarraja",
-    notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2F8f4f5b78-973d-4a65-a79d-8bc9cde23b32.pdf&embedded=true"
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/42934a6d-7019-484c-9a43-acfe40cfe874.pdf"
   }
 ,
   {
