@@ -61,4 +61,13 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://stream.srv-1.pimaxer.in/c2a670d1-07cc-4e68-b52f-e15a8bd3a1fd/master.m3u8",
   }
+,
+  {
+    id: "notices-1788269325235",
+    chapter: "Batch Demo Videos",
+    title: "Abhay Sir : Geography",
+    date: "2026-08-01",
+    duration: "",
+    url: "https://stream.srv-1.pimaxer.in/ca3642a6-a0af-43a0-a44d-99a0512bb433/master.m3u8",
+  }
 ];
