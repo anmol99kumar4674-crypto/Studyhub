@@ -1,1 +1,1 @@
-const NOTICES_LECTURES = []
+const NOTICES_LECTURES = [];
