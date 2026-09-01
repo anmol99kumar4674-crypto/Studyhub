@@ -605,6 +605,33 @@ function openPlayer(item) {
   $("#playerMeta").textContent =
     [item.chapter, item.date].filter(Boolean).join(" • ");
 
+  // Remember playback position separately for each lecture on this device.
+  const progressKey = `studyhub_video_progress_${item.id || item.url || item.title}`;
+  video.dataset.progressKey = progressKey;
+
+  const getSavedPosition = () => {
+    try {
+      const value = Number(localStorage.getItem(progressKey));
+      return Number.isFinite(value) && value > 0 ? value : 0;
+    } catch (_) {
+      return 0;
+    }
+  };
+
+  const savePosition = () => {
+    try {
+      if (Number.isFinite(video.currentTime) && video.currentTime > 0) {
+        localStorage.setItem(progressKey, String(video.currentTime));
+      }
+    } catch (_) {}
+  };
+
+  const clearPosition = () => {
+    try {
+      localStorage.removeItem(progressKey);
+    } catch (_) {}
+  };
+
   const showLoading = () => {
     if (loading) loading.classList.remove("hidden");
   };
@@ -620,12 +647,30 @@ function openPlayer(item) {
   video.load();
 
   video.src = item.url;
+
+  // Restore the saved position once duration/metadata is available.
+  video.onloadedmetadata = () => {
+    const saved = getSavedPosition();
+
+    if (saved > 0 && Number.isFinite(video.duration)) {
+      video.currentTime = Math.min(saved, Math.max(0, video.duration - 0.5));
+    }
+  };
+
   video.load();
 
   video.onwaiting = showLoading;
   video.onstalled = showLoading;
   video.onplaying = hideLoading;
   video.oncanplay = hideLoading;
+
+  // Keep the position updated while the lecture is playing.
+  video.ontimeupdate = savePosition;
+  video.onpause = savePosition;
+
+  // A completed lecture starts from the beginning next time.
+  video.onended = clearPosition;
+
   video.onerror = () => {
     hideLoading();
     video.classList.add("hidden");
@@ -635,11 +680,19 @@ function openPlayer(item) {
 
   player.classList.remove("hidden");
 }
+
 function closePlayer() {
   const player = $("#player");
   const video = $("#video");
 
   if (!player || !video) return;
+
+  // Save the current position before closing the player.
+  try {
+    if (video.currentTime > 0 && video.dataset.progressKey) {
+      localStorage.setItem(video.dataset.progressKey, String(video.currentTime));
+    }
+  } catch (_) {}
 
   video.pause();
   video.removeAttribute("src");
@@ -647,7 +700,6 @@ function closePlayer() {
 
   player.classList.add("hidden");
 }
-
 if ($("#closePlayer")) {
   $("#closePlayer").onclick = closePlayer;
 }
