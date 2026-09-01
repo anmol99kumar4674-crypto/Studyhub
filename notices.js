@@ -52,4 +52,13 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://stream.srv-1.pimaxer.in/d37bdd88-398d-4d64-bfd6-34bf55432fa5/master.m3u8",
   }
+,
+  {
+    id: "notices-1788269303170",
+    chapter: "Batch Demo Videos",
+    title: "Nishit Sir : Maths",
+    date: "2026-08-01",
+    duration: "",
+    url: "https://stream.srv-1.pimaxer.in/c2a670d1-07cc-4e68-b52f-e15a8bd3a1fd/master.m3u8",
+  }
 ];
