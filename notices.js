@@ -70,4 +70,13 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://stream.srv-1.pimaxer.in/ca3642a6-a0af-43a0-a44d-99a0512bb433/master.m3u8",
   }
+,
+  {
+    id: "notices-1788269350285",
+    chapter: "Batch Demo Videos",
+    title: "Ankit Sir : Science",
+    date: "2026-08-01",
+    duration: "",
+    url: "https://stream.srv-1.pimaxer.in/12f5b289-4e26-4c9d-b2db-887c05d15e04/master.m3u8",
+  }
 ];
