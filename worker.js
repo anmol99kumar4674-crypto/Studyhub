@@ -462,11 +462,13 @@ export default {
         const pdfOnly = PDF_ONLY_SUBJECTS.has(subject);
         const contentUrl = pdfOnly ? pdf : video;
 
-        if (!subject || !chapter || !title || !contentUrl || !date) {
+        // Video URL is optional for normal lectures.
+        // PDF-only subjects still require their PDF URL.
+        if (!subject || !chapter || !title || !date || (pdfOnly && !pdf)) {
           return reply(
             pdfOnly
               ? "Subject, Chapter, Title, PDF URL aur Date bharna zaroori hai."
-              : "Subject, Chapter, Title, Video URL aur Date bharna zaroori hai.",
+              : "Subject, Chapter, Title aur Date bharna zaroori hai.",
             400
           );
         }

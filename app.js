@@ -412,7 +412,26 @@ function showChapters(subject, pushHistory = false) {
 
   chapterList.innerHTML = "";
 
-  Object.entries(chapters).forEach(([chapter, list]) => {
+  // Only change the chapter/subject section (image 2).
+  // Keep the lecture list section (image 1) exactly as it is.
+  // The chapter containing the newest uploaded lecture is placed at the bottom.
+  const chapterEntries = Object.entries(chapters);
+  chapterEntries.sort((a, b) => {
+    const latestA = Math.max(...a[1].map(x => {
+      const d = Date.parse(x.date || x.createdAt || x.updatedAt || "");
+      return Number.isFinite(d) ? d : 0;
+    }));
+    const latestB = Math.max(...b[1].map(x => {
+      const d = Date.parse(x.date || x.createdAt || x.updatedAt || "");
+      return Number.isFinite(d) ? d : 0;
+    }));
+
+    // Newest chapter goes last; all other chapters retain their original order.
+    if (latestA === latestB) return 0;
+    return latestA - latestB;
+  });
+
+  chapterEntries.forEach(([chapter, list]) => {
     const card = document.createElement("button");
     card.className = "chapter-card";
 
