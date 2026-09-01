@@ -25,4 +25,13 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://stream.srv-1.pimaxer.in/75a3d86c-41e3-4e06-93f1-7e5fc8c6b4ab/master.m3u8",
   }
+,
+  {
+    id: "notices-1788269225388",
+    chapter: "Batch Demo Videos",
+    title: "Rahul sir (Essay)",
+    date: "2026-08-01",
+    duration: "",
+    url: "https://stream.srv-1.pimaxer.in/ee9d6392-c2e4-461f-9a9b-036b62a226eb/master.m3u8",
+  }
 ];
