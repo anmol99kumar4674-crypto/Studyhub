@@ -119,3 +119,54 @@ const NCERT_LECTURES = [
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2F80305404-7d7b-42d5-9525-0d361711914e.pdf&embedded=true"
   }
 ];
+
+
+<script id="studyhub-pdf-back-handler">
+(function () {
+  function closePdfViewer() {
+    // Common viewer/modal close controls used by this project.
+    var selectors = [
+      '[data-pdf-viewer-close]',
+      '.pdf-viewer-close',
+      '.pdfViewerClose',
+      '#pdfViewerClose',
+      '.pdf-modal .close',
+      '#pdfModal .close'
+    ];
+    for (var i = 0; i < selectors.length; i++) {
+      var el = document.querySelector(selectors[i]);
+      if (el) { el.click(); return true; }
+    }
+    // Fallback: close a visible PDF/modal overlay by common IDs/classes.
+    var nodes = document.querySelectorAll('[id*="pdf" i], [class*="pdf" i], [id*="modal" i], [class*="modal" i]');
+    for (var j = 0; j < nodes.length; j++) {
+      var n = nodes[j];
+      var s = getComputedStyle(n);
+      if (s.display !== 'none' && s.visibility !== 'hidden') {
+        var close = n.querySelector('.close, .modal-close, button[aria-label*="close" i], [data-close]');
+        if (close) { close.click(); return true; }
+      }
+    }
+    return false;
+  }
+
+  window.addEventListener('popstate', function () {
+    if (closePdfViewer()) {
+      history.pushState({studyhubPdfViewer:true}, '');
+    }
+  });
+
+  // Mark PDF viewer history state whenever the viewer opens through a click.
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('button,a,[role="button"]') : null;
+    if (!t) return;
+    var label = ((t.textContent || '') + ' ' + (t.getAttribute('aria-label') || '')).toLowerCase();
+    if (label.indexOf('pdf') !== -1 || label.indexOf('notes') !== -1) {
+      setTimeout(function () {
+        var visible = document.querySelector('[id*="pdf" i], [class*="pdf" i]');
+        if (visible) history.pushState({studyhubPdfViewer:true}, '');
+      }, 100);
+    }
+  });
+})();
+</script>
