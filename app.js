@@ -518,10 +518,13 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
     row.onclick = (event) => {
       if (event.target.closest(".pdf-btn")) {
         event.stopPropagation();
+        // Always open PDFs inside the in-site PDF viewer.
+        // Do not navigate directly to the PDF URL, because Android may
+        // hand the file to an external "Open with" / download app.
         if (item.type === "pdf") {
           openPdf(item.url, item.title);
-        } else {
-          openNotes(item);
+        } else if (item.notes) {
+          openPdf(item.notes, item.title);
         }
         return;
       }
@@ -536,10 +539,13 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
       if (hasVideo) {
         openLectureDirect(item);
       } else if (hasPdf) {
+        // Always open PDFs inside the in-site PDF viewer.
+        // Do not navigate directly to the PDF URL, because Android may
+        // hand the file to an external "Open with" / download app.
         if (item.type === "pdf") {
           openPdf(item.url, item.title);
-        } else {
-          openNotes(item);
+        } else if (item.notes) {
+          openPdf(item.notes, item.title);
         }
       }
     };
@@ -805,7 +811,7 @@ if ($("#pdfViewer")) {
 function openNotes(item) {
   if (!hasTodayAttendance()) { lockContentForAttendance(); return; }
   if (!item.notes) return;
-  window.location.href = item.notes;
+  openPdf(item.notes, item.title);
 }
 
 /* Start */
