@@ -770,7 +770,15 @@ function openPdf(url, title = "PDF") {
   if (!modal || !frame) return;
 
   if (titleEl) titleEl.textContent = title;
-  frame.src = url;
+
+  // Some PDF hosts (including static.pw.live) send PDFs as downloads.
+  // Load the PDF through Google's embedded viewer so Android browsers/WebView
+  // render it inside our modal instead of opening the "Open with" dialog.
+  const cleanUrl = String(url || "").trim();
+  const viewerUrl = /(^|[?&])embedded=true(?:&|$)/i.test(cleanUrl)
+    ? cleanUrl
+    : `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(cleanUrl)}`;
+  frame.src = viewerUrl;
   modal.classList.remove("hidden");
   document.body.classList.add("pdf-open");
 }
