@@ -763,8 +763,8 @@ button:disabled{
 <label>Video URL</label>
 <input id="video" placeholder="https://...">
 
-<label>Notes URL (Optional)</label>
-<input id="notes" placeholder="https://...">
+<label>PDF URL (Optional)</label>
+<input id="notes" placeholder="https://...pdf">
 
 <label>Duration (Optional)</label>
 <input id="duration" placeholder="01:20:00">

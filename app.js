@@ -492,6 +492,12 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
     const row = document.createElement("button");
     row.className = "lecture";
 
+    const hasPdf = item.type === "pdf"
+      ? !!item.url
+      : !!item.notes;
+
+    const hasVideo = item.type !== "pdf" && !!item.url;
+
     row.innerHTML = `
       <span class="lecture-no">${String(data.length - index).padStart(2,"0")}</span>
 
@@ -504,19 +510,38 @@ function showChapterLectures(subject, chapter, pushHistory = false) {
       </span>
 
       <span class="lecture-actions">
-        ${item.notes ? '<span class="notes-btn">📄 Notes</span>' : ""}
-        <span class="play">▶</span>
+        ${hasPdf ? '<span class="pdf-btn">📄 PDF</span>' : ""}
+        ${hasVideo ? '<span class="video-btn">▶ Video</span>' : ""}
       </span>
     `;
 
     row.onclick = (event) => {
-      if (event.target.closest(".notes-btn")) {
+      if (event.target.closest(".pdf-btn")) {
         event.stopPropagation();
-        openNotes(item);
+        if (item.type === "pdf") {
+          window.open(item.url, "_blank", "noopener");
+        } else {
+          openNotes(item);
+        }
         return;
       }
 
-      openLectureDirect(item);
+      if (event.target.closest(".video-btn")) {
+        event.stopPropagation();
+        openLectureDirect(item);
+        return;
+      }
+
+      // If there is only one content type, clicking the row opens that content.
+      if (hasVideo) {
+        openLectureDirect(item);
+      } else if (hasPdf) {
+        if (item.type === "pdf") {
+          window.open(item.url, "_blank", "noopener");
+        } else {
+          openNotes(item);
+        }
+      }
     };
 
     list.appendChild(row);
