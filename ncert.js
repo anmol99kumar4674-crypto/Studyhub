@@ -58,4 +58,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2Fbd8c3ecc-08d8-4de7-8222-da11ee7e7b2a.pdf&embedded=true"
   }
+,
+  {
+    id: "ncert-1788263393265",
+    chapter: "Economics Unit Wise Notes || Pdf Only",
+    title: "Economics : Unit Wise Notes 01",
+    date: "2026-09-01",
+    duration: "",
+    url: "",
+    notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F584f90cf-b210-4806-aabb-1f2d563d2e10.pdf&embedded=true"
+  }
 ];
