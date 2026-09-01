@@ -79,4 +79,13 @@ const NOTICES_LECTURES = [
     duration: "",
     url: "https://stream.srv-1.pimaxer.in/12f5b289-4e26-4c9d-b2db-887c05d15e04/master.m3u8",
   }
+,
+  {
+    id: "notices-1788269371617",
+    chapter: "Batch Demo Videos",
+    title: "Abhay Sir : Bihar Special",
+    date: "2026-08-01",
+    duration: "",
+    url: "https://stream.srv-1.pimaxer.in/be020c27-4310-48e4-9afc-5ba37994faaa/master.m3u8",
+  }
 ];
