@@ -78,4 +78,14 @@ const NCERT_LECTURES = [
     url: "",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F0f2613b3-6937-4306-9dda-0cbdfcee6c89.pdf&embedded=true"
   }
+,
+  {
+    id: "ncert-1788264106879",
+    chapter: "Economics Unit Wise Notes || Pdf Only",
+    title: "3",
+    date: "2026-09-01",
+    duration: "",
+    url: "",
+    notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F0f2613b3-6937-4306-9dda-0cbdfcee6c89.pdf&embedded=true"
+  }
 ];
