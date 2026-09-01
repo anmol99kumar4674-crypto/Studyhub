@@ -108,4 +108,14 @@ const NCERT_LECTURES = [
     url: "",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fc3da21f1-97f7-4fc2-87da-7630564ad2b1.pdf&embedded=true"
   }
+,
+  {
+    id: "ncert-1788273697075",
+    chapter: "Economics",
+    title: "Economics 07 : व्यष्टिअर्थशास्त्र की मूलभूत अवधारणा 04",
+    date: "2026-09-01",
+    duration: "",
+    url: "https://stream.srv-1.pimaxer.in/6629c36f-b745-45cc-8bfb-bfbecfc9165b/master.m3u8",
+    notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2F80305404-7d7b-42d5-9525-0d361711914e.pdf&embedded=true"
+  }
 ];
