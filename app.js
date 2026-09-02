@@ -590,23 +590,24 @@ searchInput.addEventListener("input", () => {
   }
 });
 
-/* Browser Back/Forward */
-window.addEventListener("popstate", event => {
-  const state = event.state;
+/* Browser Back/Forward + in-site PDF viewer */
+let pdfHistoryActive = false;
+let pdfBackClosing = false;
 
-  // If the PDF viewer is open, the phone/browser Back button
-  // closes the viewer first and then restores the previous screen.
+window.addEventListener("popstate", event => {
+  // If the PDF viewer is open, the device/browser Back button should
+  // close the viewer first instead of navigating to an intermediate blank
+  // PDF/Google Viewer page.
   const pdfViewer = $("#pdfViewer");
   if (pdfViewer && !pdfViewer.classList.contains("hidden")) {
-    const frame = $("#pdfFrame");
-    if (frame) frame.src = "about:blank";
-    pdfViewer.classList.add("hidden");
-    document.body.classList.remove("pdf-open");
-  }
-
-  if (state && state.view === "pdfViewer") {
+    pdfHistoryActive = false;
+    pdfBackClosing = true;
+    closePdf(false);
+    pdfBackClosing = false;
     return;
   }
+
+  const state = event.state;
 
   if (state && state.view === "chapterLectures") {
     activeSubject = "All";
@@ -791,47 +792,46 @@ function openPdf(url, title = "PDF") {
 
   if (titleEl) titleEl.textContent = title;
 
-  // Some PDF hosts (including static.pw.live) send PDFs as downloads.
-  // Load the PDF through Google's embedded viewer so Android browsers/WebView
-  // render it inside our modal instead of opening the "Open with" dialog.
-  const cleanUrl = String(url || "").trim();
-  const viewerUrl = /(^|[?&])embedded=true(?:&|$)/i.test(cleanUrl)
-    ? cleanUrl
-    : `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(cleanUrl)}`;
-  // Give the PDF viewer its own history entry so the phone Back button
-  // closes the viewer instead of leaving the website.
-  if (!history.state || history.state.view !== "pdfViewer") {
+  // Create exactly one browser-history entry for the PDF viewer.
+  // Pressing Android/browser Back will therefore close the viewer first.
+  if (!pdfHistoryActive) {
     history.pushState(
       {
         studyLectures: true,
         view: "pdfViewer",
-        previousView: history.state && history.state.view ? history.state.view : "subjects"
+        pdfViewer: true
       },
       "",
       location.href
     );
+    pdfHistoryActive = true;
   }
+
+  const cleanUrl = String(url || "").trim();
+  const viewerUrl = /(^|[?&])embedded=true(?:&|$)/i.test(cleanUrl)
+    ? cleanUrl
+    : `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(cleanUrl)}`;
 
   frame.src = viewerUrl;
   modal.classList.remove("hidden");
   document.body.classList.add("pdf-open");
 }
 
-function closePdf() {
+function closePdf(useHistory = true) {
   const modal = $("#pdfViewer");
   const frame = $("#pdfFrame");
   if (!modal || !frame) return;
 
-  // Use the browser history to return to exactly the screen from which
-  // the PDF was opened. The popstate handler performs the actual cleanup.
-  if (history.state && history.state.view === "pdfViewer") {
-    history.back();
-    return;
-  }
-
   frame.src = "about:blank";
   modal.classList.add("hidden");
   document.body.classList.remove("pdf-open");
+
+  if (useHistory && pdfHistoryActive && !pdfBackClosing) {
+    pdfHistoryActive = false;
+    history.back();
+  } else {
+    pdfHistoryActive = false;
+  }
 }
 
 if ($("#closePdf")) {
