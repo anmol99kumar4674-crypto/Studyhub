@@ -119,5 +119,3 @@ const NCERT_LECTURES = [
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2F80305404-7d7b-42d5-9525-0d361711914e.pdf&embedded=true"
   }
 ];
-
-

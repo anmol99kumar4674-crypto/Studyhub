@@ -189,4 +189,3 @@ const BIHAR_CURRENT_WALLAH_LECTURES = [
     type: "pdf"
   }
 ];
-

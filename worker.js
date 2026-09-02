@@ -1050,7 +1050,6 @@ async function save(){
   btn.innerText = "Add Lecture";
 }
 </script>
-
 </body>
 </html>`;
 

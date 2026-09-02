@@ -594,6 +594,20 @@ searchInput.addEventListener("input", () => {
 window.addEventListener("popstate", event => {
   const state = event.state;
 
+  // If the PDF viewer is open, the phone/browser Back button
+  // closes the viewer first and then restores the previous screen.
+  const pdfViewer = $("#pdfViewer");
+  if (pdfViewer && !pdfViewer.classList.contains("hidden")) {
+    const frame = $("#pdfFrame");
+    if (frame) frame.src = "about:blank";
+    pdfViewer.classList.add("hidden");
+    document.body.classList.remove("pdf-open");
+  }
+
+  if (state && state.view === "pdfViewer") {
+    return;
+  }
+
   if (state && state.view === "chapterLectures") {
     activeSubject = "All";
     showChapterLectures(
@@ -784,6 +798,20 @@ function openPdf(url, title = "PDF") {
   const viewerUrl = /(^|[?&])embedded=true(?:&|$)/i.test(cleanUrl)
     ? cleanUrl
     : `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(cleanUrl)}`;
+  // Give the PDF viewer its own history entry so the phone Back button
+  // closes the viewer instead of leaving the website.
+  if (!history.state || history.state.view !== "pdfViewer") {
+    history.pushState(
+      {
+        studyLectures: true,
+        view: "pdfViewer",
+        previousView: history.state && history.state.view ? history.state.view : "subjects"
+      },
+      "",
+      location.href
+    );
+  }
+
   frame.src = viewerUrl;
   modal.classList.remove("hidden");
   document.body.classList.add("pdf-open");
@@ -793,6 +821,14 @@ function closePdf() {
   const modal = $("#pdfViewer");
   const frame = $("#pdfFrame");
   if (!modal || !frame) return;
+
+  // Use the browser history to return to exactly the screen from which
+  // the PDF was opened. The popstate handler performs the actual cleanup.
+  if (history.state && history.state.view === "pdfViewer") {
+    history.back();
+    return;
+  }
+
   frame.src = "about:blank";
   modal.classList.add("hidden");
   document.body.classList.remove("pdf-open");
@@ -822,5 +858,3 @@ renderFilters();
 showSubjects();
 
 })();
-
-
