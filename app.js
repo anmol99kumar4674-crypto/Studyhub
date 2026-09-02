@@ -786,14 +786,20 @@ function openLectureDirect(item) {
 
 function openPdf(url, title = "PDF") {
   const modal = $("#pdfViewer");
-  const frame = $("#pdfFrame");
   const titleEl = $("#pdfTitle");
-  if (!modal || !frame) return;
+  if (!modal) return;
 
   if (titleEl) titleEl.textContent = title;
 
-  // Create exactly one browser-history entry for the PDF viewer.
-  // Pressing Android/browser Back will therefore close the viewer first.
+  const cleanUrl = String(url || "").trim();
+  const viewerUrl = /(^|[?&])embedded=true(?:&|$)/i.test(cleanUrl)
+    ? cleanUrl
+    : `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(cleanUrl)}`;
+
+  // Keep exactly one top-level history entry for the in-site PDF viewer.
+  // The iframe is created directly with its final URL, rather than first
+  // loading about:blank. This prevents Android Back from going to a blank
+  // iframe page before the PDF viewer closes.
   if (!pdfHistoryActive) {
     history.pushState(
       {
@@ -807,22 +813,32 @@ function openPdf(url, title = "PDF") {
     pdfHistoryActive = true;
   }
 
-  const cleanUrl = String(url || "").trim();
-  const viewerUrl = /(^|[?&])embedded=true(?:&|$)/i.test(cleanUrl)
-    ? cleanUrl
-    : `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(cleanUrl)}`;
+  // Remove any old iframe and create a fresh browsing context whose initial
+  // document is the actual viewer URL.
+  const oldFrame = $("#pdfFrame");
+  if (oldFrame) oldFrame.remove();
 
+  const frame = document.createElement("iframe");
+  frame.id = "pdfFrame";
+  frame.title = "PDF viewer";
+  frame.setAttribute("allow", "fullscreen");
+  frame.setAttribute("allowfullscreen", "");
   frame.src = viewerUrl;
+
+  const box = modal.querySelector(".pdf-viewer-box");
+  if (box) box.appendChild(frame);
+
   modal.classList.remove("hidden");
   document.body.classList.add("pdf-open");
 }
 
 function closePdf(useHistory = true) {
   const modal = $("#pdfViewer");
-  const frame = $("#pdfFrame");
-  if (!modal || !frame) return;
+  if (!modal) return;
 
-  frame.src = "about:blank";
+  const frame = $("#pdfFrame");
+  if (frame) frame.remove();
+
   modal.classList.add("hidden");
   document.body.classList.remove("pdf-open");
 
