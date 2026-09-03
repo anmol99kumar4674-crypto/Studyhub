@@ -128,4 +128,14 @@ const NCERT_LECTURES = [
     url: "https://stream.srv-1.pimaxer.in/75a2f384-c449-4536-ab35-881c96f719e5/master.m3u8",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/119d3319-854b-4841-9993-8e21a4306c3e.pdf"
   }
+,
+  {
+    id: "ncert-1788451200562",
+    chapter: "Economics",
+    title: "Economics 09 : राष्ट्रीय आय 2",
+    date: "2026-09-03",
+    duration: "",
+    url: "https://stream.srv-1.pimaxer.in/ea9f805b-9f32-4df1-87d0-b5ca55f364c0/master.m3u8",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/05525db5-62b6-4cd6-8c4d-ba4d987eccec.pdf"
+  }
 ];
