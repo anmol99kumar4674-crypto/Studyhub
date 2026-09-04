@@ -736,14 +736,24 @@ function openPlayer(item) {
 
   video.onerror = () => {
     hideLoading();
-    video.classList.add("hidden");
+    const code = video.error?.code;
+    const text = code === 4
+      ? "Video format ya streaming server se play nahi ho pa raha."
+      : "Video load nahi ho pa raha. Server connection check karein.";
+    if (loading) {
+      loading.classList.remove("hidden");
+      const title = loading.querySelector(".video-loading-title");
+      const detail = loading.querySelector(".video-loading-text");
+      if (title) title.textContent = "Video play nahi ho raha";
+      if (detail) detail.textContent = text;
+    }
   };
 
   player.classList.remove("hidden");
 
-  // Let the browser start fetching immediately after the modal is visible.
-  // The duplicate load() calls above have intentionally been removed.
-  video.play().catch(() => {});
+  // Do not force autoplay: Android browsers may block play(), and the
+  // controls remain available so the user can start playback manually.
+  video.load();
 }
 
 function closePlayer() {
