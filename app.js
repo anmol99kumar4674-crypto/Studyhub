@@ -751,9 +751,9 @@ function openPlayer(item) {
 
   player.classList.remove("hidden");
 
-  // Setting src above already starts the media load. Avoiding a second
-  // explicit load() prevents an unnecessary restart on some Android browsers.
-
+  // Do not force autoplay: Android browsers may block play(), and the
+  // controls remain available so the user can start playback manually.
+  video.load();
 }
 
 function closePlayer() {
