@@ -708,9 +708,9 @@ function openPlayer(item) {
 
   video.classList.remove("hidden");
   video.pause();
-  video.removeAttribute("src");
-  video.load();
 
+  // Assign the source only once. Calling load() before setting src and again
+  // afterwards creates an unnecessary extra request on mobile browsers.
   video.src = item.url;
 
   // Restore the saved position once duration/metadata is available.
@@ -721,8 +721,6 @@ function openPlayer(item) {
       video.currentTime = Math.min(saved, Math.max(0, video.duration - 0.5));
     }
   };
-
-  video.load();
 
   video.onwaiting = showLoading;
   video.onstalled = showLoading;
@@ -741,9 +739,11 @@ function openPlayer(item) {
     video.classList.add("hidden");
   };
 
-  video.play().catch(() => {});
-
   player.classList.remove("hidden");
+
+  // Let the browser start fetching immediately after the modal is visible.
+  // The duplicate load() calls above have intentionally been removed.
+  video.play().catch(() => {});
 }
 
 function closePlayer() {
