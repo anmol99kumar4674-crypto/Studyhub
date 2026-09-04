@@ -708,9 +708,9 @@ function openPlayer(item) {
 
   video.classList.remove("hidden");
   video.pause();
+  video.removeAttribute("src");
+  video.load();
 
-  // Assign the source only once. Calling load() before setting src and again
-  // afterwards creates an unnecessary extra request on mobile browsers.
   video.src = item.url;
 
   // Restore the saved position once duration/metadata is available.
@@ -721,6 +721,8 @@ function openPlayer(item) {
       video.currentTime = Math.min(saved, Math.max(0, video.duration - 0.5));
     }
   };
+
+  video.load();
 
   video.onwaiting = showLoading;
   video.onstalled = showLoading;
@@ -736,24 +738,12 @@ function openPlayer(item) {
 
   video.onerror = () => {
     hideLoading();
-    const code = video.error?.code;
-    const text = code === 4
-      ? "Video format ya streaming server se play nahi ho pa raha."
-      : "Video load nahi ho pa raha. Server connection check karein.";
-    if (loading) {
-      loading.classList.remove("hidden");
-      const title = loading.querySelector(".video-loading-title");
-      const detail = loading.querySelector(".video-loading-text");
-      if (title) title.textContent = "Video play nahi ho raha";
-      if (detail) detail.textContent = text;
-    }
+    video.classList.add("hidden");
   };
 
-  player.classList.remove("hidden");
+  video.play().catch(() => {});
 
-  // Do not force autoplay: Android browsers may block play(), and the
-  // controls remain available so the user can start playback manually.
-  video.load();
+  player.classList.remove("hidden");
 }
 
 function closePlayer() {
