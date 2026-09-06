@@ -272,3 +272,16 @@ body.pdf-open { overflow: hidden; }
   .ncert-section-card small{font-size:20px;line-height:1.35}
   .ncert-arrow{font-size:40px}
 }
+
+
+/* ===== NCERT clean interface ===== */
+/* The top All / Notices / Current Affairs / Politics filter row is not used. */
+#subjectFilters,
+.filters {
+  display: none !important;
+}
+
+/* XP counter is intentionally hidden from the subject screen. */
+.xp-badge {
+  display: none !important;
+}

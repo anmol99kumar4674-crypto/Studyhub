@@ -451,8 +451,8 @@ function renderNcertHome(pushHistory = false) {
   if (info) info.classList.add("hidden");
 
   const list = getNcertItems();
-  const economics = list.filter(x => x.chapter === "Economics");
-  const unitNotes = list.filter(x => x.chapter === "Economics Unit Wise Notes || Pdf Only");
+  const economics = getNcertDisplayItems("economics");
+  const unitNotes = getNcertDisplayItems("unitNotes");
 
   chapterList.innerHTML = `
     <div class="ncert-home-list">
@@ -497,8 +497,17 @@ function renderNcertHome(pushHistory = false) {
 
 function getNcertDisplayItems(kind) {
   const all = getNcertItems();
-  if (kind === "economics") return all.filter(x => x.chapter === "Economics");
-  if (kind === "unitNotes") return all.filter(x => x.chapter === "Economics Unit Wise Notes || Pdf Only");
+  if (kind === "economics") {
+    return all.filter(x =>
+      String(x.chapter || "").trim() === "Economics" &&
+      !/unit\s*wise\s*notes/i.test(String(x.title || ""))
+    );
+  }
+  if (kind === "unitNotes") {
+    return all.filter(x =>
+      String(x.chapter || "").trim() === "Economics Unit Wise Notes || Pdf Only"
+    );
+  }
   return all;
 }
 
