@@ -371,7 +371,7 @@ function showSubjects() {
       <span class="arrow">›</span>
     `;
 
-    card.onclick = () => subject === "NCERT" ? renderNcertHome(true) : showChapters(subject, true);
+    card.onclick = () => showChapters(subject, true);
     subjectGrid.appendChild(card);
   });
 
@@ -379,272 +379,10 @@ function showSubjects() {
     `${data.length} lecture${data.length === 1 ? "" : "s"}`;
 }
 
-/* STEP 2: Subject page — app-style tabs (Lectures / Notes / DPP / DPP PDF) */
-let activeContentTab = "lectures";
-
-function getItemVideo(item) {
-  return item.type === "pdf" ? "" : String(item.url || "").trim();
-}
-function getItemNotes(item) {
-  return String(item.notes || "").trim();
-}
-function getItemDpp(item) {
-  return String(item.dpp || item.dppUrl || "").trim();
-}
-function getItemDppPdf(item) {
-  return String(item.dppPdf || item.dppPDF || item.dpp_pdf || "").trim();
-}
-
-function contentTypeForItem(item) {
-  const title = String(item.title || "").toLowerCase();
-  const dpp = getItemDpp(item);
-  const dppPdf = getItemDppPdf(item);
-  if (dppPdf) return "dppPdf";
-  if (dpp || /\bdpp\b/.test(title)) return "dpp";
-  if (getItemNotes(item) && !getItemVideo(item)) return "notes";
-  return "lectures";
-}
-
-function hasContentForTab(item, tab) {
-  if (tab === "lectures") return !!getItemVideo(item);
-  if (tab === "notes") return !!getItemNotes(item);
-  if (tab === "dpp") return !!getItemDpp(item);
-  if (tab === "dppPdf") return !!getItemDppPdf(item);
-  return false;
-}
-
-function contentUrl(item, tab) {
-  if (tab === "notes") return getItemNotes(item);
-  if (tab === "dpp") return getItemDpp(item);
-  if (tab === "dppPdf") return getItemDppPdf(item);
-  return getItemVideo(item);
-}
-
-
-function getNcertItems() {
-  return LECTURES
-    .filter(x => x.subject === "NCERT")
-    .sort((a,b) => (b.date || "").localeCompare(a.date || "") || String(b.id).localeCompare(String(a.id)));
-}
-
-function renderNcertHome(pushHistory = false) {
-  activeLectureSubject = null;
-  activeChapter = null;
-  activeContentTab = "lectures";
-
-  if (pushHistory) {
-    history.pushState(
-      {studyLectures:true, view:"ncertHome"},
-      "",
-      location.href
-    );
-  }
-
-  subjectsView.classList.add("hidden");
-  lecturesView.classList.remove("hidden");
-
-  setHeader("‹", "NCERT", () => history.back());
-
-  const tabs = $("#contentTabs");
-  const info = document.querySelector(".study-info-bar");
-  if (tabs) tabs.classList.add("hidden");
-  if (info) info.classList.add("hidden");
-
-  const list = getNcertItems();
-  const economics = getNcertDisplayItems("economics");
-  const unitNotes = getNcertDisplayItems("unitNotes");
-
-  chapterList.innerHTML = `
-    <div class="ncert-home-list">
-      <button class="ncert-section-card" type="button" data-ncert-target="all">
-        <span>
-          <b>All Content</b>
-          <small>All Videos | All Exercises | All Notes</small>
-        </span>
-        <span class="ncert-arrow">›</span>
-      </button>
-
-      <button class="ncert-section-card" type="button" data-ncert-target="economics">
-        <span>
-          <b>Economics</b>
-          <small>${economics.filter(getItemVideo).length} Videos&nbsp;&nbsp;|&nbsp;&nbsp;${economics.filter(getItemNotes).length} Notes</small>
-        </span>
-        <span class="ncert-arrow">›</span>
-      </button>
-
-      <button class="ncert-section-card" type="button" data-ncert-target="unitNotes">
-        <span>
-          <b>Economics : Unit Wise Notes || PDF Only</b>
-          <small>${unitNotes.filter(getItemNotes).length} Notes</small>
-        </span>
-        <span class="ncert-arrow">›</span>
-      </button>
-    </div>
-  `;
-
-  chapterList.querySelector('[data-ncert-target="economics"]')?.addEventListener("click", () => {
-    showNcertEconomics(true);
-  });
-
-  chapterList.querySelector('[data-ncert-target="all"]')?.addEventListener("click", () => {
-    showNcertAllContent(true);
-  });
-
-  chapterList.querySelector('[data-ncert-target="unitNotes"]')?.addEventListener("click", () => {
-    showNcertUnitNotes(true);
-  });
-}
-
-function getNcertDisplayItems(kind) {
-  const all = getNcertItems();
-  if (kind === "economics") {
-    return all.filter(x =>
-      String(x.chapter || "").trim() === "Economics" &&
-      !/unit\s*wise\s*notes/i.test(String(x.title || ""))
-    );
-  }
-  if (kind === "unitNotes") {
-    return all.filter(x =>
-      String(x.chapter || "").trim() === "Economics Unit Wise Notes || Pdf Only"
-    );
-  }
-  return all;
-}
-
-function showNcertAllContent(pushHistory = false) {
-  activeLectureSubject = "NCERT";
-  activeContentTab = "lectures";
-
-  if (pushHistory) {
-    history.pushState({studyLectures:true, view:"ncertAll"}, "", location.href);
-  }
-
-  subjectsView.classList.add("hidden");
-  lecturesView.classList.remove("hidden");
-  setHeader("‹", "All Content", () => history.back());
-
-  $("#contentTabs")?.classList.remove("hidden");
-  document.querySelector(".study-info-bar")?.classList.add("hidden");
-  setupContentTabs();
-  renderNcertAllTab();
-}
-
-function renderNcertAllTab() {
-  const items = getNcertDisplayItems("all").filter(item => hasContentForTab(item, activeContentTab));
-  renderAppItems(items);
-}
-
-function showNcertUnitNotes(pushHistory = false) {
-  activeLectureSubject = null;
-  activeContentTab = "notes";
-
-  if (pushHistory) {
-    history.pushState({studyLectures:true, view:"ncertUnitNotes"}, "", location.href);
-  }
-
-  subjectsView.classList.add("hidden");
-  lecturesView.classList.remove("hidden");
-  setHeader("‹", "Economics : Unit Wise Notes || PDF Only", () => history.back());
-
-  $("#contentTabs")?.classList.add("hidden");
-  document.querySelector(".study-info-bar")?.classList.add("hidden");
-
-  const items = getNcertDisplayItems("unitNotes");
-  renderAppItems(items, "notes");
-}
-
-function renderAppItems(items, forcedTab = null) {
-  chapterList.innerHTML = "";
-
-  if (!items.length) {
-    const empty = document.createElement("div");
-    empty.className = "content-empty";
-    empty.innerHTML = `<div class="empty-icon">📚</div><b>Content available nahi hai</b><small>Is section me abhi koi content upload nahi hua hai.</small>`;
-    chapterList.appendChild(empty);
-    return;
-  }
-
-  const listWrap = document.createElement("div");
-  listWrap.className = "app-lecture-list";
-
-  items.forEach((item, index) => {
-    const row = document.createElement("article");
-    row.className = "app-lecture-card";
-
-    const tab = forcedTab || activeContentTab;
-    const videoUrl = getItemVideo(item);
-    const notesUrl = getItemNotes(item);
-    const dppUrl = getItemDpp(item);
-    const dppPdfUrl = getItemDppPdf(item);
-
-    const showVideo = tab === "lectures" && !!videoUrl;
-    const showPdf = tab === "notes" && !!notesUrl;
-    const showDpp = tab === "dpp" && !!dppUrl;
-    const showDppPdf = tab === "dppPdf" && !!dppPdfUrl;
-
-    row.innerHTML = `
-      <div class="app-lecture-number">${String(items.length - index).padStart(2,"0")}</div>
-      <div class="app-lecture-main">
-        <b>${item.title || "Untitled Lecture"}</b>
-        <small>${formatDate(item.date)}${item.duration ? " • " + item.duration : ""}</small>
-      </div>
-      <div class="app-lecture-actions">
-        ${showVideo ? '<button class="circle-play" type="button" aria-label="Play video">▶</button>' : ""}
-        ${showPdf ? '<button class="content-pill" type="button">📄 PDF</button>' : ""}
-        ${showDpp ? '<button class="content-pill" type="button">📝 DPP</button>' : ""}
-        ${showDppPdf ? '<button class="content-pill" type="button">📄 PDF</button>' : ""}
-      </div>
-    `;
-
-    const action = row.querySelector(".circle-play, .content-pill");
-    if (action) {
-      action.onclick = (event) => {
-        event.stopPropagation();
-        if (tab === "lectures") openLectureDirect(item);
-        else {
-          const url = contentUrl(item, tab);
-          if (url) openPdf(url, item.title);
-        }
-      };
-    }
-
-    row.onclick = () => {
-      if (tab === "lectures" && videoUrl) openLectureDirect(item);
-      else if (tab === "notes" && notesUrl) openPdf(notesUrl, item.title);
-      else if (tab === "dpp" && dppUrl) openPdf(dppUrl, item.title);
-      else if (tab === "dppPdf" && dppPdfUrl) openPdf(dppPdfUrl, item.title);
-    };
-
-    listWrap.appendChild(row);
-  });
-
-  chapterList.appendChild(listWrap);
-}
-
-function showNcertEconomics(pushHistory = false) {
-  activeLectureSubject = "NCERT";
-  activeContentTab = "lectures";
-
-  if (pushHistory) {
-    history.pushState({studyLectures:true, view:"ncertEconomics"}, "", location.href);
-  }
-
-  subjectsView.classList.add("hidden");
-  lecturesView.classList.remove("hidden");
-  setHeader("‹", "Economics", () => history.back());
-
-  $("#contentTabs")?.classList.remove("hidden");
-  document.querySelector(".study-info-bar")?.classList.remove("hidden");
-  setupContentTabs();
-
-  const items = getNcertDisplayItems("economics");
-  renderAppItems(items);
-}
-
+/* STEP 2: Subject ke andar sirf CHAPTERS dikhte hain */
 function showChapters(subject, pushHistory = false) {
   activeLectureSubject = subject;
   activeChapter = null;
-  activeContentTab = "lectures";
 
   if (pushHistory) {
     history.pushState(
@@ -657,120 +395,176 @@ function showChapters(subject, pushHistory = false) {
   subjectsView.classList.add("hidden");
   lecturesView.classList.remove("hidden");
 
-  setHeader("‹", subject, () => history.back());
-  setupContentTabs();
-  renderSubjectContent(subject);
-}
+  setHeader(
+    "← Subjects",
+    subject,
+    () => history.back()
+  );
 
-function setupContentTabs() {
-  const tabs = document.querySelectorAll(".content-tab");
-  tabs.forEach(tab => {
-    tab.onclick = () => {
-      activeContentTab = tab.dataset.tab || "lectures";
-      tabs.forEach(t => t.classList.toggle("active", t === tab));
-      if (activeLectureSubject === "NCERT") {
-        renderNcertAllTab();
-      } else {
-        renderSubjectContent(activeLectureSubject);
-      }
-    };
+  const data = getFilteredLectures().filter(x => x.subject === subject);
+  const chapters = {};
+
+  data.forEach(item => {
+    const chapter = item.chapter || "General";
+    if (!chapters[chapter]) chapters[chapter] = [];
+    chapters[chapter].push(item);
   });
 
-  const closeInfo = $("#closeInfoBar");
-  if (closeInfo) {
-    closeInfo.onclick = () => closeInfo.parentElement.classList.add("hidden");
-  }
-}
-
-function renderSubjectContent(subject) {
-  const data = getFilteredLectures()
-    .filter(x => x.subject === subject)
-    .sort((a,b) => (b.date || "").localeCompare(a.date || "") || String(b.id).localeCompare(String(a.id)));
-
-  const list = data.filter(item => hasContentForTab(item, activeContentTab));
   chapterList.innerHTML = "";
 
-  if (!list.length) {
-    const empty = document.createElement("div");
-    empty.className = "content-empty";
-    const labels = {lectures:"Lectures", notes:"Notes", dpp:"DPP", dppPdf:"DPP PDF"};
-    empty.innerHTML = `<div class="empty-icon">📚</div><b>${labels[activeContentTab] || "Content"} available nahi hai</b><small>Is section me abhi koi content upload nahi hua hai.</small>`;
-    chapterList.appendChild(empty);
-    return;
-  }
+  // Only change the chapter/subject section (image 2).
+  // Keep the lecture list section (image 1) exactly as it is.
+  // The chapter containing the newest uploaded lecture is placed at the bottom.
+  const chapterEntries = Object.entries(chapters);
+  chapterEntries.sort((a, b) => {
+    const latestA = Math.max(...a[1].map(x => {
+      const d = Date.parse(x.date || x.createdAt || x.updatedAt || "");
+      return Number.isFinite(d) ? d : 0;
+    }));
+    const latestB = Math.max(...b[1].map(x => {
+      const d = Date.parse(x.date || x.createdAt || x.updatedAt || "");
+      return Number.isFinite(d) ? d : 0;
+    }));
 
-  const listWrap = document.createElement("div");
-  listWrap.className = "app-lecture-list";
-
-  list.forEach((item, index) => {
-    const row = document.createElement("article");
-    row.className = "app-lecture-card";
-
-    const videoUrl = getItemVideo(item);
-    const notesUrl = getItemNotes(item);
-    const dppUrl = getItemDpp(item);
-    const dppPdfUrl = getItemDppPdf(item);
-
-    const showVideo = activeContentTab === "lectures" && !!videoUrl;
-    const showPdf = activeContentTab === "notes" && !!notesUrl;
-    const showDpp = activeContentTab === "dpp" && !!dppUrl;
-    const showDppPdf = activeContentTab === "dppPdf" && !!dppPdfUrl;
-
-    row.innerHTML = `
-      <div class="app-lecture-number">${String(list.length - index).padStart(2,"0")}</div>
-      <div class="app-lecture-main">
-        <b>${item.title || "Untitled Lecture"}</b>
-        <small>${formatDate(item.date)}${item.duration ? " • " + item.duration : ""}</small>
-      </div>
-      <div class="app-lecture-actions">
-        ${showVideo ? '<button class="circle-play" type="button" aria-label="Play video">▶</button>' : ""}
-        ${showPdf ? '<button class="content-pill" type="button">📄 PDF</button>' : ""}
-        ${showDpp ? '<button class="content-pill" type="button">📝 DPP</button>' : ""}
-        ${showDppPdf ? '<button class="content-pill" type="button">📄 PDF</button>' : ""}
-        <button class="more-btn" type="button" aria-label="More">⋮</button>
-      </div>
-    `;
-
-    const action = row.querySelector(".circle-play, .content-pill");
-    if (action) {
-      action.onclick = (event) => {
-        event.stopPropagation();
-        if (activeContentTab === "lectures") openLectureDirect(item);
-        else {
-          const url = contentUrl(item, activeContentTab);
-          if (url) openPdf(url, item.title);
-        }
-      };
-    }
-
-    row.onclick = () => {
-      if (activeContentTab === "lectures" && videoUrl) openLectureDirect(item);
-      else if (activeContentTab === "notes" && notesUrl) openPdf(notesUrl, item.title);
-      else if (activeContentTab === "dpp" && dppUrl) openPdf(dppUrl, item.title);
-      else if (activeContentTab === "dppPdf" && dppPdfUrl) openPdf(dppPdfUrl, item.title);
-    };
-
-    listWrap.appendChild(row);
+    // Newest chapter goes last; all other chapters retain their original order.
+    if (latestA === latestB) return 0;
+    return latestA - latestB;
   });
 
-  chapterList.appendChild(listWrap);
+  chapterEntries.forEach(([chapter, list]) => {
+    const card = document.createElement("button");
+    card.className = "chapter-card";
+
+    card.innerHTML = `
+      <span class="chapter-card-text">
+        <b>${chapter}</b>
+        <small>${list.length} lecture${list.length === 1 ? "" : "s"}</small>
+      </span>
+      <span class="chapter-card-arrow">›</span>
+    `;
+
+    /* Chapter par click karne ke baad hi lectures khulenge */
+    card.onclick = () => showChapterLectures(subject, chapter, true);
+
+    chapterList.appendChild(card);
+  });
 }
 
-/* Kept for compatibility with older history states. */
+/* STEP 3: Chapter ke andar lectures */
 function showChapterLectures(subject, chapter, pushHistory = false) {
-  showChapters(subject, pushHistory);
-  activeContentTab = "lectures";
-  renderSubjectContent(subject);
+  activeLectureSubject = subject;
+  activeChapter = chapter;
+
+  if (pushHistory) {
+    history.pushState(
+      {
+        studyLectures:true,
+        view:"chapterLectures",
+        subject,
+        chapter
+      },
+      "",
+      location.href
+    );
+  }
+
+  subjectsView.classList.add("hidden");
+  lecturesView.classList.remove("hidden");
+
+  setHeader(
+    "← " + subject,
+    chapter,
+    () => history.back()
+  );
+
+  const data = getFilteredLectures()
+    .filter(x =>
+      x.subject === subject &&
+      (x.chapter || "General") === chapter
+    );
+
+  chapterList.innerHTML = "";
+
+  const list = document.createElement("div");
+  list.className = "lecture-list";
+
+  data.forEach((item, index) => {
+    const row = document.createElement("button");
+    row.className = "lecture";
+
+    const hasPdf = item.type === "pdf"
+      ? !!item.url
+      : !!item.notes;
+
+    const hasVideo = item.type !== "pdf" && !!item.url;
+
+    row.innerHTML = `
+      <span class="lecture-no">${String(data.length - index).padStart(2,"0")}</span>
+
+      <span class="lecture-main">
+        <b>${item.title}</b>
+        <small>
+          ${formatDate(item.date)}
+          ${item.duration ? " • " + item.duration : ""}
+        </small>
+      </span>
+
+      <span class="lecture-actions">
+        ${hasPdf ? '<span class="pdf-btn">📄 PDF</span>' : ""}
+        ${hasVideo ? '<span class="video-btn">▶ Video</span>' : ""}
+      </span>
+    `;
+
+    row.onclick = (event) => {
+      if (event.target.closest(".pdf-btn")) {
+        event.stopPropagation();
+        // Always open PDFs inside the in-site PDF viewer.
+        // Do not navigate directly to the PDF URL, because Android may
+        // hand the file to an external "Open with" / download app.
+        if (item.type === "pdf") {
+          openPdf(item.url, item.title);
+        } else if (item.notes) {
+          openPdf(item.notes, item.title);
+        }
+        return;
+      }
+
+      if (event.target.closest(".video-btn")) {
+        event.stopPropagation();
+        openLectureDirect(item);
+        return;
+      }
+
+      // If there is only one content type, clicking the row opens that content.
+      if (hasVideo) {
+        openLectureDirect(item);
+      } else if (hasPdf) {
+        // Always open PDFs inside the in-site PDF viewer.
+        // Do not navigate directly to the PDF URL, because Android may
+        // hand the file to an external "Open with" / download app.
+        if (item.type === "pdf") {
+          openPdf(item.url, item.title);
+        } else if (item.notes) {
+          openPdf(item.notes, item.title);
+        }
+      }
+    };
+
+    list.appendChild(row);
+  });
+
+  chapterList.appendChild(list);
 }
 
 function setHeader(backText, title, backAction) {
-  const titleEl = $("#subjectTitle");
-  const backBtn = $("#backBtn");
-  if (titleEl) titleEl.textContent = title;
-  if (backBtn) {
-    backBtn.textContent = backText;
-    backBtn.onclick = backAction;
-  }
+  const head = lecturesView.querySelector(".section-head");
+
+  head.innerHTML = `
+    <button class="back-btn" id="backBtn">${backText}</button>
+    <h2 id="subjectTitle">${title}</h2>
+  `;
+
+  $("#backBtn").onclick = backAction;
 }
 
 function formatDate(value) {
@@ -787,8 +581,10 @@ function formatDate(value) {
 
 /* Search current screen ko hi update karega */
 searchInput.addEventListener("input", () => {
-  if (activeLectureSubject) {
-    renderSubjectContent(activeLectureSubject);
+  if (activeLectureSubject && activeChapter) {
+    showChapterLectures(activeLectureSubject, activeChapter, false);
+  } else if (activeLectureSubject) {
+    showChapters(activeLectureSubject, false);
   } else {
     showSubjects();
   }
@@ -815,28 +611,12 @@ window.addEventListener("popstate", event => {
 
   if (state && state.view === "chapterLectures") {
     activeSubject = "All";
-    showChapters(state.subject, false);
+    showChapterLectures(
+      state.subject,
+      state.chapter,
+      false
+    );
     renderFilters();
-    return;
-  }
-
-  if (state && state.view === "ncertHome") {
-    renderNcertHome(false);
-    return;
-  }
-
-  if (state && state.view === "ncertEconomics") {
-    showNcertEconomics(false);
-    return;
-  }
-
-  if (state && state.view === "ncertAll") {
-    showNcertAllContent(false);
-    return;
-  }
-
-  if (state && state.view === "ncertUnitNotes") {
-    showNcertUnitNotes(false);
     return;
   }
 
