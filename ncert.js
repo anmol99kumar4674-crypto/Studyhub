@@ -138,4 +138,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/16?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/05525db5-62b6-4cd6-8c4d-ba4d987eccec.pdf"
   }
+,
+  {
+    id: "ncert-1788695387019",
+    chapter: "Economics",
+    title: "Economics 10 : राष्ट्रीय आय 3 || DPP will be Provided Soon",
+    date: "2026-09-05",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/17?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/1a7a7690-8c85-4492-a7b1-d578f4842591.pdf"
+  }
 ];
