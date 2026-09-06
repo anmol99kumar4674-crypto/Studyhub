@@ -256,3 +256,19 @@ body.pdf-open { overflow: hidden; }
   .xp-badge{font-size:17px;padding:6px 9px}
   .xp-badge span{width:25px;height:25px}
 }
+
+
+/* ===== NCERT category overview (PW-style) ===== */
+.ncert-home-list{display:flex;flex-direction:column;gap:22px;width:min(1180px,calc(100% - 24px));margin:26px auto 0}
+.ncert-section-card{width:100%;min-height:150px;border:1px solid #eee;border-radius:16px;background:#fff;box-shadow:0 3px 16px #0000000b;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:28px 24px;cursor:pointer}
+.ncert-section-card:hover{background:#faf9ff}
+.ncert-section-card b{display:block;font-size:30px;line-height:1.25;color:#202124}
+.ncert-section-card small{display:block;margin-top:14px;color:#777;font-size:21px;font-weight:500}
+.ncert-arrow{font-size:42px;color:#555;line-height:1}
+@media(max-width:800px){
+  .ncert-home-list{width:calc(100% - 24px);gap:22px;margin-top:22px}
+  .ncert-section-card{min-height:148px;padding:25px 22px;border-radius:15px}
+  .ncert-section-card b{font-size:29px}
+  .ncert-section-card small{font-size:20px;line-height:1.35}
+  .ncert-arrow{font-size:40px}
+}
