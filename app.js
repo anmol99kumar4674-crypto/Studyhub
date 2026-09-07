@@ -414,10 +414,23 @@ function showChapters(subject, pushHistory = false) {
     const card = document.createElement("button");
     card.className = "chapter-card";
 
+    // A chapter can contain lecture records and/or note-only records.
+    // Show the count according to the content that actually exists.
+    const lectureCount = list.filter(item => !!item.url).length;
+    const noteCount = list.filter(item => !!item.notes).length;
+    const dppCount = list.filter(item => !!(item.dpp || item.dppUrl)).length;
+    const dppPdfCount = list.filter(item => !!(item.dppPdf || item.dppPdfUrl)).length;
+
+    const countParts = [];
+    if (lectureCount) countParts.push(`${lectureCount} Lecture${lectureCount === 1 ? "" : "s"}`);
+    if (noteCount) countParts.push(`${noteCount} Note${noteCount === 1 ? "" : "s"}`);
+    if (dppCount) countParts.push(`${dppCount} DPP`);
+    if (dppPdfCount) countParts.push(`${dppPdfCount} DPP PDF`);
+
     card.innerHTML = `
       <span class="chapter-card-text">
         <b>${chapter}</b>
-        <small>${list.length} Lecture${list.length === 1 ? "" : "s"}</small>
+        <small>${countParts.join(" • ") || "No content"}</small>
       </span>
       <span class="chapter-card-arrow">›</span>
     `;
@@ -474,7 +487,7 @@ function showAllContent(subject, pushHistory = false, tab = "lectures") {
   content.className = "tab-content";
 
   if (tab === "lectures") {
-    renderLectureRows(content, data);
+    renderLectureRows(content, data.filter(item => !!item.url));
   } else if (tab === "notes") {
     renderLectureRows(content, data.filter(item => !!item.notes), "notes");
   } else if (tab === "dpp") {
@@ -561,7 +574,9 @@ function showChapterLectures(subject, chapter, pushHistory = false, tab = "lectu
   content.className = "tab-content";
 
   if (tab === "lectures") {
-    renderLectureRows(content, data);
+    // Only records with an actual video URL belong in the Lectures tab.
+    // Note-only records (url: "") must stay out of this tab.
+    renderLectureRows(content, data.filter(item => !!item.url));
   } else if (tab === "notes") {
     renderLectureRows(content, data.filter(item => !!item.notes), "notes");
   } else if (tab === "dpp") {
