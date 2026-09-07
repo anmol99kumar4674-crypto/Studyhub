@@ -45,34 +45,12 @@
     <div class="subject-grid" id="subjectGrid"></div>
   </section>
 
-  <section id="lecturesView" class="hidden subject-detail">
-    <div class="subject-detail-head">
-      <button class="subject-back" id="backBtn" aria-label="Back">‹</button>
+  <section id="lecturesView" class="hidden">
+    <div class="section-head">
+      <button class="back-btn" id="backBtn">← Subjects</button>
       <h2 id="subjectTitle">Subject</h2>
     </div>
-
-    <button class="all-content-card" id="allContentBtn" type="button">
-      <span class="all-content-icon">▤</span>
-      <span class="all-content-copy">
-        <b>All Content</b>
-        <small id="allContentMeta">All Videos | All Exercises | All Notes</small>
-      </span>
-      <span class="all-content-arrow">›</span>
-    </button>
-
-    <div class="content-tabs" id="contentTabs" role="tablist" aria-label="Content types">
-      <button class="content-tab active" data-tab="lectures" role="tab">Lectures</button>
-      <button class="content-tab" data-tab="notes" role="tab">Notes</button>
-      <button class="content-tab" data-tab="dpp" role="tab">DPP</button>
-      <button class="content-tab" data-tab="dppPdf" role="tab">DPP PDF</button>
-    </div>
-
-    <div class="content-notice">
-      <span>Earn 2 <b>XP</b> for every minute you watch a lecture.</span>
-      <button id="closeContentNotice" type="button" aria-label="Close">×</button>
-    </div>
-
-    <div class="content-list" id="chapterList"></div>
+    <div class="chapter-list" id="chapterList"></div>
   </section>
 </main>
 

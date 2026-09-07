@@ -288,7 +288,7 @@ const iconMap = {
 
 let activeSubject = "All";
 let activeLectureSubject = null;
-let activeTab = "lectures";
+let activeChapter = null;
 
 function subjects() {
   return [...new Set([...SUBJECTS, ...LECTURES.map(x => x.subject)])];
@@ -311,18 +311,6 @@ function getFilteredLectures() {
     );
 }
 
-function contentUrl(item, type) {
-  if (!item) return "";
-  if (type === "notes") return item.notes || item.note || item.notesUrl || "";
-  if (type === "dpp") return item.dpp || item.dppUrl || item.exercise || item.exerciseUrl || "";
-  if (type === "dppPdf") return item.dppPdf || item.dppPDF || item.dpp_pdf || item.dppPdfUrl || "";
-  return item.url || "";
-}
-
-function hasContent(item, type) {
-  return !!contentUrl(item, type);
-}
-
 function renderFilters() {
   filters.innerHTML = "";
 
@@ -334,12 +322,14 @@ function renderFilters() {
     button.onclick = () => {
       activeSubject = subject;
       activeLectureSubject = null;
-      activeTab = "lectures";
+      activeChapter = null;
+
       history.pushState(
         {studyLectures:true, view:"subjects", subject},
         "",
         location.href
       );
+
       showSubjects();
       renderFilters();
     };
@@ -348,64 +338,62 @@ function renderFilters() {
   });
 }
 
-function subjectCounts(subject) {
-  const data = LECTURES.filter(x => x.subject === subject);
-  return {
-    videos: data.filter(x => hasContent(x, "lectures") && x.type !== "pdf").length,
-    notes: data.filter(x => hasContent(x, "notes") || x.type === "pdf").length,
-    dpp: data.filter(x => hasContent(x, "dpp")).length,
-    dppPdf: data.filter(x => hasContent(x, "dppPdf")).length
-  };
+function getChapterCount(subject) {
+  const chapters = new Set(
+    getFilteredLectures()
+      .filter(x => x.subject === subject)
+      .map(x => x.chapter || "General")
+  );
+  return chapters.size;
 }
 
 function showSubjects() {
   activeLectureSubject = null;
-  activeTab = "lectures";
+  activeChapter = null;
 
   subjectsView.classList.remove("hidden");
   lecturesView.classList.add("hidden");
 
   const data = getFilteredLectures();
   const grouped = {};
-  subjects().forEach(subject => grouped[subject] = 0);
-  data.forEach(item => grouped[item.subject] = (grouped[item.subject] || 0) + 1);
+
+  subjects().forEach(subject => {
+    grouped[subject] = getChapterCount(subject);
+  });
 
   subjectGrid.innerHTML = "";
 
   Object.keys(grouped).forEach(subject => {
     const card = document.createElement("button");
     card.className = "subject-card";
-    const counts = subjectCounts(subject);
-    const meta = [
-      counts.videos ? `${counts.videos} Video${counts.videos === 1 ? "" : "s"}` : "",
-      counts.notes ? `${counts.notes} Note${counts.notes === 1 ? "" : "s"}` : ""
-    ].filter(Boolean).join(" | ") || `${grouped[subject]} item${grouped[subject] === 1 ? "" : "s"}`;
+
+    const count = grouped[subject];
 
     card.innerHTML = `
       <span class="subject-icon">${iconMap[subject] || "📘"}</span>
       <span>
         <b>${subject}</b>
-        <small>${meta}</small>
+        <small>${count} Chapter${count === 1 ? "" : "s"}</small>
       </span>
       <span class="arrow">›</span>
     `;
 
-    card.onclick = () => showSubjectContent(subject, "lectures", true);
+    card.onclick = () => showChapters(subject, true);
     subjectGrid.appendChild(card);
   });
 
   $("#countLabel").textContent =
-    `${data.length} item${data.length === 1 ? "" : "s"}`;
+    `${Object.values(grouped).reduce((a,b) => a+b, 0)} chapters`;
 }
 
-function showSubjectContent(subject, tab = "lectures", pushHistory = false) {
+/* STEP 2: Subject ke andar sirf CHAPTERS dikhte hain */
+function showChapters(subject, pushHistory = false) {
   activeLectureSubject = subject;
-  activeTab = tab;
-  activeSubject = "All";
+  activeChapter = null;
 
   if (pushHistory) {
     history.pushState(
-      {studyLectures:true, view:"subjectContent", subject, tab},
+      {studyLectures:true, view:"chapters", subject},
       "",
       location.href
     );
@@ -413,132 +401,309 @@ function showSubjectContent(subject, tab = "lectures", pushHistory = false) {
 
   subjectsView.classList.add("hidden");
   lecturesView.classList.remove("hidden");
-  $("#subjectTitle").textContent = subject;
 
-  $("#backBtn").onclick = () => history.back();
+  setHeader(
+    "← Subjects",
+    subject,
+    () => history.back()
+  );
 
-  const counts = subjectCounts(subject);
-  $("#allContentMeta").textContent =
-    `${counts.videos} Videos | ${counts.dpp} Exercises | ${counts.notes} Notes`;
+  const data = getFilteredLectures().filter(x => x.subject === subject);
+  const chapters = {};
 
-  document.querySelectorAll(".content-tab").forEach(button => {
-    const selected = button.dataset.tab === activeTab;
-    button.classList.toggle("active", selected);
-    button.setAttribute("aria-selected", selected ? "true" : "false");
+  data.forEach(item => {
+    const chapter = item.chapter || "General";
+    if (!chapters[chapter]) chapters[chapter] = [];
+    chapters[chapter].push(item);
   });
 
-  renderContentList(subject, activeTab);
-}
+  chapterList.innerHTML = "";
 
-function renderContentList(subject, tab) {
-  const listRoot = $("#chapterList");
-  const data = getFilteredLectures().filter(x => x.subject === subject);
-  listRoot.innerHTML = "";
-
-  if (tab === "dpp" || tab === "dppPdf") {
-    const available = data.filter(item => hasContent(item, tab));
-    if (!available.length) {
-      listRoot.innerHTML = `<div class="coming-soon"><div class="coming-icon">✓</div><b>Coming Soon</b><small>${tab === "dpp" ? "DPP will be available here." : "DPP PDFs will be available here."}</small></div>`;
-      return;
-    }
-    available.forEach((item, index) => appendContentRow(listRoot, item, tab, index, available.length));
-    return;
-  }
-
-  const available = data.filter(item => hasContent(item, tab));
-  if (!available.length) {
-    listRoot.innerHTML = `<div class="coming-soon"><div class="coming-icon">✓</div><b>Coming Soon</b></div>`;
-    return;
-  }
-
-  available.forEach((item, index) => appendContentRow(listRoot, item, tab, index, available.length));
-}
-
-function appendContentRow(root, item, tab, index, total) {
-  const row = document.createElement("button");
-  row.className = "content-row";
-  const url = contentUrl(item, tab);
-  const isPdf = tab === "notes" || tab === "dppPdf" || item.type === "pdf";
-  const number = String(total - index).padStart(2, "0");
-
-  row.innerHTML = `
-    <span class="content-number">${number}</span>
-    <span class="content-main">
-      <b>${item.title}</b>
-      <small>${formatDate(item.date)}${item.duration ? " • " + item.duration : ""}</small>
+  // App-style "All Content" entry shown before the chapter list.
+  // It combines every chapter of the selected subject.
+  const allContentCard = document.createElement("button");
+  allContentCard.className = "all-content-card";
+  const totalNotes = data.filter(x => !!x.notes).length;
+  const totalDpp = data.filter(x => !!(x.dpp || x.dppUrl)).length;
+  allContentCard.innerHTML = `
+    <span class="all-content-main">
+      <b>All Content</b>
+      <small>All Videos | All Exercises | All Notes</small>
     </span>
-    <span class="content-action">${isPdf ? "▧" : "▶"}</span>
+    <span class="chapter-card-arrow">›</span>
+  `;
+  allContentCard.onclick = () => showAllContent(subject, true);
+  chapterList.appendChild(allContentCard);
+
+  const chapterEntries = Object.entries(chapters);
+  chapterEntries.sort((a, b) => {
+    const latestA = Math.max(...a[1].map(x => {
+      const d = Date.parse(x.date || x.createdAt || x.updatedAt || "");
+      return Number.isFinite(d) ? d : 0;
+    }));
+    const latestB = Math.max(...b[1].map(x => {
+      const d = Date.parse(x.date || x.createdAt || x.updatedAt || "");
+      return Number.isFinite(d) ? d : 0;
+    }));
+    if (latestA === latestB) return 0;
+    return latestA - latestB;
+  });
+
+  chapterEntries.forEach(([chapter, list]) => {
+    const card = document.createElement("button");
+    card.className = "chapter-card";
+
+    card.innerHTML = `
+      <span class="chapter-card-text">
+        <b>${chapter}</b>
+        <small>${list.length} Lecture${list.length === 1 ? "" : "s"}</small>
+      </span>
+      <span class="chapter-card-arrow">›</span>
+    `;
+
+    card.onclick = () => showChapterLectures(subject, chapter, true);
+    chapterList.appendChild(card);
+  });
+}
+
+/*
+ * "All Content" combines every chapter for the selected subject.
+ * It uses the same tabs as an individual chapter.
+ */
+function showAllContent(subject, pushHistory = false, tab = "lectures") {
+  activeLectureSubject = subject;
+  activeChapter = "__ALL__";
+  activeChapterTab = tab;
+
+  if (pushHistory) {
+    history.pushState(
+      {
+        studyLectures:true,
+        view:"allContent",
+        subject,
+        tab
+      },
+      "",
+      location.href
+    );
+  }
+
+  subjectsView.classList.add("hidden");
+  lecturesView.classList.remove("hidden");
+
+  setHeader("← " + subject, "All Content", () => history.back());
+
+  const data = getFilteredLectures().filter(x => x.subject === subject);
+  chapterList.innerHTML = "";
+
+  const tabs = document.createElement("div");
+  tabs.className = "content-tabs";
+  tabs.innerHTML = `
+    <button class="${tab === "lectures" ? "active" : ""}" data-tab="lectures">Lectures</button>
+    <button class="${tab === "notes" ? "active" : ""}" data-tab="notes">Notes</button>
+    <button class="${tab === "dpp" ? "active" : ""}" data-tab="dpp">DPP</button>
+    <button class="${tab === "dpp-pdf" ? "active" : ""}" data-tab="dpp-pdf">DPP PDF</button>
+  `;
+  tabs.querySelectorAll("button").forEach(btn => {
+    btn.onclick = () => showAllContent(subject, false, btn.dataset.tab);
+  });
+  chapterList.appendChild(tabs);
+
+  const content = document.createElement("div");
+  content.className = "tab-content";
+
+  if (tab === "lectures") {
+    renderLectureRows(content, data);
+  } else if (tab === "notes") {
+    renderLectureRows(content, data.filter(item => !!item.notes), "notes");
+  } else if (tab === "dpp") {
+    renderLectureRows(content, data.filter(item => !!(item.dpp || item.dppUrl)), "dpp");
+  } else {
+    renderLectureRows(content, data.filter(item => !!(item.dppPdf || item.dppPdfUrl)), "dpp-pdf");
+  }
+
+  if (!content.children.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty-tab";
+    empty.textContent =
+      tab === "notes" ? "Notes abhi available nahi hain." :
+      tab === "dpp" ? "DPP abhi available nahi hai." :
+      tab === "dpp-pdf" ? "DPP PDF abhi available nahi hai." :
+      "Is subject mein abhi koi lecture nahi hai.";
+    content.appendChild(empty);
+  }
+
+  chapterList.appendChild(content);
+}
+
+/*
+ * STEP 3: Chapter ke andar app-style tabs.
+ * Lectures / Notes / DPP / DPP PDF ek hi chapter ke data se render hote hain.
+ */
+let activeChapterTab = "lectures";
+
+function showChapterLectures(subject, chapter, pushHistory = false, tab = "lectures") {
+  activeLectureSubject = subject;
+  activeChapter = chapter;
+  activeChapterTab = tab;
+
+  if (pushHistory) {
+    history.pushState(
+      {
+        studyLectures:true,
+        view:"chapterLectures",
+        subject,
+        chapter,
+        tab
+      },
+      "",
+      location.href
+    );
+  }
+
+  subjectsView.classList.add("hidden");
+  lecturesView.classList.remove("hidden");
+
+  setHeader(
+    "← " + subject,
+    chapter,
+    () => history.back()
+  );
+
+  const data = getFilteredLectures()
+    .filter(x =>
+      x.subject === subject &&
+      (x.chapter || "General") === chapter
+    );
+
+  chapterList.innerHTML = "";
+
+  const tabs = document.createElement("div");
+  tabs.className = "content-tabs";
+  tabs.innerHTML = `
+    <button class="${tab === "lectures" ? "active" : ""}" data-tab="lectures">Lectures</button>
+    <button class="${tab === "notes" ? "active" : ""}" data-tab="notes">Notes</button>
+    <button class="${tab === "dpp" ? "active" : ""}" data-tab="dpp">DPP</button>
+    <button class="${tab === "dpp-pdf" ? "active" : ""}" data-tab="dpp-pdf">DPP PDF</button>
   `;
 
-  row.onclick = () => {
-    if (!url) return;
-    if (isPdf) openPdf(url, item.title);
-    else openLectureDirect(item);
-  };
-
-  root.appendChild(row);
-}
-
-function setupContentTabs() {
-  document.querySelectorAll(".content-tab").forEach(button => {
-    button.onclick = () => {
-      if (!activeLectureSubject) return;
-      activeTab = button.dataset.tab;
-      history.pushState(
-        {studyLectures:true, view:"subjectContent", subject:activeLectureSubject, tab:activeTab},
-        "",
-        location.href
-      );
-      showSubjectContent(activeLectureSubject, activeTab, false);
+  tabs.querySelectorAll("button").forEach(btn => {
+    btn.onclick = () => {
+      showChapterLectures(subject, chapter, false, btn.dataset.tab);
+      activeChapterTab = btn.dataset.tab;
     };
   });
 
-  $("#allContentBtn")?.addEventListener("click", () => {
-    if (!activeLectureSubject) return;
-    activeTab = "lectures";
-    showSubjectContent(activeLectureSubject, "lectures", false);
-  });
+  chapterList.appendChild(tabs);
 
-  $("#closeContentNotice")?.addEventListener("click", () => {
-    $(".content-notice")?.classList.add("hidden");
-  });
+  const content = document.createElement("div");
+  content.className = "tab-content";
+
+  if (tab === "lectures") {
+    renderLectureRows(content, data);
+  } else if (tab === "notes") {
+    renderLectureRows(content, data.filter(item => !!item.notes), "notes");
+  } else if (tab === "dpp") {
+    renderLectureRows(
+      content,
+      data.filter(item => !!(item.dpp || item.dppUrl)),
+      "dpp"
+    );
+  } else if (tab === "dpp-pdf") {
+    renderLectureRows(
+      content,
+      data.filter(item => !!(item.dppPdf || item.dppPdfUrl)),
+      "dpp-pdf"
+    );
+  }
+
+  if (!content.children.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty-tab";
+    empty.textContent =
+      tab === "notes" ? "Is chapter ke notes abhi available nahi hain." :
+      tab === "dpp" ? "Is chapter ka DPP abhi available nahi hai." :
+      tab === "dpp-pdf" ? "Is chapter ka DPP PDF abhi available nahi hai." :
+      "Is chapter mein abhi koi lecture nahi hai.";
+    content.appendChild(empty);
+  }
+
+  chapterList.appendChild(content);
 }
 
-/* Search current screen ko hi update karega */
-searchInput.addEventListener("input", () => {
-  if (activeLectureSubject) renderContentList(activeLectureSubject, activeTab);
-  else showSubjects();
-});
+function renderLectureRows(container, data, mode = "lectures") {
+  const list = document.createElement("div");
+  list.className = "lecture-list";
 
-/* Browser Back/Forward + in-site PDF viewer */
-let pdfHistoryActive = false;
-let pdfBackClosing = false;
+  data.forEach((item, index) => {
+    const row = document.createElement("button");
+    row.className = "lecture";
 
-window.addEventListener("popstate", event => {
-  const pdfViewer = $("#pdfViewer");
-  if (pdfViewer && !pdfViewer.classList.contains("hidden")) {
-    pdfHistoryActive = false;
-    pdfBackClosing = true;
-    closePdf(false);
-    pdfBackClosing = false;
-    return;
-  }
+    const contentUrl =
+      mode === "notes" ? item.notes :
+      mode === "dpp" ? (item.dpp || item.dppUrl) :
+      mode === "dpp-pdf" ? (item.dppPdf || item.dppPdfUrl) :
+      item.url;
 
-  const state = event.state;
-  if (state && state.view === "subjectContent") {
-    showSubjectContent(state.subject, state.tab || "lectures", false);
-    renderFilters();
-    return;
-  }
+    const hasPdf =
+      mode === "notes" || mode === "dpp-pdf" ||
+      (item.type === "pdf" && !!contentUrl);
 
-  activeLectureSubject = null;
-  activeTab = "lectures";
-  showSubjects();
-  renderFilters();
-});
+    const hasVideo =
+      mode === "lectures" && item.type !== "pdf" && !!contentUrl;
 
-if (!history.state || !history.state.studyLectures) {
-  history.replaceState({studyLectures:true, view:"subjects", subject:null}, "", location.href);
+    row.innerHTML = `
+      <span class="lecture-no">${String(data.length - index).padStart(2,"0")}</span>
+      <span class="lecture-main">
+        <b>${mode === "notes" ? item.title.replace(/\s*\|\|.*$/, "") + " : Class Notes" : item.title}</b>
+        <small>
+          ${formatDate(item.date)}
+          ${item.duration ? " • " + item.duration : ""}
+        </small>
+      </span>
+      <span class="lecture-actions">
+        ${hasPdf ? '<span class="pdf-btn">📄 PDF</span>' : ""}
+        ${hasVideo ? '<span class="video-btn">▶ Video</span>' : ""}
+      </span>
+    `;
+
+    row.onclick = (event) => {
+      if (event.target.closest(".pdf-btn")) {
+        event.stopPropagation();
+        if (contentUrl) openPdf(contentUrl, item.title);
+        return;
+      }
+
+      if (event.target.closest(".video-btn")) {
+        event.stopPropagation();
+        if (contentUrl) openLectureDirect(item);
+        return;
+      }
+
+      if (mode === "notes" || mode === "dpp-pdf" || (mode === "dpp" && !item.dppVideo)) {
+        if (contentUrl) openPdf(contentUrl, item.title);
+      } else if (hasVideo) {
+        openLectureDirect(item);
+      } else if (hasPdf && contentUrl) {
+        openPdf(contentUrl, item.title);
+      }
+    };
+
+    list.appendChild(row);
+  });
+
+  container.appendChild(list);
+}
+
+function setHeader(backText, title, backAction) {
+  const head = lecturesView.querySelector(".section-head");
+
+  head.innerHTML = `
+    <button class="back-btn" id="backBtn">${backText}</button>
+    <h2 id="subjectTitle">${title}</h2>
+  `;
+
+  $("#backBtn").onclick = backAction;
 }
 
 function formatDate(value) {
@@ -551,6 +716,86 @@ function formatDate(value) {
     month:"short",
     year:"numeric"
   });
+}
+
+/* Search current screen ko hi update karega */
+searchInput.addEventListener("input", () => {
+  if (activeLectureSubject && activeChapter === "__ALL__") {
+    showAllContent(activeLectureSubject, false, activeChapterTab);
+  } else if (activeLectureSubject && activeChapter) {
+    showChapterLectures(activeLectureSubject, activeChapter, false, activeChapterTab);
+  } else if (activeLectureSubject) {
+    showChapters(activeLectureSubject, false);
+  } else {
+    showSubjects();
+  }
+});
+
+/* Browser Back/Forward + in-site PDF viewer */
+let pdfHistoryActive = false;
+let pdfBackClosing = false;
+
+window.addEventListener("popstate", event => {
+  // If the PDF viewer is open, the device/browser Back button should
+  // close the viewer first instead of navigating to an intermediate blank
+  // PDF/Google Viewer page.
+  const pdfViewer = $("#pdfViewer");
+  if (pdfViewer && !pdfViewer.classList.contains("hidden")) {
+    pdfHistoryActive = false;
+    pdfBackClosing = true;
+    closePdf(false);
+    pdfBackClosing = false;
+    return;
+  }
+
+  const state = event.state;
+
+  if (state && state.view === "allContent") {
+    activeSubject = "All";
+    showAllContent(
+      state.subject,
+      false,
+      state.tab || "lectures"
+    );
+    renderFilters();
+    return;
+  }
+
+  if (state && state.view === "chapterLectures") {
+    activeSubject = "All";
+    showChapterLectures(
+      state.subject,
+      state.chapter,
+      false,
+      state.tab || "lectures"
+    );
+    renderFilters();
+    return;
+  }
+
+  if (state && state.view === "chapters") {
+    activeSubject = "All";
+    showChapters(state.subject, false);
+    renderFilters();
+    return;
+  }
+
+  activeLectureSubject = null;
+  activeChapter = null;
+  showSubjects();
+  renderFilters();
+});
+
+if (!history.state || !history.state.studyLectures) {
+  history.replaceState(
+    {
+      studyLectures:true,
+      view:"subjects",
+      subject:null
+    },
+    "",
+    location.href
+  );
 }
 
 /* Menu */
@@ -617,7 +862,8 @@ function openPlayer(item) {
   video.classList.remove("hidden");
   video.pause();
   video.removeAttribute("src");
-  video.preload = "auto";
+  video.load();
+
   video.src = item.url;
 
   // Restore the saved position once duration/metadata is available.
@@ -774,7 +1020,6 @@ function openNotes(item) {
 }
 
 /* Start */
-setupContentTabs();
 lockContentForAttendance();
 recordWebsiteVisit();
 startWebsiteTimeTracking();
