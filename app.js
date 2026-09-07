@@ -288,7 +288,7 @@ const iconMap = {
 
 let activeSubject = "All";
 let activeLectureSubject = null;
-let activeChapter = null;
+let activeTab = "lectures";
 
 function subjects() {
   return [...new Set([...SUBJECTS, ...LECTURES.map(x => x.subject)])];
@@ -311,6 +311,18 @@ function getFilteredLectures() {
     );
 }
 
+function contentUrl(item, type) {
+  if (!item) return "";
+  if (type === "notes") return item.notes || item.note || item.notesUrl || "";
+  if (type === "dpp") return item.dpp || item.dppUrl || item.exercise || item.exerciseUrl || "";
+  if (type === "dppPdf") return item.dppPdf || item.dppPDF || item.dpp_pdf || item.dppPdfUrl || "";
+  return item.url || "";
+}
+
+function hasContent(item, type) {
+  return !!contentUrl(item, type);
+}
+
 function renderFilters() {
   filters.innerHTML = "";
 
@@ -322,14 +334,12 @@ function renderFilters() {
     button.onclick = () => {
       activeSubject = subject;
       activeLectureSubject = null;
-      activeChapter = null;
-
+      activeTab = "lectures";
       history.pushState(
         {studyLectures:true, view:"subjects", subject},
         "",
         location.href
       );
-
       showSubjects();
       renderFilters();
     };
@@ -338,55 +348,64 @@ function renderFilters() {
   });
 }
 
+function subjectCounts(subject) {
+  const data = LECTURES.filter(x => x.subject === subject);
+  return {
+    videos: data.filter(x => hasContent(x, "lectures") && x.type !== "pdf").length,
+    notes: data.filter(x => hasContent(x, "notes") || x.type === "pdf").length,
+    dpp: data.filter(x => hasContent(x, "dpp")).length,
+    dppPdf: data.filter(x => hasContent(x, "dppPdf")).length
+  };
+}
+
 function showSubjects() {
   activeLectureSubject = null;
-  activeChapter = null;
+  activeTab = "lectures";
 
   subjectsView.classList.remove("hidden");
   lecturesView.classList.add("hidden");
 
   const data = getFilteredLectures();
   const grouped = {};
-
-  subjects().forEach(subject => {
-    grouped[subject] = 0;
-  });
-
-  data.forEach(item => {
-    grouped[item.subject] = (grouped[item.subject] || 0) + 1;
-  });
+  subjects().forEach(subject => grouped[subject] = 0);
+  data.forEach(item => grouped[item.subject] = (grouped[item.subject] || 0) + 1);
 
   subjectGrid.innerHTML = "";
 
   Object.keys(grouped).forEach(subject => {
     const card = document.createElement("button");
     card.className = "subject-card";
+    const counts = subjectCounts(subject);
+    const meta = [
+      counts.videos ? `${counts.videos} Video${counts.videos === 1 ? "" : "s"}` : "",
+      counts.notes ? `${counts.notes} Note${counts.notes === 1 ? "" : "s"}` : ""
+    ].filter(Boolean).join(" | ") || `${grouped[subject]} item${grouped[subject] === 1 ? "" : "s"}`;
 
     card.innerHTML = `
       <span class="subject-icon">${iconMap[subject] || "📘"}</span>
       <span>
         <b>${subject}</b>
-        <small>${grouped[subject]} lecture${grouped[subject] === 1 ? "" : "s"}</small>
+        <small>${meta}</small>
       </span>
       <span class="arrow">›</span>
     `;
 
-    card.onclick = () => showChapters(subject, true);
+    card.onclick = () => showSubjectContent(subject, "lectures", true);
     subjectGrid.appendChild(card);
   });
 
   $("#countLabel").textContent =
-    `${data.length} lecture${data.length === 1 ? "" : "s"}`;
+    `${data.length} item${data.length === 1 ? "" : "s"}`;
 }
 
-/* STEP 2: Subject ke andar sirf CHAPTERS dikhte hain */
-function showChapters(subject, pushHistory = false) {
+function showSubjectContent(subject, tab = "lectures", pushHistory = false) {
   activeLectureSubject = subject;
-  activeChapter = null;
+  activeTab = tab;
+  activeSubject = "All";
 
   if (pushHistory) {
     history.pushState(
-      {studyLectures:true, view:"chapters", subject},
+      {studyLectures:true, view:"subjectContent", subject, tab},
       "",
       location.href
     );
@@ -394,177 +413,132 @@ function showChapters(subject, pushHistory = false) {
 
   subjectsView.classList.add("hidden");
   lecturesView.classList.remove("hidden");
+  $("#subjectTitle").textContent = subject;
 
-  setHeader(
-    "← Subjects",
-    subject,
-    () => history.back()
-  );
+  $("#backBtn").onclick = () => history.back();
 
+  const counts = subjectCounts(subject);
+  $("#allContentMeta").textContent =
+    `${counts.videos} Videos | ${counts.dpp} Exercises | ${counts.notes} Notes`;
+
+  document.querySelectorAll(".content-tab").forEach(button => {
+    const selected = button.dataset.tab === activeTab;
+    button.classList.toggle("active", selected);
+    button.setAttribute("aria-selected", selected ? "true" : "false");
+  });
+
+  renderContentList(subject, activeTab);
+}
+
+function renderContentList(subject, tab) {
+  const listRoot = $("#chapterList");
   const data = getFilteredLectures().filter(x => x.subject === subject);
-  const chapters = {};
+  listRoot.innerHTML = "";
 
-  data.forEach(item => {
-    const chapter = item.chapter || "General";
-    if (!chapters[chapter]) chapters[chapter] = [];
-    chapters[chapter].push(item);
-  });
-
-  chapterList.innerHTML = "";
-
-  // Only change the chapter/subject section (image 2).
-  // Keep the lecture list section (image 1) exactly as it is.
-  // The chapter containing the newest uploaded lecture is placed at the bottom.
-  const chapterEntries = Object.entries(chapters);
-  chapterEntries.sort((a, b) => {
-    const latestA = Math.max(...a[1].map(x => {
-      const d = Date.parse(x.date || x.createdAt || x.updatedAt || "");
-      return Number.isFinite(d) ? d : 0;
-    }));
-    const latestB = Math.max(...b[1].map(x => {
-      const d = Date.parse(x.date || x.createdAt || x.updatedAt || "");
-      return Number.isFinite(d) ? d : 0;
-    }));
-
-    // Newest chapter goes last; all other chapters retain their original order.
-    if (latestA === latestB) return 0;
-    return latestA - latestB;
-  });
-
-  chapterEntries.forEach(([chapter, list]) => {
-    const card = document.createElement("button");
-    card.className = "chapter-card";
-
-    card.innerHTML = `
-      <span class="chapter-card-text">
-        <b>${chapter}</b>
-        <small>${list.length} lecture${list.length === 1 ? "" : "s"}</small>
-      </span>
-      <span class="chapter-card-arrow">›</span>
-    `;
-
-    /* Chapter par click karne ke baad hi lectures khulenge */
-    card.onclick = () => showChapterLectures(subject, chapter, true);
-
-    chapterList.appendChild(card);
-  });
-}
-
-/* STEP 3: Chapter ke andar lectures */
-function showChapterLectures(subject, chapter, pushHistory = false) {
-  activeLectureSubject = subject;
-  activeChapter = chapter;
-
-  if (pushHistory) {
-    history.pushState(
-      {
-        studyLectures:true,
-        view:"chapterLectures",
-        subject,
-        chapter
-      },
-      "",
-      location.href
-    );
+  if (tab === "dpp" || tab === "dppPdf") {
+    const available = data.filter(item => hasContent(item, tab));
+    if (!available.length) {
+      listRoot.innerHTML = `<div class="coming-soon"><div class="coming-icon">✓</div><b>Coming Soon</b><small>${tab === "dpp" ? "DPP will be available here." : "DPP PDFs will be available here."}</small></div>`;
+      return;
+    }
+    available.forEach((item, index) => appendContentRow(listRoot, item, tab, index, available.length));
+    return;
   }
 
-  subjectsView.classList.add("hidden");
-  lecturesView.classList.remove("hidden");
+  const available = data.filter(item => hasContent(item, tab));
+  if (!available.length) {
+    listRoot.innerHTML = `<div class="coming-soon"><div class="coming-icon">✓</div><b>Coming Soon</b></div>`;
+    return;
+  }
 
-  setHeader(
-    "← " + subject,
-    chapter,
-    () => history.back()
-  );
-
-  const data = getFilteredLectures()
-    .filter(x =>
-      x.subject === subject &&
-      (x.chapter || "General") === chapter
-    );
-
-  chapterList.innerHTML = "";
-
-  const list = document.createElement("div");
-  list.className = "lecture-list";
-
-  data.forEach((item, index) => {
-    const row = document.createElement("button");
-    row.className = "lecture";
-
-    const hasPdf = item.type === "pdf"
-      ? !!item.url
-      : !!item.notes;
-
-    const hasVideo = item.type !== "pdf" && !!item.url;
-
-    row.innerHTML = `
-      <span class="lecture-no">${String(data.length - index).padStart(2,"0")}</span>
-
-      <span class="lecture-main">
-        <b>${item.title}</b>
-        <small>
-          ${formatDate(item.date)}
-          ${item.duration ? " • " + item.duration : ""}
-        </small>
-      </span>
-
-      <span class="lecture-actions">
-        ${hasPdf ? '<span class="pdf-btn">📄 PDF</span>' : ""}
-        ${hasVideo ? '<span class="video-btn">▶ Video</span>' : ""}
-      </span>
-    `;
-
-    row.onclick = (event) => {
-      if (event.target.closest(".pdf-btn")) {
-        event.stopPropagation();
-        // Always open PDFs inside the in-site PDF viewer.
-        // Do not navigate directly to the PDF URL, because Android may
-        // hand the file to an external "Open with" / download app.
-        if (item.type === "pdf") {
-          openPdf(item.url, item.title);
-        } else if (item.notes) {
-          openPdf(item.notes, item.title);
-        }
-        return;
-      }
-
-      if (event.target.closest(".video-btn")) {
-        event.stopPropagation();
-        openLectureDirect(item);
-        return;
-      }
-
-      // If there is only one content type, clicking the row opens that content.
-      if (hasVideo) {
-        openLectureDirect(item);
-      } else if (hasPdf) {
-        // Always open PDFs inside the in-site PDF viewer.
-        // Do not navigate directly to the PDF URL, because Android may
-        // hand the file to an external "Open with" / download app.
-        if (item.type === "pdf") {
-          openPdf(item.url, item.title);
-        } else if (item.notes) {
-          openPdf(item.notes, item.title);
-        }
-      }
-    };
-
-    list.appendChild(row);
-  });
-
-  chapterList.appendChild(list);
+  available.forEach((item, index) => appendContentRow(listRoot, item, tab, index, available.length));
 }
 
-function setHeader(backText, title, backAction) {
-  const head = lecturesView.querySelector(".section-head");
+function appendContentRow(root, item, tab, index, total) {
+  const row = document.createElement("button");
+  row.className = "content-row";
+  const url = contentUrl(item, tab);
+  const isPdf = tab === "notes" || tab === "dppPdf" || item.type === "pdf";
+  const number = String(total - index).padStart(2, "0");
 
-  head.innerHTML = `
-    <button class="back-btn" id="backBtn">${backText}</button>
-    <h2 id="subjectTitle">${title}</h2>
+  row.innerHTML = `
+    <span class="content-number">${number}</span>
+    <span class="content-main">
+      <b>${item.title}</b>
+      <small>${formatDate(item.date)}${item.duration ? " • " + item.duration : ""}</small>
+    </span>
+    <span class="content-action">${isPdf ? "▧" : "▶"}</span>
   `;
 
-  $("#backBtn").onclick = backAction;
+  row.onclick = () => {
+    if (!url) return;
+    if (isPdf) openPdf(url, item.title);
+    else openLectureDirect(item);
+  };
+
+  root.appendChild(row);
+}
+
+function setupContentTabs() {
+  document.querySelectorAll(".content-tab").forEach(button => {
+    button.onclick = () => {
+      if (!activeLectureSubject) return;
+      activeTab = button.dataset.tab;
+      history.pushState(
+        {studyLectures:true, view:"subjectContent", subject:activeLectureSubject, tab:activeTab},
+        "",
+        location.href
+      );
+      showSubjectContent(activeLectureSubject, activeTab, false);
+    };
+  });
+
+  $("#allContentBtn")?.addEventListener("click", () => {
+    if (!activeLectureSubject) return;
+    activeTab = "lectures";
+    showSubjectContent(activeLectureSubject, "lectures", false);
+  });
+
+  $("#closeContentNotice")?.addEventListener("click", () => {
+    $(".content-notice")?.classList.add("hidden");
+  });
+}
+
+/* Search current screen ko hi update karega */
+searchInput.addEventListener("input", () => {
+  if (activeLectureSubject) renderContentList(activeLectureSubject, activeTab);
+  else showSubjects();
+});
+
+/* Browser Back/Forward + in-site PDF viewer */
+let pdfHistoryActive = false;
+let pdfBackClosing = false;
+
+window.addEventListener("popstate", event => {
+  const pdfViewer = $("#pdfViewer");
+  if (pdfViewer && !pdfViewer.classList.contains("hidden")) {
+    pdfHistoryActive = false;
+    pdfBackClosing = true;
+    closePdf(false);
+    pdfBackClosing = false;
+    return;
+  }
+
+  const state = event.state;
+  if (state && state.view === "subjectContent") {
+    showSubjectContent(state.subject, state.tab || "lectures", false);
+    renderFilters();
+    return;
+  }
+
+  activeLectureSubject = null;
+  activeTab = "lectures";
+  showSubjects();
+  renderFilters();
+});
+
+if (!history.state || !history.state.studyLectures) {
+  history.replaceState({studyLectures:true, view:"subjects", subject:null}, "", location.href);
 }
 
 function formatDate(value) {
@@ -577,72 +551,6 @@ function formatDate(value) {
     month:"short",
     year:"numeric"
   });
-}
-
-/* Search current screen ko hi update karega */
-searchInput.addEventListener("input", () => {
-  if (activeLectureSubject && activeChapter) {
-    showChapterLectures(activeLectureSubject, activeChapter, false);
-  } else if (activeLectureSubject) {
-    showChapters(activeLectureSubject, false);
-  } else {
-    showSubjects();
-  }
-});
-
-/* Browser Back/Forward + in-site PDF viewer */
-let pdfHistoryActive = false;
-let pdfBackClosing = false;
-
-window.addEventListener("popstate", event => {
-  // If the PDF viewer is open, the device/browser Back button should
-  // close the viewer first instead of navigating to an intermediate blank
-  // PDF/Google Viewer page.
-  const pdfViewer = $("#pdfViewer");
-  if (pdfViewer && !pdfViewer.classList.contains("hidden")) {
-    pdfHistoryActive = false;
-    pdfBackClosing = true;
-    closePdf(false);
-    pdfBackClosing = false;
-    return;
-  }
-
-  const state = event.state;
-
-  if (state && state.view === "chapterLectures") {
-    activeSubject = "All";
-    showChapterLectures(
-      state.subject,
-      state.chapter,
-      false
-    );
-    renderFilters();
-    return;
-  }
-
-  if (state && state.view === "chapters") {
-    activeSubject = "All";
-    showChapters(state.subject, false);
-    renderFilters();
-    return;
-  }
-
-  activeLectureSubject = null;
-  activeChapter = null;
-  showSubjects();
-  renderFilters();
-});
-
-if (!history.state || !history.state.studyLectures) {
-  history.replaceState(
-    {
-      studyLectures:true,
-      view:"subjects",
-      subject:null
-    },
-    "",
-    location.href
-  );
 }
 
 /* Menu */
@@ -709,8 +617,7 @@ function openPlayer(item) {
   video.classList.remove("hidden");
   video.pause();
   video.removeAttribute("src");
-  video.load();
-
+  video.preload = "auto";
   video.src = item.url;
 
   // Restore the saved position once duration/metadata is available.
@@ -867,6 +774,7 @@ function openNotes(item) {
 }
 
 /* Start */
+setupContentTabs();
 lockContentForAttendance();
 recordWebsiteVisit();
 startWebsiteTimeTracking();
