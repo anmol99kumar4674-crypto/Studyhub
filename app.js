@@ -274,7 +274,6 @@ const subjectsView = $("#subjectsView");
 const lecturesView = $("#lecturesView");
 const subjectGrid = $("#subjectGrid");
 const chapterList = $("#chapterList");
-const filters = $("#subjectFilters");
 const searchInput = $("#searchInput");
 
 const iconMap = {
@@ -312,30 +311,7 @@ function getFilteredLectures() {
 }
 
 function renderFilters() {
-  filters.innerHTML = "";
-
-  ["All", ...subjects()].forEach(subject => {
-    const button = document.createElement("button");
-    button.className = "filter " + (activeSubject === subject ? "active" : "");
-    button.textContent = subject;
-
-    button.onclick = () => {
-      activeSubject = subject;
-      activeLectureSubject = null;
-      activeChapter = null;
-
-      history.pushState(
-        {studyLectures:true, view:"subjects", subject},
-        "",
-        location.href
-      );
-
-      showSubjects();
-      renderFilters();
-    };
-
-    filters.appendChild(button);
-  });
+  // Top category/filter bar removed by design.
 }
 
 function getChapterCount(subject) {
@@ -419,21 +395,6 @@ function showChapters(subject, pushHistory = false) {
 
   chapterList.innerHTML = "";
 
-  // App-style "All Content" entry shown before the chapter list.
-  // It combines every chapter of the selected subject.
-  const allContentCard = document.createElement("button");
-  allContentCard.className = "all-content-card";
-  const totalNotes = data.filter(x => !!x.notes).length;
-  const totalDpp = data.filter(x => !!(x.dpp || x.dppUrl)).length;
-  allContentCard.innerHTML = `
-    <span class="all-content-main">
-      <b>All Content</b>
-      <small>All Videos | All Exercises | All Notes</small>
-    </span>
-    <span class="chapter-card-arrow">›</span>
-  `;
-  allContentCard.onclick = () => showAllContent(subject, true);
-  chapterList.appendChild(allContentCard);
 
   const chapterEntries = Object.entries(chapters);
   chapterEntries.sort((a, b) => {
