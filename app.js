@@ -499,11 +499,7 @@ function showAllContent(subject, pushHistory = false, tab = "lectures") {
   if (!content.children.length) {
     const empty = document.createElement("div");
     empty.className = "empty-tab";
-    empty.textContent =
-      tab === "notes" ? "Notes abhi available nahi hain." :
-      tab === "dpp" ? "DPP abhi available nahi hai." :
-      tab === "dpp-pdf" ? "DPP PDF abhi available nahi hai." :
-      "Is subject mein abhi koi lecture nahi hai.";
+    empty.textContent = "No content available";
     content.appendChild(empty);
   }
 
@@ -596,11 +592,7 @@ function showChapterLectures(subject, chapter, pushHistory = false, tab = "lectu
   if (!content.children.length) {
     const empty = document.createElement("div");
     empty.className = "empty-tab";
-    empty.textContent =
-      tab === "notes" ? "Is chapter ke notes abhi available nahi hain." :
-      tab === "dpp" ? "Is chapter ka DPP abhi available nahi hai." :
-      tab === "dpp-pdf" ? "Is chapter ka DPP PDF abhi available nahi hai." :
-      "Is chapter mein abhi koi lecture nahi hai.";
+    empty.textContent = "No content available";
     content.appendChild(empty);
   }
 
@@ -608,6 +600,9 @@ function showChapterLectures(subject, chapter, pushHistory = false, tab = "lectu
 }
 
 function renderLectureRows(container, data, mode = "lectures") {
+  // Do not create an empty lecture-list; this lets the tab show its empty-state message.
+  if (!data || !data.length) return;
+
   const list = document.createElement("div");
   list.className = "lecture-list";
 
