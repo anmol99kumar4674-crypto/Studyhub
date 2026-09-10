@@ -148,4 +148,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/17?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/1a7a7690-8c85-4492-a7b1-d578f4842591.pdf"
   }
+,
+  {
+    id: "ncert-1789055545546",
+    chapter: "Economics",
+    title: "Economics 11 : मुद्रा एवं बैंकिंग",
+    date: "2026-09-07",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/18?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/58e6fd4a-e518-457d-86cb-a8b32b84c37e.pdf"
+  }
 ];
