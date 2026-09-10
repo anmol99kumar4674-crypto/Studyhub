@@ -168,4 +168,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/19?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ae54b8b0-3a86-471f-a52c-7b9927f3559a.pdf"
   }
+,
+  {
+    id: "ncert-1789055641775",
+    chapter: "Economics",
+    title: "Economics 13 : बैंकिंग 3",
+    date: "2026-09-09",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/20?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c199243c-e7cf-4e1c-b094-57bd558c3943.pdf"
+  }
 ];
