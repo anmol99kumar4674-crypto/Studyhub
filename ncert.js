@@ -188,4 +188,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/15?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c8de49e8-3bb8-4be9-8646-f854ee1a4154.pdf"
   }
+,
+  {
+    id: "ncert-1789531434139",
+    chapter: "Economics",
+    title: "Economics 15 : बजट",
+    date: "2026-09-11",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/16?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/26a2f12b-37df-4d08-9011-6222684b2066.pdf"
+  }
 ];
