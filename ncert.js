@@ -178,4 +178,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/14?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c199243c-e7cf-4e1c-b094-57bd558c3943.pdf"
   }
+,
+  {
+    id: "ncert-1789531365091",
+    chapter: "Economics",
+    title: "Economics 14 : बैंकिंग 4",
+    date: "2026-09-10",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/15?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c8de49e8-3bb8-4be9-8646-f854ee1a4154.pdf"
+  }
 ];
