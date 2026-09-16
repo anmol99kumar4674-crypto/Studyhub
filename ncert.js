@@ -198,4 +198,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/16?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/26a2f12b-37df-4d08-9011-6222684b2066.pdf"
   }
+,
+  {
+    id: "ncert-1789531498075",
+    chapter: "Economics",
+    title: "Economics 16 : बजट 2",
+    date: "2026-09-12",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/17?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/73eef12e-3dc7-4e08-8480-e57629d20b9c.pdf"
+  }
 ];
