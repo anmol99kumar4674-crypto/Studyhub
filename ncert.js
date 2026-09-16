@@ -5,7 +5,7 @@ const NCERT_LECTURES = [
     title: "Economics 01 : अर्थशास्त्र का परिचय",
     date: "2026-08-24",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/8?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/2?chat=@xjffjxzhfhfz&key=@navinkumarraja",
   notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/1cba57cd-548a-441d-9cc6-3f957defe8f1.pdf",
   }
 ,
@@ -15,7 +15,7 @@ const NCERT_LECTURES = [
     title: "Economics 02 : मूलभूत अवधारणा || Rescheduled @06:40 PM",
     date: "2026-08-25",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/9?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/3?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/42934a6d-7019-484c-9a43-acfe40cfe874.pdf"
   }
 ,
@@ -25,7 +25,7 @@ const NCERT_LECTURES = [
     title: "Economics 03 : मूलभूत अवधारणा 02",
     date: "2026-08-26",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/10?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/4?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/42934a6d-7019-484c-9a43-acfe40cfe874.pdf"
   }
 ,
@@ -35,7 +35,7 @@ const NCERT_LECTURES = [
     title: "Economics 04 : व्यष्टि अर्थशास्त्र की मूलभूत अवधारणा || Rescheduled @06:40 PM",
     date: "2026-08-27",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/11?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/5?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/42934a6d-7019-484c-9a43-acfe40cfe874.pdf"
   }
 ,
@@ -45,7 +45,7 @@ const NCERT_LECTURES = [
     title: "Economics 05 : व्यष्टिअर्थशास्त्र की मूलभूत अवधारणा 02",
     date: "2026-08-29",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/12?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/6?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fa8b6d3f1-d46b-4244-b42a-38623e662932.pdf&embedded=true"
   }
 ,
@@ -55,7 +55,7 @@ const NCERT_LECTURES = [
     title: "Economics 06 : व्यष्टिअर्थशास्त्र की मूलभूत अवधारणा 03",
     date: "2026-08-31",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/7?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2Fbd8c3ecc-08d8-4de7-8222-da11ee7e7b2a.pdf&embedded=true"
   }
 ,
@@ -115,7 +115,7 @@ const NCERT_LECTURES = [
     title: "Economics 07 : व्यष्टिअर्थशास्त्र की मूलभूत अवधारणा 04",
     date: "2026-09-01",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/14?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/8?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2F80305404-7d7b-42d5-9525-0d361711914e.pdf&embedded=true"
   }
 ,
@@ -125,7 +125,7 @@ const NCERT_LECTURES = [
     title: "Economics 08 : राष्ट्रीय आय",
     date: "2026-09-02",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/15?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/9?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/119d3319-854b-4841-9993-8e21a4306c3e.pdf"
   }
 ,
@@ -135,7 +135,7 @@ const NCERT_LECTURES = [
     title: "Economics 09 : राष्ट्रीय आय 2",
     date: "2026-09-03",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/16?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/10?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/05525db5-62b6-4cd6-8c4d-ba4d987eccec.pdf"
   }
 ,
@@ -145,7 +145,7 @@ const NCERT_LECTURES = [
     title: "Economics 10 : राष्ट्रीय आय 3 || DPP will be Provided Soon",
     date: "2026-09-05",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/17?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/11?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/1a7a7690-8c85-4492-a7b1-d578f4842591.pdf"
   }
 ,
@@ -155,7 +155,7 @@ const NCERT_LECTURES = [
     title: "Economics 11 : मुद्रा एवं बैंकिंग",
     date: "2026-09-07",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/18?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/12?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/58e6fd4a-e518-457d-86cb-a8b32b84c37e.pdf"
   }
 ,
@@ -165,7 +165,7 @@ const NCERT_LECTURES = [
     title: "Economics 12 : मुद्रा एवं बैंकिंग 2",
     date: "2026-09-08",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/19?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ae54b8b0-3a86-471f-a52c-7b9927f3559a.pdf"
   }
 ,
@@ -175,7 +175,7 @@ const NCERT_LECTURES = [
     title: "Economics 13 : बैंकिंग 3",
     date: "2026-09-09",
     duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/20?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/14?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c199243c-e7cf-4e1c-b094-57bd558c3943.pdf"
   }
 ];
