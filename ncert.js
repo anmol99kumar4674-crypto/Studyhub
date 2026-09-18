@@ -218,4 +218,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/18?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/3f730458-a58e-4fe9-b216-423f6188da6a.pdf"
   }
+,
+  {
+    id: "ncert-1789744094789",
+    chapter: "Economics",
+    title: "Economics 18 : भारतीय अर्थव्यवस्था ||Reschedule @8:00 PM",
+    date: "2026-09-17",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/19?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/7c36e27f-f3bc-4ac3-b193-87b5ca5a9e84.pdf"
+  }
 ];
