@@ -439,6 +439,161 @@ export default {
       }
     }
 
+    // Read lectures from a selected GitHub subject file for the admin editor.
+    if (request.method === "GET" && url.pathname === "/api/lectures") {
+      try {
+        if (!TOKEN) return reply("Cloudflare Settings me STUDYHUB_TOKEN secret configure nahi hai.", 500);
+
+        const subject = String(url.searchParams.get("subject") || "").trim();
+        const config = SUBJECT_FILES[subject];
+        if (!config) return reply("Selected subject configured nahi hai.", 400);
+
+        const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${config.file}`;
+        const headers = {
+          "Authorization": `Bearer ${TOKEN}`,
+          "Accept": "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "StudyHub-Admin"
+        };
+        const response = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, { headers });
+        const file = await response.json();
+        if (!response.ok) return reply(`GitHub file read failed: ${file.message || response.status}`, 502);
+
+        const source = decodeBase64(file.content);
+        const lectures = extractLectures(source, config.array);
+        return reply("Lectures loaded", 200, { ok: true, lectures });
+      } catch (error) {
+        return reply(`Worker error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
+    // Edit an existing lecture in the selected GitHub subject file.
+    if (request.method === "PUT" && url.pathname === "/api/lecture") {
+      try {
+        if (!TOKEN) return reply("Cloudflare Settings me STUDYHUB_TOKEN secret configure nahi hai.", 500);
+        const data = await request.json();
+        const subject = String(data.subject || "").trim();
+        const id = String(data.id || "").trim();
+        const chapter = String(data.chapter || "").trim();
+        const title = String(data.title || "").trim();
+        const video = String(data.video || "").trim();
+        const pdf = String(data.pdf || "").trim();
+        const notes = String(data.notes || "").trim();
+        const date = String(data.date || "").trim();
+        const duration = String(data.duration || "").trim();
+        const pdfOnly = PDF_ONLY_SUBJECTS.has(subject);
+        const contentUrl = pdfOnly ? pdf : video;
+
+        if (!subject || !id || !chapter || !title || !date || (pdfOnly && !pdf)) {
+          return reply(pdfOnly
+            ? "Subject, ID, Chapter, Title, PDF URL aur Date bharna zaroori hai."
+            : "Subject, ID, Chapter, Title aur Date bharna zaroori hai.", 400);
+        }
+
+        const config = SUBJECT_FILES[subject];
+        if (!config) return reply("Selected subject configured nahi hai.", 400);
+
+        const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${config.file}`;
+        const headers = {
+          "Authorization": `Bearer ${TOKEN}`,
+          "Accept": "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "StudyHub-Admin"
+        };
+        const getResponse = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, { headers });
+        const oldFile = await getResponse.json();
+        if (!getResponse.ok) return reply(`GitHub file read failed: ${oldFile.message || getResponse.status}`, 502);
+
+        const source = decodeBase64(oldFile.content);
+        const range = findLectureRange(source, config.array, id);
+        if (!range) return reply("Lecture nahi mila.", 404);
+
+        const lectureLines = [
+          "  {",
+          `    id: ${jsString(id)},`,
+          `    chapter: ${jsString(chapter)},`,
+          `    title: ${jsString(title)},`,
+          `    date: ${jsString(date)},`,
+          `    duration: ${jsString(pdfOnly ? "" : duration)},`,
+          `    url: ${jsString(contentUrl)},`
+        ];
+        if (pdfOnly) lectureLines.push(`    type: "pdf"`);
+        else if (notes) lectureLines.push(`    notes: ${jsString(notes)}`);
+        lectureLines.push("  }");
+
+        const updatedSource = source.slice(0, range.start) + lectureLines.join("\n") + source.slice(range.end);
+        const putResponse = await fetch(api, {
+          method: "PUT",
+          headers: { ...headers, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: `Edit ${subject} lecture: ${title}`,
+            content: encodeBase64(updatedSource),
+            sha: oldFile.sha,
+            branch: BRANCH
+          })
+        });
+        const result = await putResponse.json();
+        if (!putResponse.ok) return reply(`GitHub update failed: ${result.message || putResponse.status}`, 502);
+        return reply("Lecture successfully edit ho gaya.", 200, { ok: true, id, commit: result.commit?.html_url || "" });
+      } catch (error) {
+        return reply(`Worker error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
+    // Delete an existing lecture from the selected GitHub subject file.
+    if (request.method === "DELETE" && url.pathname === "/api/lecture") {
+      try {
+        if (!TOKEN) return reply("Cloudflare Settings me STUDYHUB_TOKEN secret configure nahi hai.", 500);
+        const data = await request.json();
+        const subject = String(data.subject || "").trim();
+        const id = String(data.id || "").trim();
+        const config = SUBJECT_FILES[subject];
+        if (!config || !id) return reply("Subject aur lecture ID zaroori hai.", 400);
+
+        const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${config.file}`;
+        const headers = {
+          "Authorization": `Bearer ${TOKEN}`,
+          "Accept": "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "StudyHub-Admin"
+        };
+        const getResponse = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, { headers });
+        const oldFile = await getResponse.json();
+        if (!getResponse.ok) return reply(`GitHub file read failed: ${oldFile.message || getResponse.status}`, 502);
+
+        const source = decodeBase64(oldFile.content);
+        const range = findLectureRange(source, config.array, id);
+        if (!range) return reply("Lecture nahi mila.", 404);
+
+        let start = range.start;
+        let end = range.end;
+        // Remove a following comma when present, otherwise remove the preceding comma.
+        if (source.slice(end).match(/^\s*,/)) {
+          end = source.slice(end).search(/,/) + end + 1;
+        } else {
+          const before = source.slice(0, start);
+          const comma = before.lastIndexOf(",");
+          if (comma >= source.indexOf("[", source.lastIndexOf(`const ${config.array}`))) start = comma;
+        }
+        const updatedSource = source.slice(0, start) + source.slice(end);
+        const putResponse = await fetch(api, {
+          method: "PUT",
+          headers: { ...headers, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: `Delete ${subject} lecture: ${id}`,
+            content: encodeBase64(updatedSource),
+            sha: oldFile.sha,
+            branch: BRANCH
+          })
+        });
+        const result = await putResponse.json();
+        if (!putResponse.ok) return reply(`GitHub update failed: ${result.message || putResponse.status}`, 502);
+        return reply("Lecture successfully delete ho gaya.", 200, { ok: true, id, commit: result.commit?.html_url || "" });
+      } catch (error) {
+        return reply(`Worker error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
     // Add a lecture to the selected GitHub subject file
     if (request.method === "POST" && url.pathname === "/api/lecture") {
       try {
@@ -610,6 +765,39 @@ export default {
     return new Response("Not Found", { status: 404 });
   }
 };
+
+function findLectureRange(source, arrayName, id) {
+  const arrayStart = source.indexOf(`const ${arrayName} = [`);
+  if (arrayStart === -1) return null;
+  const arrayEnd = source.indexOf("];", arrayStart);
+  if (arrayEnd === -1) return null;
+  const area = source.slice(arrayStart, arrayEnd);
+  const escapedId = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = area.match(new RegExp(`\\{\\s*id\\s*:\\s*${JSON.stringify(id)}[\\s\\S]*?\\n\\s*\\}`));
+  if (!match) return null;
+  return { start: arrayStart + match.index, end: arrayStart + match.index + match[0].length };
+}
+
+function extractLectures(source, arrayName) {
+  const arrayStart = source.indexOf(`const ${arrayName} = [`);
+  if (arrayStart === -1) return [];
+  const arrayEnd = source.indexOf("];", arrayStart);
+  if (arrayEnd === -1) return [];
+  const area = source.slice(arrayStart, arrayEnd);
+  const objects = area.match(/\{\s*id\s*:\s*"[^"]*"[\s\S]*?\n\s*\}/g) || [];
+  return objects.map(block => {
+    const get = key => {
+      const m = block.match(new RegExp(`${key}\\s*:\\s*"((?:\\\\.|[^"\\\\])*)"`));
+      if (!m) return "";
+      try { return JSON.parse(`"${m[1]}"`); } catch (_) { return m[1]; }
+    };
+    return {
+      id: get("id"), chapter: get("chapter"), title: get("title"),
+      date: get("date"), duration: get("duration"), url: get("url"),
+      notes: get("notes"), type: get("type")
+    };
+  }).filter(x => x.id);
+}
 
 function reply(message, status = 200, extra = {}) {
   return new Response(
@@ -785,6 +973,110 @@ button:disabled{
 Lecture save hone par selected subject ki GitHub file automatically update hogi.
 </div>
 </div>
+
+<div class="box" style="margin-top:20px">
+<h2>✏️ Manage Lectures</h2>
+<label>Subject</label>
+<select id="manageSubject"></select>
+<button type="button" onclick="loadLectures()">Refresh Posts</button>
+<div id="manageMsg" class="small">Subject select karke posts load karein.</div>
+<div id="lectureManageList" style="margin-top:14px"></div>
+</div>
+
+<div id="editBox" class="box" style="margin-top:20px;display:none">
+<h2>✏️ Edit Lecture</h2>
+<input type="hidden" id="editId">
+<label>Chapter</label><input id="editChapter">
+<label>Lecture Title</label><input id="editTitle">
+<div id="editVideoFields">
+<label>Video URL</label><input id="editVideo">
+<label>PDF URL / Notes (Optional)</label><input id="editNotes">
+<label>Duration (Optional)</label><input id="editDuration">
+</div>
+<div id="editPdfFields" style="display:none">
+<label>PDF URL</label><input id="editPdf">
+</div>
+<label>Date</label><input id="editDate" type="date">
+<button type="button" onclick="updateLecture()">Save Changes</button>
+<div id="editMsg" class="small"></div>
+</div>
+
+<script>
+const manageSubjects = ["Notices","Current Affairs","Polity","History","Bihar Special","Science","Environment","Economics","Essay","Hindi (हिन्दी)","Maths/DI","Bihar Current Wallah Monthly Compilation","NCERT"];
+const manageSubjectEl = document.getElementById("manageSubject");
+manageSubjects.forEach(s => {
+  const o = document.createElement("option"); o.value=s; o.textContent=s; manageSubjectEl.appendChild(o);
+});
+
+function escHtml(value){
+  return String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
+}
+
+async function loadLectures(){
+  const subject = manageSubjectEl.value;
+  const msg = document.getElementById("manageMsg");
+  const list = document.getElementById("lectureManageList");
+  list.innerHTML = ""; msg.textContent = "Loading...";
+  try{
+    const response = await fetch("/api/lectures?subject=" + encodeURIComponent(subject), {cache:"no-store"});
+    const result = await response.json();
+    if(!response.ok || !result.ok) throw new Error(result.message || "Posts load nahi hue.");
+    const lectures = result.lectures || [];
+    if(!lectures.length){ msg.textContent = "No content available"; return; }
+    msg.textContent = lectures.length + " post(s)";
+    lectures.forEach(item => {
+      const card = document.createElement("div");
+      card.style.cssText = "border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0;background:#fff";
+      const safeItem = JSON.stringify(item).replace(/</g, "\\u003c");
+      const safeId = JSON.stringify(item.id);
+      card.innerHTML = "<b>" + escHtml(item.title) + "</b><div class=\"small\">Chapter: " + escHtml(item.chapter) + " · " + escHtml(item.date) + "</div><div style=\"display:flex;gap:8px;margin-top:10px\"><button type=\"button\" style=\"flex:1\" onclick='openEdit(" + safeItem + ")'>Edit</button><button type=\"button\" style=\"flex:1;background:#d9363e\" onclick='deleteLecture(" + safeId + ")'>Delete</button></div>";
+      list.appendChild(card);
+    });
+  }catch(error){ msg.textContent = error.message || "Posts load failed."; }
+}
+
+function openEdit(item){
+  document.getElementById("editBox").style.display="block";
+  document.getElementById("editId").value=item.id||"";
+  document.getElementById("editChapter").value=item.chapter||"";
+  document.getElementById("editTitle").value=item.title||"";
+  document.getElementById("editDate").value=item.date||"";
+  const pdfOnly=manageSubjectEl.value==="Bihar Current Wallah Monthly Compilation";
+  document.getElementById("editVideoFields").style.display=pdfOnly?"none":"block";
+  document.getElementById("editPdfFields").style.display=pdfOnly?"block":"none";
+  document.getElementById("editVideo").value=pdfOnly?"":(item.url||"");
+  document.getElementById("editPdf").value=pdfOnly?(item.url||""):"";
+  document.getElementById("editNotes").value=item.notes||"";
+  document.getElementById("editDuration").value=item.duration||"";
+  window.scrollTo({top:document.getElementById("editBox").offsetTop-10,behavior:"smooth"});
+}
+
+async function updateLecture(){
+  const subject=manageSubjectEl.value;
+  const pdfOnly=subject==="Bihar Current Wallah Monthly Compilation";
+  const data={subject,id:document.getElementById("editId").value,chapter:document.getElementById("editChapter").value.trim(),title:document.getElementById("editTitle").value.trim(),date:document.getElementById("editDate").value,video:document.getElementById("editVideo").value.trim(),pdf:document.getElementById("editPdf").value.trim(),notes:document.getElementById("editNotes").value.trim(),duration:document.getElementById("editDuration").value.trim()};
+  const msg=document.getElementById("editMsg"); msg.textContent="Saving...";
+  try{
+    const response=await fetch("/api/lecture",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    const result=await response.json();
+    if(!response.ok||!result.ok) throw new Error(result.message||"Update failed.");
+    msg.textContent="Lecture successfully edit ho gaya.";
+    await loadLectures();
+  }catch(error){msg.textContent=error.message||"Update failed.";}
+}
+
+async function deleteLecture(id){
+  if(!confirm("Kya aap is post ko delete karna chahte hain?")) return;
+  const msg=document.getElementById("manageMsg"); msg.textContent="Deleting...";
+  try{
+    const response=await fetch("/api/lecture",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({subject:manageSubjectEl.value,id})});
+    const result=await response.json();
+    if(!response.ok||!result.ok) throw new Error(result.message||"Delete failed.");
+    document.getElementById("editBox").style.display="none";
+    await loadLectures();
+  }catch(error){msg.textContent=error.message||"Delete failed.";}
+}
+</script>
 
 <div class="box" style="margin-top:20px">
 <h2>📋 Student Attendance</h2>
@@ -1057,7 +1349,7 @@ async function save(){
 function corsHeaders() {
   return {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type"
   };
 }
