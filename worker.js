@@ -784,19 +784,24 @@ function extractLectures(source, arrayName) {
   const arrayEnd = source.indexOf("];", arrayStart);
   if (arrayEnd === -1) return [];
   const area = source.slice(arrayStart, arrayEnd);
-  const objects = area.match(/\{\s*id\s*:\s*"[^"]*"[\s\S]*?\n\s*\}/g) || [];
-  return objects.map(block => {
+  const objects = [];
+  const objectRe = /\{[\s\S]*?\}(?=\s*,|\s*$)/g;
+  let match;
+  while ((match = objectRe.exec(area))) {
+    const block = match[0];
+    if (!/\bid\s*:\s*"/.test(block)) continue;
     const get = key => {
       const m = block.match(new RegExp(`${key}\\s*:\\s*"((?:\\\\.|[^"\\\\])*)"`));
       if (!m) return "";
       try { return JSON.parse(`"${m[1]}"`); } catch (_) { return m[1]; }
     };
-    return {
+    objects.push({
       id: get("id"), chapter: get("chapter"), title: get("title"),
       date: get("date"), duration: get("duration"), url: get("url"),
       notes: get("notes"), type: get("type")
-    };
-  }).filter(x => x.id);
+    });
+  }
+  return objects.filter(x => x.id);
 }
 
 function reply(message, status = 200, extra = {}) {
@@ -977,7 +982,7 @@ Lecture save hone par selected subject ki GitHub file automatically update hogi.
 <div class="box" style="margin-top:20px">
 <h2>✏️ Manage Lectures</h2>
 <label>Subject</label>
-<select id="manageSubject" onchange="loadLectures()">
+<select id="manageSubject">
   <option value="">Select Subject</option>
   <option value="Notices">Notices</option>
   <option value="Current Affairs">Current Affairs</option>
@@ -1018,13 +1023,15 @@ Lecture save hone par selected subject ki GitHub file automatically update hogi.
 
 <script>
 const manageSubjectEl = document.getElementById("manageSubject");
+const refreshPostsBtn = document.querySelector('button[onclick="loadLectures()"]');
 
 function escHtml(value){
   return String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
 }
 
 async function loadLectures(){
-  const subject = manageSubjectEl.value;
+  const subject = String(manageSubjectEl.value || "").trim();
+  console.log("StudyHub: loading posts for", subject);
   if(!subject){
     document.getElementById("manageMsg").textContent = "Please select a subject.";
     document.getElementById("lectureManageList").innerHTML = "";
@@ -1048,8 +1055,15 @@ async function loadLectures(){
       card.innerHTML = "<b>" + escHtml(item.title) + "</b><div class=\"small\">Chapter: " + escHtml(item.chapter) + " · " + escHtml(item.date) + "</div><div style=\"display:flex;gap:8px;margin-top:10px\"><button type=\"button\" style=\"flex:1\" onclick='openEdit(" + safeItem + ")'>Edit</button><button type=\"button\" style=\"flex:1;background:#d9363e\" onclick='deleteLecture(" + safeId + ")'>Delete</button></div>";
       list.appendChild(card);
     });
-  }catch(error){ msg.textContent = error.message || "Posts load failed."; }
+  }catch(error){
+    console.error("StudyHub loadLectures error:", error);
+    msg.textContent = error.message || "Posts load failed.";
+    list.innerHTML = '<div style="padding:14px;border:1px solid #f0b4b4;border-radius:10px;background:#fff5f5;color:#a52222">No content available</div>';
+  }
 }
+
+manageSubjectEl.addEventListener("change", loadLectures);
+if (refreshPostsBtn) refreshPostsBtn.addEventListener("click", loadLectures);
 
 function openEdit(item){
   document.getElementById("editBox").style.display="block";
