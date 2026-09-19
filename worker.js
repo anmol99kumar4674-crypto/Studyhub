@@ -977,7 +977,22 @@ Lecture save hone par selected subject ki GitHub file automatically update hogi.
 <div class="box" style="margin-top:20px">
 <h2>✏️ Manage Lectures</h2>
 <label>Subject</label>
-<select id="manageSubject"></select>
+<select id="manageSubject" onchange="loadLectures()">
+  <option value="">Select Subject</option>
+  <option value="Notices">Notices</option>
+  <option value="Current Affairs">Current Affairs</option>
+  <option value="Polity">Polity</option>
+  <option value="History">History</option>
+  <option value="Bihar Special">Bihar Special</option>
+  <option value="Science">Science</option>
+  <option value="Environment">Environment</option>
+  <option value="Economics">Economics</option>
+  <option value="Essay">Essay</option>
+  <option value="Hindi (हिन्दी)">Hindi (हिन्दी)</option>
+  <option value="Maths/DI">Maths/DI</option>
+  <option value="Bihar Current Wallah Monthly Compilation">Bihar Current Wallah Monthly Compilation</option>
+  <option value="NCERT">NCERT</option>
+</select>
 <button type="button" onclick="loadLectures()">Refresh Posts</button>
 <div id="manageMsg" class="small">Subject select karke posts load karein.</div>
 <div id="lectureManageList" style="margin-top:14px"></div>
@@ -1002,11 +1017,7 @@ Lecture save hone par selected subject ki GitHub file automatically update hogi.
 </div>
 
 <script>
-const manageSubjects = ["Notices","Current Affairs","Polity","History","Bihar Special","Science","Environment","Economics","Essay","Hindi (हिन्दी)","Maths/DI","Bihar Current Wallah Monthly Compilation","NCERT"];
 const manageSubjectEl = document.getElementById("manageSubject");
-manageSubjects.forEach(s => {
-  const o = document.createElement("option"); o.value=s; o.textContent=s; manageSubjectEl.appendChild(o);
-});
 
 function escHtml(value){
   return String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
@@ -1014,6 +1025,11 @@ function escHtml(value){
 
 async function loadLectures(){
   const subject = manageSubjectEl.value;
+  if(!subject){
+    document.getElementById("manageMsg").textContent = "Please select a subject.";
+    document.getElementById("lectureManageList").innerHTML = "";
+    return;
+  }
   const msg = document.getElementById("manageMsg");
   const list = document.getElementById("lectureManageList");
   list.innerHTML = ""; msg.textContent = "Loading...";
