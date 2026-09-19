@@ -618,8 +618,44 @@ function escHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+function makeAutoThumbnail(item) {
+  const subject = String(item.subject || item.chapter || "Study").trim();
+  const title = String(item.title || "Lecture").replace(/\s*\|\|.*$/, "").trim();
+  const match = title.match(/(\d+)\s*:/);
+  const number = match ? match[1] : "";
+  const initial = subject.charAt(0).toUpperCase() || "S";
+
+  // Local SVG fallback: no external image request, so thumbnails still work
+  // when a post does not have a thumbnail URL.
+  const svg = `\
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">\
+  <defs>\
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">\
+      <stop offset="0" stop-color="#242a33"/>\
+      <stop offset="1" stop-color="#11151b"/>\
+    </linearGradient>\
+  </defs>\
+  <rect width="640" height="360" rx="28" fill="url(#g)"/>\
+  <text x="42" y="75" fill="#f4b400" font-family="Arial, sans-serif" font-size="25" font-weight="700">${escapeSvg(subject.slice(0,24))}</text>\
+  <text x="42" y="205" fill="#f4b400" font-family="Arial, sans-serif" font-size="132" font-weight="900">${escapeSvg(initial)}</text>\
+  ${number ? `<text x="520" y="300" text-anchor="middle" fill="#ffffff" opacity=".9" font-family="Arial, sans-serif" font-size="58" font-weight="800">${escapeSvg(number)}</text>` : ""}\
+  <circle cx="548" cy="108" r="43" fill="#f4b400"/>\
+  <path d="M535 86 L535 130 L570 108 Z" fill="#050505"/>\
+</svg>`;
+  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+}
+
+function escapeSvg(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 function itemThumb(item) {
-  return item.thumbnail || item.image || item.poster || "";
+  return item.thumbnail || item.image || item.poster || makeAutoThumbnail(item);
 }
 
 function openAttachments(item) {
