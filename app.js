@@ -639,6 +639,8 @@ function makeAutoThumbnail(item) {
   <text x="42" y="75" fill="#f4b400" font-family="Arial, sans-serif" font-size="25" font-weight="700">${escapeSvg(subject.slice(0,24))}</text>\
   <text x="42" y="205" fill="#f4b400" font-family="Arial, sans-serif" font-size="132" font-weight="900">${escapeSvg(initial)}</text>\
   ${number ? `<text x="520" y="300" text-anchor="middle" fill="#ffffff" opacity=".9" font-family="Arial, sans-serif" font-size="58" font-weight="800">${escapeSvg(number)}</text>` : ""}\
+  <circle cx="548" cy="108" r="43" fill="#f4b400"/>\
+  <path d="M535 86 L535 130 L570 108 Z" fill="#050505"/>\
 </svg>`;
   return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
 }
@@ -754,15 +756,10 @@ function renderLectureRows(container, data, mode = "lectures") {
         ${item.duration ? `<div class="app-lecture-duration">${escHtml(item.duration)}</div>` : ""}
         <div class="app-lecture-buttons">
           <button class="notes-btn" type="button">
-            <svg class="btn-icon notes-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 3.5h9l3 3V20.5H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M15 3.5v4h4M9 11h6M9 14.5h6M9 18h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-            <span>Notes</span>
+            <span>▤</span> Notes
           </button>
           <button class="watch-btn" type="button">
-            <svg class="btn-icon watch-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5v11l8-5.5z" fill="currentColor"/></svg>
-            <span>${mode === "lectures" || mode === "dpp-video" ? "Watch" : "Open"}</span>
+            <span>▶</span> ${mode === "lectures" || mode === "dpp-video" ? "Watch" : "Open"}
           </button>
         </div>
       </div>
