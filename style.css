@@ -578,7 +578,7 @@ body{color-scheme:light;}
 }
 .app-lecture-meta span{color:var(--ui-muted) !important}
 .app-lecture-title{
-  color:var(--ui-text) !important;
+  color: #000;
   font-size:22px !important;
   font-weight:800 !important;
   line-height:1.35 !important;
