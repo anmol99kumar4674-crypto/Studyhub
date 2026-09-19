@@ -952,3 +952,15 @@ body{min-width:320px}
   justify-content:center !important;
   gap:9px !important;
 }
+.lecture-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.lecture-actions button {
+    height: 58px;
+    padding: 0 28px;
+    font-size: 19px;
+    border-radius: 18px;
+}
