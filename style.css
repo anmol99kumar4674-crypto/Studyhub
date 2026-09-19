@@ -964,3 +964,24 @@ body{min-width:320px}
     font-size: 19px;
     border-radius: 18px;
 }
+
+
+/* ===== Attendance + video title text fix ===== */
+.attendance-card h2 {
+  color: #111 !important;
+}
+.attendance-card p {
+  color: #666 !important;
+}
+.attendance-card input {
+  color: #111 !important;
+  background: #fff !important;
+}
+.player-info h2,
+#playerTitle {
+  color: #111 !important;
+}
+.player-info p,
+#playerMeta {
+  color: #666 !important;
+}
