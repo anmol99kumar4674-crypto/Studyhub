@@ -696,11 +696,11 @@ function renderLectureRows(container, data, mode = "lectures") {
       item.url;
 
     const thumb = itemThumb(item);
+    const fallbackText = String(item.subject || item.chapter || "Lecture").trim().slice(0, 1).toUpperCase();
     const thumbHtml = thumb
-      ? `<img src="${escHtml(thumb)}" alt="" loading="lazy">`
-      : `<div class="lecture-thumb-fallback">
-           <span>${escHtml((item.chapter || item.subject || "S").slice(0,1).toUpperCase())}</span>
-         </div>`;
+      ? `<img src="${escHtml(thumb)}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+         <div class="lecture-thumb-fallback" style="display:none"><span>${escHtml(fallbackText)}</span></div>`
+      : `<div class="lecture-thumb-fallback"><span>${escHtml(fallbackText)}</span></div>`;
 
     const metaType =
       mode === "notes" ? "Notes" :
@@ -719,10 +719,12 @@ function renderLectureRows(container, data, mode = "lectures") {
         <div class="app-lecture-title">${escHtml(displayTitle)}</div>
         ${item.duration ? `<div class="app-lecture-duration">${escHtml(item.duration)}</div>` : ""}
         <div class="app-lecture-buttons">
+          <button class="notes-btn" type="button">
+            <span>▤</span> Notes
+          </button>
           <button class="watch-btn" type="button">
             <span>▶</span> ${mode === "lectures" || mode === "dpp-video" ? "Watch" : "Open"}
           </button>
-          <button class="more-btn" type="button">Notes &amp; more</button>
         </div>
       </div>
     `;
@@ -737,9 +739,11 @@ function renderLectureRows(container, data, mode = "lectures") {
       }
     };
 
-    row.querySelector(".more-btn").onclick = e => {
+    row.querySelector(".notes-btn").onclick = e => {
       e.stopPropagation();
-      openAttachments(item);
+      const notesUrl = item.notes || "";
+      if (notesUrl) openPdf(notesUrl, displayTitle);
+      else openAttachments(item);
     };
 
     row.onclick = () => {
