@@ -76,3 +76,7 @@ Lecture URLs are now opened directly in the browser instead of being forced into
 ### Browser Back navigation
 
 Subject opening now uses browser history. Pressing the phone/browser **Back** button from a subject returns to the Subjects screen instead of leaving the website.
+
+
+### App-style UI update
+The public interface now uses a dark learning-app layout with content tabs, lecture cards, Watch buttons, Notes & more attachment modal, and No content available empty states.

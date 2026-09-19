@@ -284,3 +284,188 @@ body.pdf-open { overflow: hidden; }
 .all-content-main{display:block;min-width:0}
 .all-content-main b{display:block;font-size:19px;line-height:1.35}
 .all-content-main small{display:block;color:#888;margin-top:6px;font-size:13px}
+
+
+/* =========================================================
+   StudyHub app-style interface
+   ========================================================= */
+:root{
+  --app-bg:#090d12;
+  --app-card:#0d1218;
+  --app-card-2:#111820;
+  --app-border:#37414b;
+  --app-text:#f5f7fa;
+  --app-muted:#94a0b2;
+  --app-accent:#6b50e8;
+  --app-button:#3a434d;
+  --app-red:#ff3f4d;
+}
+html,body{background:var(--app-bg);color:var(--app-text)}
+body{min-height:100vh}
+.topbar{
+  height:70px;background:#0b1016;border-bottom:1px solid #202832;
+  color:#fff;position:sticky;top:0;z-index:20;
+}
+.brand{font-size:21px}.brand-mark{background:#5b45d9}
+.menu-btn{color:#fff}
+.section-head{
+  width:min(1180px,calc(100% - 30px));color:#fff;margin:18px auto 12px;
+}
+.section-head h2{color:#fff;font-size:25px}
+.back-btn{color:#8d78ff;font-size:16px}
+.chapter-list{width:min(1180px,calc(100% - 30px));gap:14px}
+.chapter-card{
+  background:var(--app-card);border:1px solid var(--app-border);
+  color:#fff;box-shadow:none;border-radius:20px;
+}
+.chapter-card:hover{background:#111820;border-color:#505c68}
+.chapter-card-text b{color:#fff;font-size:20px}
+.chapter-card-text small{color:var(--app-muted)}
+.chapter-card-arrow{color:#aab2bd}
+
+.content-tabs{
+  background:#0b1016;border-bottom:1px solid #35404b;
+  gap:35px;padding:0 5px;margin-bottom:18px;
+}
+.content-tabs button{
+  color:#8d98aa;font-size:17px;font-weight:500;padding:14px 3px 13px;
+}
+.content-tabs button.active{color:#8c76ff}
+.content-tabs button.active::after{background:#7359ef;height:3px}
+
+.tab-content{width:100%}
+.empty-tab{
+  background:#0d1218;color:#96a2b3;border:1px dashed #3b4652;
+  border-radius:18px;padding:42px 18px;font-size:17px;
+}
+
+/* Card layout like the reference learning app */
+.app-lecture-list{display:flex;flex-direction:column;gap:30px}
+.app-lecture-card{
+  position:relative;display:flex;gap:22px;padding:26px 30px 30px;
+  background:var(--app-card);border:2px solid #39434e;border-radius:28px;
+  color:#fff;box-shadow:none;overflow:hidden;cursor:pointer;
+}
+.app-lecture-card::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:10px;
+  background:#39434e;border-radius:28px 28px 0 0;
+}
+.lecture-thumb{
+  position:relative;flex:0 0 135px;width:135px;height:135px;
+  margin-top:8px;border-radius:16px;overflow:hidden;background:#202833;
+}
+.lecture-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.lecture-thumb-fallback{
+  width:100%;height:100%;display:grid;place-items:center;
+  background:linear-gradient(145deg,#252c36,#151b22);
+}
+.lecture-thumb-fallback span{font-size:58px;font-weight:800;color:#b6a8ff}
+.thumb-play{
+  position:absolute;right:0;bottom:0;width:43px;height:43px;border-radius:50%;
+  background:var(--app-red);display:grid;place-items:center;color:#fff;
+  font-size:17px;box-shadow:0 3px 10px #0008;
+}
+.app-lecture-body{min-width:0;flex:1;padding-top:9px}
+.app-lecture-meta{
+  color:#9aa6b8;font-size:17px;margin-bottom:10px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.app-lecture-meta span{color:#9aa6b8;margin:0 5px}
+.app-lecture-title{
+  color:#fff;font-size:22px;font-weight:800;line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.app-lecture-duration{color:#a7b1c0;font-size:17px;margin-top:9px}
+.app-lecture-buttons{display:flex;gap:14px;margin-top:20px}
+.watch-btn,.more-btn{
+  min-height:54px;border:0;border-radius:12px;font-weight:700;font-size:17px;
+  padding:0 28px;color:#f6f8fb;background:var(--app-button);
+}
+.watch-btn{flex:0 1 285px}.more-btn{flex:0 1 285px}
+.watch-btn span{margin-right:10px}
+.watch-btn:hover,.more-btn:hover{filter:brightness(1.12)}
+.hidden{display:none!important}
+
+/* Attachments modal */
+body.modal-open{overflow:hidden}
+.attachments-modal{
+  position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.78);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.attachments-box{
+  width:min(680px,100%);max-height:88vh;overflow:auto;
+  background:#0d1218;border:1px solid #242d37;border-radius:24px;
+  box-shadow:0 25px 80px #000c;color:#fff;
+}
+.attachments-head{
+  position:sticky;top:0;z-index:2;display:flex;align-items:center;
+  justify-content:space-between;padding:22px 28px;
+  background:#0d1218;border-bottom:1px solid #3a444f;
+}
+.attachments-head h2{margin:0;font-size:25px}
+.attachments-head button{
+  border:0;background:transparent;color:#fff;font-size:34px;line-height:1;cursor:pointer;
+}
+.attachments-section{padding:18px 28px 0}
+.attachments-section:last-child{padding-bottom:24px}
+.attachments-section-title{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:18px;font-weight:800;margin-bottom:14px;
+}
+.attachment-link{
+  width:100%;min-height:58px;display:flex;align-items:center;gap:15px;
+  border:1px solid #46515d;background:#0d141b;border-radius:14px;
+  color:#fff;padding:10px 14px;text-align:left;cursor:pointer;
+}
+.attachment-file-icon{
+  width:32px;height:38px;display:grid;place-items:center;color:#aab7c8;
+  font-size:26px;flex:0 0 32px;
+}
+.attachment-link-title{
+  flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:16px;font-weight:600;
+}
+.attachment-open{font-size:24px;color:#d6dce5}
+.attachment-empty{
+  min-height:82px;display:flex;align-items:center;justify-content:center;
+  text-align:center;border:1px dashed #3f4a56;border-radius:14px;
+  color:#94a1b3;padding:14px;font-size:16px;
+}
+
+.drawer{background:#0d1218;color:#fff}.drawer a{color:#fff;border-color:#27313b}
+.drawer-head button{color:#fff}
+
+.pdf-viewer-box{background:#0d1218}.pdf-viewer-head{background:#171e26}
+.pdf-viewer iframe{background:#111}
+
+@media(max-width:700px){
+  .topbar{height:68px;padding:0 18px}
+  .section-head{width:calc(100% - 30px);margin-top:16px}
+  .chapter-list{width:calc(100% - 30px)}
+  .content-tabs{gap:30px;padding-left:3px}
+  .content-tabs button{font-size:16px}
+  .app-lecture-list{gap:28px}
+  .app-lecture-card{
+    display:block;padding:25px 30px 29px;border-radius:27px;
+  }
+  .lecture-thumb{
+    width:135px;height:135px;float:left;margin:4px 22px 12px 0;
+  }
+  .app-lecture-body{padding-top:7px;min-height:205px}
+  .app-lecture-meta{font-size:16px}
+  .app-lecture-title{font-size:20px}
+  .app-lecture-duration{font-size:16px}
+  .app-lecture-buttons{clear:both;display:flex;gap:14px;margin-top:20px}
+  .watch-btn,.more-btn{flex:1;min-height:55px;padding:0 10px;font-size:17px}
+  .attachments-modal{padding:0}
+  .attachments-box{width:100%;max-height:92vh;border-radius:24px 24px 0 0}
+}
+@media(max-width:420px){
+  .app-lecture-card{padding-left:22px;padding-right:22px}
+  .lecture-thumb{width:120px;height:120px}
+  .app-lecture-title{font-size:18px}
+  .app-lecture-meta{font-size:14px}
+  .watch-btn,.more-btn{font-size:15px}
+  .attachments-section{padding-left:20px;padding-right:20px}
+  .attachments-head{padding-left:20px;padding-right:20px}
+}

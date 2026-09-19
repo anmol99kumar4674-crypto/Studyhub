@@ -474,9 +474,10 @@ function showAllContent(subject, pushHistory = false, tab = "lectures") {
   tabs.className = "content-tabs";
   tabs.innerHTML = `
     <button class="${tab === "lectures" ? "active" : ""}" data-tab="lectures">Lectures</button>
+    <button class="${tab === "dpp" ? "active" : ""}" data-tab="dpp">DPPs</button>
     <button class="${tab === "notes" ? "active" : ""}" data-tab="notes">Notes</button>
-    <button class="${tab === "dpp" ? "active" : ""}" data-tab="dpp">DPP</button>
-    <button class="${tab === "dpp-pdf" ? "active" : ""}" data-tab="dpp-pdf">DPP PDF</button>
+    <button class="${tab === "dpp-pdf" ? "active" : ""}" data-tab="dpp-pdf">DPP PDFs</button>
+    <button class="${tab === "dpp-video" ? "active" : ""}" data-tab="dpp-video">DPP Videos</button>
   `;
   tabs.querySelectorAll("button").forEach(btn => {
     btn.onclick = () => showAllContent(subject, false, btn.dataset.tab);
@@ -492,8 +493,10 @@ function showAllContent(subject, pushHistory = false, tab = "lectures") {
     renderLectureRows(content, data.filter(item => !!item.notes), "notes");
   } else if (tab === "dpp") {
     renderLectureRows(content, data.filter(item => !!(item.dpp || item.dppUrl)), "dpp");
-  } else {
+  } else if (tab === "dpp-pdf") {
     renderLectureRows(content, data.filter(item => !!(item.dppPdf || item.dppPdfUrl)), "dpp-pdf");
+  } else {
+    renderLectureRows(content, data.filter(item => !!item.dppVideo), "dpp-video");
   }
 
   if (!content.children.length) {
@@ -552,9 +555,10 @@ function showChapterLectures(subject, chapter, pushHistory = false, tab = "lectu
   tabs.className = "content-tabs";
   tabs.innerHTML = `
     <button class="${tab === "lectures" ? "active" : ""}" data-tab="lectures">Lectures</button>
+    <button class="${tab === "dpp" ? "active" : ""}" data-tab="dpp">DPPs</button>
     <button class="${tab === "notes" ? "active" : ""}" data-tab="notes">Notes</button>
-    <button class="${tab === "dpp" ? "active" : ""}" data-tab="dpp">DPP</button>
-    <button class="${tab === "dpp-pdf" ? "active" : ""}" data-tab="dpp-pdf">DPP PDF</button>
+    <button class="${tab === "dpp-pdf" ? "active" : ""}" data-tab="dpp-pdf">DPP PDFs</button>
+    <button class="${tab === "dpp-video" ? "active" : ""}" data-tab="dpp-video">DPP Videos</button>
   `;
 
   tabs.querySelectorAll("button").forEach(btn => {
@@ -587,6 +591,12 @@ function showChapterLectures(subject, chapter, pushHistory = false, tab = "lectu
       data.filter(item => !!(item.dppPdf || item.dppPdfUrl)),
       "dpp-pdf"
     );
+  } else if (tab === "dpp-video") {
+    renderLectureRows(
+      content,
+      data.filter(item => !!item.dppVideo),
+      "dpp-video"
+    );
   }
 
   if (!content.children.length) {
@@ -599,64 +609,146 @@ function showChapterLectures(subject, chapter, pushHistory = false, tab = "lectu
   chapterList.appendChild(content);
 }
 
+function escHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function itemThumb(item) {
+  return item.thumbnail || item.image || item.poster || "";
+}
+
+function openAttachments(item) {
+  const modal = $("#attachmentsModal");
+  if (!modal) return;
+
+  const title = $("#attachmentsTitle");
+  if (title) title.textContent = "Attachments";
+
+  const note = item.notes || "";
+  const dpp = item.dpp || item.dppUrl || "";
+  const dppPdf = item.dppPdf || item.dppPdfUrl || "";
+  const dppVideo = item.dppVideo || "";
+
+  const makeLink = (label, url, kind) => {
+    if (!url) {
+      return `<div class="attachment-empty">No ${label} is attached to this lecture.</div>`;
+    }
+    return `<button class="attachment-link" data-kind="${kind}" data-url="${escHtml(url)}">
+      <span class="attachment-file-icon">▤</span>
+      <span class="attachment-link-title">${escHtml(item.title || label)}</span>
+      <span class="attachment-open">↧</span>
+    </button>`;
+  };
+
+  $("#attachmentNotes").innerHTML = makeLink("Notes", note, "pdf");
+  $("#attachmentDpp").innerHTML = makeLink("DPP", dpp, "pdf");
+  $("#attachmentDppPdf").innerHTML = makeLink("DPP PDF", dppPdf, "pdf");
+  $("#attachmentDppVideo").innerHTML = makeLink("DPP video", dppVideo, "video");
+
+  modal.classList.remove("hidden");
+  document.body.classList.add("modal-open");
+
+  modal.querySelectorAll(".attachment-link").forEach(btn => {
+    btn.onclick = () => {
+      const url = btn.dataset.url;
+      if (!url) return;
+      modal.classList.add("hidden");
+      document.body.classList.remove("modal-open");
+      if (btn.dataset.kind === "video") {
+        openLectureDirect({...item, url});
+      } else {
+        openPdf(url, item.title || "PDF");
+      }
+    };
+  });
+}
+
+function closeAttachments() {
+  $("#attachmentsModal")?.classList.add("hidden");
+  document.body.classList.remove("modal-open");
+}
+
+$("#closeAttachments")?.addEventListener("click", closeAttachments);
+$("#attachmentsModal")?.addEventListener("click", e => {
+  if (e.target.id === "attachmentsModal") closeAttachments();
+});
+
 function renderLectureRows(container, data, mode = "lectures") {
-  // Do not create an empty lecture-list; this lets the tab show its empty-state message.
   if (!data || !data.length) return;
 
   const list = document.createElement("div");
-  list.className = "lecture-list";
+  list.className = "app-lecture-list";
 
   data.forEach((item, index) => {
-    const row = document.createElement("button");
-    row.className = "lecture";
+    const row = document.createElement("article");
+    row.className = "app-lecture-card";
 
     const contentUrl =
       mode === "notes" ? item.notes :
       mode === "dpp" ? (item.dpp || item.dppUrl) :
       mode === "dpp-pdf" ? (item.dppPdf || item.dppPdfUrl) :
+      mode === "dpp-video" ? item.dppVideo :
       item.url;
 
-    const hasPdf =
-      mode === "notes" || mode === "dpp-pdf" ||
-      (item.type === "pdf" && !!contentUrl);
+    const thumb = itemThumb(item);
+    const thumbHtml = thumb
+      ? `<img src="${escHtml(thumb)}" alt="" loading="lazy">`
+      : `<div class="lecture-thumb-fallback">
+           <span>${escHtml((item.chapter || item.subject || "S").slice(0,1).toUpperCase())}</span>
+         </div>`;
 
-    const hasVideo =
-      mode === "lectures" && item.type !== "pdf" && !!contentUrl;
+    const metaType =
+      mode === "notes" ? "Notes" :
+      mode === "dpp" ? "DPP" :
+      mode === "dpp-pdf" ? "DPP PDF" :
+      mode === "dpp-video" ? "DPP Video" : "Lecture";
+
+    const displayTitle = mode === "notes"
+      ? String(item.title || "").replace(/\s*\|\|.*$/, "") + " : Class Notes"
+      : (item.title || "Untitled");
 
     row.innerHTML = `
-      <span class="lecture-no">${String(data.length - index).padStart(2,"0")}</span>
-      <span class="lecture-main">
-        <b>${mode === "notes" ? item.title.replace(/\s*\|\|.*$/, "") + " : Class Notes" : item.title}</b>
-        <small>
-          ${formatDate(item.date)}
-          ${item.duration ? " • " + item.duration : ""}
-        </small>
-      </span>
-      <span class="lecture-actions">
-        ${hasPdf ? '<span class="pdf-btn">📄 PDF</span>' : ""}
-        ${hasVideo ? '<span class="video-btn">▶ Video</span>' : ""}
-      </span>
+      <div class="lecture-thumb">${thumbHtml}<span class="thumb-play">${mode === "lectures" || mode === "dpp-video" ? "▶" : "▤"}</span></div>
+      <div class="app-lecture-body">
+        <div class="app-lecture-meta">${escHtml(metaType)} <span>•</span> ${escHtml(formatDate(item.date))}</div>
+        <div class="app-lecture-title">${escHtml(displayTitle)}</div>
+        ${item.duration ? `<div class="app-lecture-duration">${escHtml(item.duration)}</div>` : ""}
+        <div class="app-lecture-buttons">
+          <button class="watch-btn" type="button">
+            <span>▶</span> ${mode === "lectures" || mode === "dpp-video" ? "Watch" : "Open"}
+          </button>
+          <button class="more-btn" type="button">Notes &amp; more</button>
+        </div>
+      </div>
     `;
 
-    row.onclick = (event) => {
-      if (event.target.closest(".pdf-btn")) {
-        event.stopPropagation();
-        if (contentUrl) openPdf(contentUrl, item.title);
-        return;
+    row.querySelector(".watch-btn").onclick = e => {
+      e.stopPropagation();
+      if (!contentUrl) return;
+      if (mode === "lectures" || mode === "dpp-video") {
+        openLectureDirect({...item, url: contentUrl});
+      } else {
+        openPdf(contentUrl, displayTitle);
       }
+    };
 
-      if (event.target.closest(".video-btn")) {
-        event.stopPropagation();
-        if (contentUrl) openLectureDirect(item);
-        return;
-      }
+    row.querySelector(".more-btn").onclick = e => {
+      e.stopPropagation();
+      openAttachments(item);
+    };
 
-      if (mode === "notes" || mode === "dpp-pdf" || (mode === "dpp" && !item.dppVideo)) {
-        if (contentUrl) openPdf(contentUrl, item.title);
-      } else if (hasVideo) {
-        openLectureDirect(item);
-      } else if (hasPdf && contentUrl) {
-        openPdf(contentUrl, item.title);
+    row.onclick = () => {
+      if (!contentUrl) {
+        openAttachments(item);
+      } else if (mode === "lectures" || mode === "dpp-video") {
+        openLectureDirect({...item, url: contentUrl});
+      } else {
+        openPdf(contentUrl, displayTitle);
       }
     };
 
