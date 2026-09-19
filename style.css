@@ -922,3 +922,33 @@ body{min-width:320px}
   .app-lecture-card{grid-template-columns:112px minmax(0,1fr) !important;gap:0 14px !important}
   .lecture-thumb{width:112px !important;aspect-ratio:16 / 9 !important}
 }
+
+/* ===== Fix lecture action alignment on mobile ===== */
+.app-lecture-buttons{
+  min-width:0 !important;
+  width:100% !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+  align-items:stretch !important;
+  justify-content:start !important;
+}
+.app-lecture-buttons .notes-btn,
+.app-lecture-buttons .watch-btn{
+  min-width:0 !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  flex:none !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+}
+.app-lecture-buttons .btn-icon{
+  width:21px !important;
+  height:21px !important;
+  flex:0 0 21px !important;
+  vertical-align:middle !important;
+}
+.app-lecture-buttons button{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:9px !important;
+}

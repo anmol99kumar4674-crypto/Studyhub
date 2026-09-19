@@ -752,19 +752,19 @@ function renderLectureRows(container, data, mode = "lectures") {
         <div class="app-lecture-meta">${escHtml(metaType)} <span>•</span> ${escHtml(formatDate(item.date))}</div>
         <div class="app-lecture-title">${escHtml(displayTitle)}</div>
         ${item.duration ? `<div class="app-lecture-duration">${escHtml(item.duration)}</div>` : ""}
-        <div class="app-lecture-buttons">
-          <button class="notes-btn" type="button">
-            <svg class="btn-icon notes-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 3.5h9l3 3V20.5H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M15 3.5v4h4M9 11h6M9 14.5h6M9 18h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-            <span>Notes</span>
-          </button>
-          <button class="watch-btn" type="button">
-            <svg class="btn-icon watch-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5v11l8-5.5z" fill="currentColor"/></svg>
-            <span>${mode === "lectures" || mode === "dpp-video" ? "Watch" : "Open"}</span>
-          </button>
-        </div>
+      </div>
+      <div class="app-lecture-buttons">
+        <button class="notes-btn" type="button">
+          <svg class="btn-icon notes-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 3.5h9l3 3V20.5H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M15 3.5v4h4M9 11h6M9 14.5h6M9 18h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span>Notes</span>
+        </button>
+        <button class="watch-btn" type="button">
+          <svg class="btn-icon watch-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5v11l8-5.5z" fill="currentColor"/></svg>
+          <span>${mode === "lectures" || mode === "dpp-video" ? "Watch" : "Open"}</span>
+        </button>
       </div>
     `;
 
