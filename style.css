@@ -868,39 +868,57 @@ body{min-width:320px}
   .notes-btn,.watch-btn{font-size:14px!important;min-height:49px!important}
 }
 
-/* Final visibility fixes */
-.player-box .player-info{
-  background:#fff!important;
-  color:#111!important;
+/* ===== Final mobile polish ===== */
+.subject-card{color:#15171b !important}
+.subject-card b{color:#15171b !important}
+.subject-card small{color:#858585 !important}
+.subject-card .arrow{color:#8b8b8b !important}
+
+.btn-icon{
+  width:21px !important;
+  height:21px !important;
+  flex:0 0 21px !important;
+  display:block !important;
+  margin:0 !important;
 }
-.player-box .player-info h2{
-  color:#111!important;
-  opacity:1!important;
-  font-weight:800!important;
+.notes-btn,.watch-btn{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
 }
-.player-box .player-info p{
-  color:#666!important;
-  opacity:1!important;
+.notes-btn .btn-icon,.watch-btn .btn-icon{margin-right:0 !important}
+.watch-icon{width:22px !important;height:22px !important}
+.notes-icon{width:21px !important;height:21px !important}
+
+/* Keep lecture thumbnails at true 16:9 so images never look stretched/cropped. */
+.lecture-thumb{
+  aspect-ratio:16 / 9 !important;
+  height:auto !important;
 }
-.attendance-card{
-  color:#111!important;
-  background:#fff!important;
+.lecture-thumb img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  object-position:center !important;
 }
-.attendance-card h2{
-  color:#111!important;
-  opacity:1!important;
-  font-weight:800!important;
+.lecture-thumb-fallback{
+  width:100% !important;
+  height:100% !important;
+  display:grid !important;
+  place-items:center !important;
+  overflow:hidden !important;
 }
-.attendance-card p{
-  color:#555!important;
-  opacity:1!important;
+
+@media(max-width:700px){
+  .lecture-thumb{
+    width:120px !important;
+    height:auto !important;
+    aspect-ratio:16 / 9 !important;
+  }
+  .app-lecture-body{min-height:68px !important}
 }
-.attendance-card input{
-  color:#111!important;
-  background:#fff!important;
+@media(max-width:380px){
+  .app-lecture-card{grid-template-columns:112px minmax(0,1fr) !important;gap:0 14px !important}
+  .lecture-thumb{width:112px !important;aspect-ratio:16 / 9 !important}
 }
-.attendance-card input::placeholder{
-  color:#777!important;
-  opacity:1!important;
-}
-.attendance-msg{color:#b22!important;}
