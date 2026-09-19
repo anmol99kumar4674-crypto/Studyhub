@@ -469,3 +469,230 @@ body.modal-open{overflow:hidden}
   .attachments-section{padding-left:20px;padding-right:20px}
   .attachments-head{padding-left:20px;padding-right:20px}
 }
+
+/* =========================================================
+   Final app interface: system theme + reference card layout
+   Light mode follows the device/browser preference.
+   Dark mode is applied only when the system requests it.
+   ========================================================= */
+:root{
+  --ui-bg:#f7f8fb;
+  --ui-surface:#ffffff;
+  --ui-surface-2:#f4f5f8;
+  --ui-border:#dfe3e8;
+  --ui-border-strong:#cfd5dc;
+  --ui-text:#17191d;
+  --ui-muted:#7c8795;
+  --ui-accent:#6048d9;
+  --ui-button:#e2e6eb;
+  --ui-button-text:#252a31;
+  --ui-red:#ff3f4d;
+}
+
+html,body{
+  background:var(--ui-bg) !important;
+  color:var(--ui-text) !important;
+}
+body{color-scheme:light;}
+.topbar{
+  background:var(--ui-surface) !important;
+  color:var(--ui-text) !important;
+  border-bottom:1px solid var(--ui-border) !important;
+}
+.menu-btn{color:var(--ui-text) !important}
+.brand{color:var(--ui-text) !important}
+.section-head{color:var(--ui-text) !important}
+.section-head h2{color:var(--ui-text) !important}
+.back-btn{color:var(--ui-accent) !important}
+
+.content-tabs{
+  background:var(--ui-bg) !important;
+  border-bottom:1px solid var(--ui-border) !important;
+  gap:34px !important;
+}
+.content-tabs button{color:var(--ui-muted) !important}
+.content-tabs button.active{color:var(--ui-accent) !important}
+.content-tabs button.active::after{background:var(--ui-accent) !important}
+
+/* Reference app card: thumbnail + information on one row,
+   action buttons on the next row. */
+.app-lecture-list{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:30px !important;
+}
+.app-lecture-card{
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:135px minmax(0,1fr) !important;
+  grid-template-rows:auto auto !important;
+  grid-template-areas:
+    "thumb body"
+    "buttons buttons" !important;
+  gap:0 22px !important;
+  padding:30px 30px 28px !important;
+  margin:0 !important;
+  background:var(--ui-surface) !important;
+  border:2px solid var(--ui-border-strong) !important;
+  border-radius:28px !important;
+  color:var(--ui-text) !important;
+  box-shadow:none !important;
+  overflow:hidden !important;
+  cursor:pointer !important;
+}
+.app-lecture-card::before{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  height:9px !important;
+  background:var(--ui-border-strong) !important;
+  border-radius:28px 28px 0 0 !important;
+}
+.lecture-thumb{
+  grid-area:thumb !important;
+  position:relative !important;
+  width:135px !important;
+  height:135px !important;
+  margin:4px 0 0 !important;
+  border-radius:16px !important;
+  overflow:hidden !important;
+  background:var(--ui-surface-2) !important;
+  float:none !important;
+}
+.lecture-thumb img{width:100% !important;height:100% !important;object-fit:cover !important;display:block !important}
+.lecture-thumb-fallback{background:linear-gradient(145deg,#eef0f4,#e4e7ec) !important}
+.lecture-thumb-fallback span{color:#a994ff !important}
+.thumb-play{background:var(--ui-red) !important}
+.app-lecture-body{
+  grid-area:body !important;
+  min-width:0 !important;
+  padding:7px 0 0 !important;
+  min-height:135px !important;
+}
+.app-lecture-meta{
+  color:var(--ui-muted) !important;
+  font-size:17px !important;
+  margin-bottom:10px !important;
+}
+.app-lecture-meta span{color:var(--ui-muted) !important}
+.app-lecture-title{
+  color:var(--ui-text) !important;
+  font-size:22px !important;
+  font-weight:800 !important;
+  line-height:1.35 !important;
+}
+.app-lecture-duration{color:var(--ui-muted) !important;font-size:17px !important;margin-top:9px !important}
+.app-lecture-buttons{
+  grid-area:buttons !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:14px !important;
+  margin-top:25px !important;
+  clear:none !important;
+}
+.watch-btn,.more-btn{
+  width:100% !important;
+  min-height:54px !important;
+  border:0 !important;
+  border-radius:12px !important;
+  font-weight:700 !important;
+  font-size:17px !important;
+  padding:0 14px !important;
+  color:var(--ui-button-text) !important;
+  background:var(--ui-button) !important;
+}
+.watch-btn span{margin-right:10px !important}
+
+.empty-tab{
+  background:var(--ui-surface) !important;
+  color:var(--ui-muted) !important;
+  border:1px dashed var(--ui-border-strong) !important;
+}
+
+/* Attachments popup follows the same system theme. */
+.attachments-modal{background:rgba(0,0,0,.58) !important}
+.attachments-box{
+  background:var(--ui-surface) !important;
+  border:1px solid var(--ui-border) !important;
+  color:var(--ui-text) !important;
+}
+.attachments-head{
+  background:var(--ui-surface) !important;
+  border-bottom:1px solid var(--ui-border) !important;
+}
+.attachments-head button{color:var(--ui-text) !important}
+.attachment-link{
+  border:1px solid var(--ui-border) !important;
+  background:var(--ui-surface-2) !important;
+  color:var(--ui-text) !important;
+}
+.attachment-file-icon,.attachment-open{color:var(--ui-muted) !important}
+.attachment-empty{border-color:var(--ui-border-strong) !important;color:var(--ui-muted) !important}
+
+/* Desktop keeps the same proportions; mobile still uses the reference
+   horizontal card rather than switching to a tall stacked card. */
+@media(max-width:700px){
+  .topbar{height:68px !important;padding:0 18px !important}
+  .section-head{width:calc(100% - 30px) !important;margin-top:16px !important}
+  .chapter-list{width:calc(100% - 30px) !important}
+  .content-tabs{gap:30px !important;padding-left:3px !important}
+  .content-tabs button{font-size:16px !important}
+  .app-lecture-list{gap:28px !important}
+  .app-lecture-card{
+    display:grid !important;
+    grid-template-columns:135px minmax(0,1fr) !important;
+    grid-template-rows:auto auto !important;
+    grid-template-areas:"thumb body" "buttons buttons" !important;
+    gap:0 22px !important;
+    padding:30px 30px 29px !important;
+    border-radius:27px !important;
+  }
+  .lecture-thumb{
+    width:135px !important;height:135px !important;
+    margin:4px 0 0 !important;
+    float:none !important;
+  }
+  .app-lecture-body{padding-top:7px !important;min-height:135px !important}
+  .app-lecture-meta{font-size:16px !important}
+  .app-lecture-title{font-size:20px !important}
+  .app-lecture-duration{font-size:16px !important}
+  .app-lecture-buttons{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:14px !important;
+    margin-top:20px !important;
+  }
+  .watch-btn,.more-btn{min-height:55px !important;font-size:17px !important}
+}
+@media(max-width:420px){
+  .app-lecture-card{
+    grid-template-columns:120px minmax(0,1fr) !important;
+    padding:28px 22px 27px !important;
+    gap:0 18px !important;
+  }
+  .lecture-thumb{width:120px !important;height:120px !important}
+  .app-lecture-body{min-height:120px !important;padding-top:5px !important}
+  .app-lecture-title{font-size:18px !important}
+  .app-lecture-meta{font-size:14px !important}
+  .watch-btn,.more-btn{font-size:15px !important}
+}
+
+/* Dark mode only when the user's operating system/browser requests it. */
+@media (prefers-color-scheme: dark){
+  :root{
+    --ui-bg:#090d12;
+    --ui-surface:#0d1218;
+    --ui-surface-2:#111820;
+    --ui-border:#2d3742;
+    --ui-border-strong:#39434e;
+    --ui-text:#f5f7fa;
+    --ui-muted:#94a0b2;
+    --ui-accent:#8c76ff;
+    --ui-button:#3a434d;
+    --ui-button-text:#f6f8fb;
+    --ui-red:#ff3f4d;
+  }
+  html,body{color-scheme:dark}
+}
