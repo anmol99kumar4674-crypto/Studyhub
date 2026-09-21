@@ -204,4 +204,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/21?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ac782d24-f83b-475e-bb8a-f6611844024d.pdf"
   }
+,
+  {
+    id: "ncert-1789959858111",
+    chapter: "General Science",
+    title: "General Science 02 : जीव विज्ञान की शाखाएँ और पोषण",
+    date: "2026-09-19",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/3?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/a6931587-35ae-48c5-83f4-ef9b291d42ad.pdf"
+  }
 ];
