@@ -194,4 +194,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/20?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8e009f06-87ce-46b0-8db1-ff9718d782e5.pdf"
   }
+,
+  {
+    id: "ncert-1789959734353",
+    chapter: "Economics",
+    title: "Economics 20 : भारतीय अर्थव्यवस्था 3,आर्थिक आयोजन || Rescheduled at 07:00 PM",
+    date: "2026-09-19",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/21?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ac782d24-f83b-475e-bb8a-f6611844024d.pdf"
+  }
 ];
