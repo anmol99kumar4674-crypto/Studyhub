@@ -224,4 +224,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/4?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ef9ee5d2-ff17-4893-9b5f-8365006eb9a7.pdf"
   }
+,
+  {
+    id: "ncert-1790002666725",
+    chapter: "General Science : Unit Wise Notes || PDF Only",
+    title: "General Science : Unit Wise Notes 01",
+    date: "2026-09-21",
+    duration: "",
+    url: "",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/bec42d10-409a-4613-ab5c-a42817ff5328.pdf"
+  }
 ];
