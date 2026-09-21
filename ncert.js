@@ -189,7 +189,7 @@ const NCERT_LECTURES = [
   {
     id: "ncert-1789793653698",
     chapter: "Economics",
-    title: "(Comming Soon) Economics 19 : भारतीय अर्थव्यवस्था 2 || Reschedule @7:30 PM",
+    title: "Economics 19 : भारतीय अर्थव्यवस्था 2 || Reschedule @7:30 PM",
     date: "2026-09-18",
     url: "https://studyhub-telegram-stream.onrender.com/video/20?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8e009f06-87ce-46b0-8db1-ff9718d782e5.pdf"
