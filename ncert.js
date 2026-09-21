@@ -254,4 +254,14 @@ const NCERT_LECTURES = [
     url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/6ac36eac-3461-41c6-9ae3-e4b39766ff3f.pdf"
   }
+,
+  {
+    id: "ncert-1790002802947",
+    chapter: "General Science : Unit Wise Notes || PDF Only",
+    title: "General Science : Unit Wise Notes 04",
+    date: "2026-09-21",
+    duration: "",
+    url: "",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ede950ea-34b5-4117-90aa-8a609c813804.pdf"
+  }
 ];
