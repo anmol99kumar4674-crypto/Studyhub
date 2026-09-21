@@ -264,4 +264,14 @@ const NCERT_LECTURES = [
     url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ede950ea-34b5-4117-90aa-8a609c813804.pdf"
   }
+,
+  {
+    id: "ncert-1790007677474",
+    chapter: "Economics",
+    title: "Economics 21 : आजादी के बाद भारतीय अर्थव्यवस्था || Rescheduled @07:30 PM",
+    date: "2026-09-21",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/22?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8e5781f2-542e-4554-a8a5-857958552516.pdf"
+  }
 ];
