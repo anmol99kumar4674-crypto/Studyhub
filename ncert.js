@@ -214,4 +214,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/3?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/a6931587-35ae-48c5-83f4-ef9b291d42ad.pdf"
   }
+,
+  {
+    id: "ncert-1790002215907",
+    chapter: "General Science",
+    title: "General Science 03 : पादप एवं जंतुओं में पोषण",
+    date: "2026-09-21",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/4?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ef9ee5d2-ff17-4893-9b5f-8365006eb9a7.pdf"
+  }
 ];
