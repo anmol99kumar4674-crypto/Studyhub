@@ -4,187 +4,150 @@ const BIHAR_CURRENT_WALLAH_LECTURES = [
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : January 2025 (Hindi) || PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fe6bdf892-56a9-4512-b2c6-a9f6983fca6c-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717255191",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : February 2025 (Hindi) || PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F4d032ab5-6c33-4bc0-a2ec-06ebfa0b3b60.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717284962",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation March 2026 (Hindi) || PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fb1433c51-ccfb-4f1d-a8a1-b2639e1cd940.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717309815",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : April 2025 (Hindi) ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F92fe0feb-2e67-4b48-978d-1b62c8ebf9ab-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717334207",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : May 2025 (Hindi) ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F91775406-84c6-4a4c-860f-887b41920945-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717374064",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : June 2025 (Hindi) ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F7e56da5b-2210-459b-9fe2-4738678f4dc7-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717420808",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : July 2025 (Hindi) || PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Ff7a0a42d-939d-4157-998e-97db3db36c6e-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717446274",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : August 2025 (Hindi) PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F6b66fcd8-9ff7-4c3a-b49a-c681a529db6f-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717469118",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : September 2025 (Hindi) PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F9b84b043-5842-47d2-80dd-10346d37933e-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717500986",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : October 2025 (Hindi) PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F6e73eb11-7046-41bc-b151-89a584457caf-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717522643",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : November 2025 (Hindi) PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F180c7196-f5f8-46da-93b9-289518a6fda6-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717542809",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation December 2025 (Hindi) || PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fba4bc81e-c4fe-4c53-975e-47fbb61279e2.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717565153",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : January 2026 (Hindi) || PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fe703901b-d747-4981-960c-c95d630e3501.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717586000",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation February 2026 (Hindi) || PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F8a71c254-b785-43d2-b097-dccdf44b9f9b.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717609958",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation : March 2025 (Hindi) ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fd2bps9p1kiy4ka.cloudfront.net%2F5eb393ee95fab7468a79d189%2Fce7b4ef8-e5d4-485e-97b7-66caabaa5c0b-small.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717633170",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation April 2026 (Hindi) || PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fbe37ef21-0dcd-407c-b08a-8f9106f2b761.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717666859",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation May 2026 (Hindi) : PDF Only ~ Bihar Current Wallah Monthly Compilation",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Ff5bf26dd-53e4-4f10-9113-9080a3c9a145.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717691353",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation June 2026 (Hindi) : PDF Only",
     date: "2026-08-02",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fb31e4c7f-bea9-4fa6-841e-fbc2439e8c97.pdf&embedded=true",
     type: "pdf"
-  }
-,
+  },
   {
     id: "bihar-current-wallah-1787717726337",
     chapter: "Monthly Compilation || Pdf Only",
     title: "Bihar Current Wallah Monthly Compilation July 2026 (Hindi) : PDF Only",
     date: "2026-08-14",
-    duration: "",
     url: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2F773a3589-f327-4d9b-8675-f82b3684d770.pdf&embedded=true",
     type: "pdf"
   }
