@@ -1144,3 +1144,27 @@ body{min-width:320px}
 }
 
 .today-classes-section.hidden{display:none !important;}
+
+
+/* ===== Today's Class final UI ===== */
+.today-section-head h2{
+  color:#ff3b81 !important;
+}
+.today-class-status{
+  background:#ff3b81 !important;
+}
+.today-class-card{
+  min-height:0 !important;
+}
+@media(max-width:800px){
+  .today-class-card{
+    min-height:0 !important;
+    padding:16px 16px 14px !important;
+  }
+  .today-class-divider{
+    margin:14px 0 11px !important;
+  }
+  .today-class-title{
+    margin-bottom:0 !important;
+  }
+}

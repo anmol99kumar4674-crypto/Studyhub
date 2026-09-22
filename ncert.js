@@ -193,78 +193,85 @@ const NCERT_LECTURES = [
     date: "2026-09-18",
     url: "https://studyhub-telegram-stream.onrender.com/video/20?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8e009f06-87ce-46b0-8db1-ff9718d782e5.pdf"
-  },
+  }
+,
   {
     id: "ncert-1789959734353",
     chapter: "Economics",
     title: "Economics 20 : भारतीय अर्थव्यवस्था 3,आर्थिक आयोजन || Rescheduled at 07:00 PM",
     date: "2026-09-19",
+    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/21?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ac782d24-f83b-475e-bb8a-f6611844024d.pdf"
-  },
+  }
+,
   {
     id: "ncert-1789959858111",
     chapter: "General Science",
     title: "General Science 02 : जीव विज्ञान की शाखाएँ और पोषण",
     date: "2026-09-19",
+    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/3?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/a6931587-35ae-48c5-83f4-ef9b291d42ad.pdf"
-  },
+  }
+,
   {
     id: "ncert-1790002215907",
     chapter: "General Science",
     title: "General Science 03 : पादप एवं जंतुओं में पोषण",
     date: "2026-09-21",
+    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/4?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ef9ee5d2-ff17-4893-9b5f-8365006eb9a7.pdf"
-  },
+  }
+,
   {
     id: "ncert-1790002666725",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "General Science : Unit Wise Notes 01",
     date: "2026-09-21",
+    duration: "",
+    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/bec42d10-409a-4613-ab5c-a42817ff5328.pdf"
-  },
+  }
+,
   {
     id: "ncert-1790002713664",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "General Science : Unit Wise Notes 02",
     date: "2026-09-21",
+    duration: "",
+    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/87754069-0ab4-4b07-93a0-acd14f1756bb.pdf"
-  },
+  }
+,
   {
     id: "ncert-1790002759598",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "General Science : Unit Wise Notes 03",
     date: "2026-09-21",
+    duration: "",
+    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/6ac36eac-3461-41c6-9ae3-e4b39766ff3f.pdf"
-  },
+  }
+,
   {
     id: "ncert-1790002802947",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "General Science : Unit Wise Notes 04",
     date: "2026-09-21",
+    duration: "",
+    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/ede950ea-34b5-4117-90aa-8a609c813804.pdf"
-  },
+  }
+,
   {
     id: "ncert-1790007677474",
     chapter: "Economics",
     title: "Economics 21 : आजादी के बाद भारतीय अर्थव्यवस्था || Rescheduled @07:30 PM",
     date: "2026-09-21",
+    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/22?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8e5781f2-542e-4554-a8a5-857958552516.pdf"
-  },
-  {
-    id: "ncert-1790052635734",
-    chapter: "General Science",
-    title: "General Science 04 : पादप एवं जंतुओं में पोषण 02",
-    date: "2026-09-22"
-  },
-  {
-    id: "ncert-1790052658754",
-    chapter: "Economics",
-    title: "Economics 22 : आजादी के बाद भारतीय अर्थव्यवस्था - 2",
-    date: "2026-09-22",
-    url: "https://studyhub-telegram-stream.onrender.com/video/23?chat=@xjffjxzhfhfz&key=@navinkumarraja"
   }
 ];

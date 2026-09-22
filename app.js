@@ -419,6 +419,8 @@ function showSubjects() {
 
 /* STEP 2: Subject ke andar sirf CHAPTERS dikhte hain */
 function showChapters(subject, pushHistory = false) {
+  // Today's Class is homepage-only.
+  $("#todayClassesSection")?.classList.add("hidden");
   activeLectureSubject = subject;
   activeChapter = null;
 
@@ -500,6 +502,8 @@ function showChapters(subject, pushHistory = false) {
  * It uses the same tabs as an individual chapter.
  */
 function showAllContent(subject, pushHistory = false, tab = "lectures") {
+  // Today's Class is homepage-only.
+  $("#todayClassesSection")?.classList.add("hidden");
   activeLectureSubject = subject;
   activeChapter = "__ALL__";
   activeChapterTab = tab;
@@ -571,6 +575,8 @@ function showAllContent(subject, pushHistory = false, tab = "lectures") {
 let activeChapterTab = "lectures";
 
 function showChapterLectures(subject, chapter, pushHistory = false, tab = "lectures") {
+  // Today's Class is homepage-only.
+  $("#todayClassesSection")?.classList.add("hidden");
   activeLectureSubject = subject;
   activeChapter = chapter;
   activeChapterTab = tab;
