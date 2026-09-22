@@ -283,4 +283,13 @@ const NCERT_LECTURES = [
     duration: "",
     url: "",
   }
+,
+  {
+    id: "ncert-1790052658754",
+    chapter: "Economics",
+    title: "Economics 22 : आजादी के बाद भारतीय अर्थव्यवस्था - 2",
+    date: "2026-09-22",
+    duration: "",
+    url: "",
+  }
 ];
