@@ -257,8 +257,10 @@ const NCERT_LECTURES = [
   {
     id: "ncert-1790054902900",
     chapter: "Economics",
-    title: "Economics 22 : आजादी के बाद भारतीय अर्थव्यवस्था - 2",
-    date: "2026-09-22"
+    title: "Economics 22 : नई आर्थिक नीति",
+    date: "2026-09-22",
+    url: "https://studyhub-telegram-stream.onrender.com/video/23?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/7e246a8c-f8f2-4de3-966e-1121ee397523.pdf"
   },
   {
     id: "ncert-1790054921186",
