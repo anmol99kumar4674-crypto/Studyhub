@@ -985,3 +985,160 @@ body{min-width:320px}
 #playerMeta {
   color: #666 !important;
 }
+
+
+/* ===== Today's Class – horizontal learning-app section ===== */
+.today-classes-section{
+  width:min(1180px,calc(100% - 24px));
+  margin:34px auto 30px;
+}
+.today-section-head{
+  display:flex;
+  align-items:center;
+  margin:0 0 18px;
+  padding:0;
+}
+.today-section-head h2{
+  margin:0;
+  font-size:28px;
+  font-weight:800;
+  color:#17171b;
+}
+.today-classes-wrap{
+  width:100%;
+  overflow:hidden;
+}
+.today-classes{
+  display:flex;
+  gap:18px;
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  padding:2px 2px 8px;
+}
+.today-classes::-webkit-scrollbar{display:none}
+.today-class-card{
+  flex:0 0 480px;
+  min-height:286px;
+  scroll-snap-align:start;
+  background:#fff;
+  border:1px solid #e0e0e5;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 4px 16px #00000008;
+  overflow:hidden;
+}
+.today-class-top{
+  display:grid;
+  grid-template-columns:210px minmax(0,1fr);
+  gap:18px;
+  align-items:start;
+}
+.today-class-thumb{
+  width:210px;
+  height:118px;
+  border-radius:12px;
+  overflow:hidden;
+  background:#eef0f4;
+  border:1px solid #dfe1e6;
+}
+.today-class-thumb img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+.today-class-info{
+  min-width:0;
+}
+.today-class-teacher{
+  font-size:17px;
+  font-weight:700;
+  color:#17171b;
+  margin:0 0 18px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.today-class-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color:#777;
+  font-size:14px;
+}
+.today-class-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 14px;
+  border-radius:10px;
+  background:#7b2ce2;
+  color:#fff;
+  font-weight:700;
+  font-size:13px;
+}
+.today-class-time{
+  white-space:nowrap;
+  font-size:15px;
+}
+.today-class-divider{
+  height:1px;
+  background:#ececf0;
+  margin:18px 0 14px;
+}
+.today-class-title{
+  margin:0;
+  color:#17171b;
+  font-size:18px;
+  line-height:1.4;
+  font-weight:750;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.today-class-card.clickable{cursor:pointer}
+.today-class-card.clickable:hover{
+  border-color:#d4cef5;
+  box-shadow:0 7px 22px #0000000d;
+}
+.today-empty{
+  color:#777;
+  padding:20px 0;
+}
+
+@media(max-width:800px){
+  .today-classes-section{
+    width:calc(100% - 24px);
+    margin:28px auto 26px;
+  }
+  .today-section-head h2{font-size:24px}
+  .today-class-card{
+    flex-basis:calc(100vw - 62px);
+    min-height:265px;
+    padding:16px;
+  }
+  .today-class-top{
+    grid-template-columns:145px minmax(0,1fr);
+    gap:14px;
+  }
+  .today-class-thumb{
+    width:145px;
+    height:82px;
+  }
+  .today-class-teacher{
+    font-size:15px;
+    margin-bottom:12px;
+  }
+  .today-class-meta{font-size:12px}
+  .today-class-status{
+    min-height:32px;
+    padding:0 11px;
+    font-size:12px;
+  }
+  .today-class-time{font-size:13px}
+  .today-class-title{font-size:16px}
+}

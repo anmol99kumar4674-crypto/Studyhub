@@ -323,7 +323,89 @@ function getChapterCount(subject) {
   return chapters.size;
 }
 
+
+function renderTodayClasses() {
+  const section = $("#todayClassesSection");
+  const wrap = $("#todayClasses");
+  if (!section || !wrap) return;
+
+  const today = attendanceTodayKey();
+  const valid = LECTURES.filter(item => item && item.title);
+
+  // Prefer lectures scheduled for today, then future lectures.
+  // If the data file has no current/future entries, show the newest entries
+  // so the section never becomes an empty block.
+  const todayItems = valid
+    .filter(item => item.date === today)
+    .sort((a,b) => String(a.date).localeCompare(String(b.date)));
+
+  let items = todayItems;
+
+  if (!items.length) {
+    items = valid
+      .filter(item => item.date && item.date > today)
+      .sort((a,b) =>
+        String(a.date).localeCompare(String(b.date)) ||
+        String(a.id).localeCompare(String(b.id))
+      );
+  }
+
+  if (!items.length) {
+    items = [...valid]
+      .sort((a,b) =>
+        String(b.date || "").localeCompare(String(a.date || "")) ||
+        String(b.id).localeCompare(String(a.id))
+      );
+  }
+
+  items = items.slice(0, 8);
+  wrap.innerHTML = "";
+
+  if (!items.length) {
+    const empty = document.createElement("div");
+    empty.className = "today-empty";
+    empty.textContent = "No class available.";
+    wrap.appendChild(empty);
+    return;
+  }
+
+  items.forEach(item => {
+    const card = document.createElement("article");
+    card.className = "today-class-card" + (item.url ? " clickable" : "");
+
+    const thumb = itemThumb(item);
+    const teacher = item.teacher || item.teacherName || item.faculty || "Study Lecture";
+    const time = item.time || item.startTime || (item.duration ? item.duration : "Scheduled");
+    const isToday = item.date === today;
+
+    card.innerHTML = `
+      <div class="today-class-top">
+        <div class="today-class-thumb">
+          <img src="${escHtml(thumb)}" alt="" loading="lazy"
+               onerror="this.src='${escHtml(makeAutoThumbnail(item))}'">
+        </div>
+        <div class="today-class-info">
+          <div class="today-class-teacher">${escHtml(teacher)}</div>
+          <div class="today-class-meta">
+            <span class="today-class-status">${isToday ? "TODAY" : "UPCOMING"}</span>
+            <span class="today-class-time">◷ ${escHtml(time)}</span>
+          </div>
+        </div>
+      </div>
+      <div class="today-class-divider"></div>
+      <h3 class="today-class-title">${escHtml(item.title)}</h3>
+    `;
+
+    if (item.url) {
+      card.onclick = () => openLectureDirect(item);
+    }
+
+    wrap.appendChild(card);
+  });
+}
+
 function showSubjects() {
+  renderTodayClasses();
   activeLectureSubject = null;
   activeChapter = null;
 
