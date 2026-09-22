@@ -1002,7 +1002,7 @@ body{min-width:320px}
   margin:0;
   font-size:28px;
   font-weight:800;
-  color:#17171b;
+  color:#ff4fa3 !important;
 }
 .today-classes-wrap{
   width:100%;
@@ -1020,7 +1020,7 @@ body{min-width:320px}
 .today-classes::-webkit-scrollbar{display:none}
 .today-class-card{
   flex:0 0 480px;
-  min-height:286px;
+  min-height:0;
   scroll-snap-align:start;
   background:#fff;
   border:1px solid #e0e0e5;
@@ -1075,7 +1075,7 @@ body{min-width:320px}
   min-height:34px;
   padding:0 14px;
   border-radius:10px;
-  background:#7b2ce2;
+  background:#ff4fa3;
   color:#fff;
   font-weight:700;
   font-size:13px;
@@ -1118,7 +1118,7 @@ body{min-width:320px}
   .today-section-head h2{font-size:24px}
   .today-class-card{
     flex-basis:calc(100vw - 62px);
-    min-height:265px;
+    min-height:0;
     padding:16px;
   }
   .today-class-top{
@@ -1144,27 +1144,3 @@ body{min-width:320px}
 }
 
 .today-classes-section.hidden{display:none !important;}
-
-
-/* ===== Today's Class final UI ===== */
-.today-section-head h2{
-  color:#ff3b81 !important;
-}
-.today-class-status{
-  background:#ff3b81 !important;
-}
-.today-class-card{
-  min-height:0 !important;
-}
-@media(max-width:800px){
-  .today-class-card{
-    min-height:0 !important;
-    padding:16px 16px 14px !important;
-  }
-  .today-class-divider{
-    margin:14px 0 11px !important;
-  }
-  .today-class-title{
-    margin-bottom:0 !important;
-  }
-}
