@@ -1142,3 +1142,5 @@ body{min-width:320px}
   .today-class-time{font-size:13px}
   .today-class-title{font-size:16px}
 }
+
+.today-classes-section.hidden{display:none !important;}

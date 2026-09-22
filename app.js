@@ -329,45 +329,22 @@ function renderTodayClasses() {
   const wrap = $("#todayClasses");
   if (!section || !wrap) return;
 
+  // Show ONLY lectures whose uploaded/scheduled date is today's date (IST).
+  // Do not fall back to future or older lectures.
   const today = attendanceTodayKey();
-  const valid = LECTURES.filter(item => item && item.title);
+  const items = LECTURES
+    .filter(item => item && item.title && String(item.date || "") === today)
+    .sort((a, b) => String(a.id || "").localeCompare(String(b.id || "")));
 
-  // Prefer lectures scheduled for today, then future lectures.
-  // If the data file has no current/future entries, show the newest entries
-  // so the section never becomes an empty block.
-  const todayItems = valid
-    .filter(item => item.date === today)
-    .sort((a,b) => String(a.date).localeCompare(String(b.date)));
-
-  let items = todayItems;
-
-  if (!items.length) {
-    items = valid
-      .filter(item => item.date && item.date > today)
-      .sort((a,b) =>
-        String(a.date).localeCompare(String(b.date)) ||
-        String(a.id).localeCompare(String(b.id))
-      );
-  }
-
-  if (!items.length) {
-    items = [...valid]
-      .sort((a,b) =>
-        String(b.date || "").localeCompare(String(a.date || "")) ||
-        String(b.id).localeCompare(String(a.id))
-      );
-  }
-
-  items = items.slice(0, 8);
   wrap.innerHTML = "";
 
+  // If nothing is uploaded for today, hide the section completely.
   if (!items.length) {
-    const empty = document.createElement("div");
-    empty.className = "today-empty";
-    empty.textContent = "No class available.";
-    wrap.appendChild(empty);
+    section.classList.add("hidden");
     return;
   }
+
+  section.classList.remove("hidden");
 
   items.forEach(item => {
     const card = document.createElement("article");
@@ -376,7 +353,6 @@ function renderTodayClasses() {
     const thumb = itemThumb(item);
     const teacher = item.teacher || item.teacherName || item.faculty || "Study Lecture";
     const time = item.time || item.startTime || (item.duration ? item.duration : "Scheduled");
-    const isToday = item.date === today;
 
     card.innerHTML = `
       <div class="today-class-top">
@@ -387,7 +363,7 @@ function renderTodayClasses() {
         <div class="today-class-info">
           <div class="today-class-teacher">${escHtml(teacher)}</div>
           <div class="today-class-meta">
-            <span class="today-class-status">${isToday ? "TODAY" : "UPCOMING"}</span>
+            <span class="today-class-status">TODAY</span>
             <span class="today-class-time">◷ ${escHtml(time)}</span>
           </div>
         </div>
@@ -396,10 +372,7 @@ function renderTodayClasses() {
       <h3 class="today-class-title">${escHtml(item.title)}</h3>
     `;
 
-    if (item.url) {
-      card.onclick = () => openLectureDirect(item);
-    }
-
+    if (item.url) card.onclick = () => openLectureDirect(item);
     wrap.appendChild(card);
   });
 }
