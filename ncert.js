@@ -283,4 +283,13 @@ const NCERT_LECTURES = [
     duration: "",
     url: "",
   }
+,
+  {
+    id: "ncert-1790054921186",
+    chapter: "General Science",
+    title: "General Science 04 : पादप एवं जंतुओं में पोषण 02",
+    date: "2026-09-22",
+    duration: "",
+    url: "",
+  }
 ];
