@@ -274,4 +274,13 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/22?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8e5781f2-542e-4554-a8a5-857958552516.pdf"
   }
+,
+  {
+    id: "ncert-1790054902900",
+    chapter: "Economics",
+    title: "Economics 22 : आजादी के बाद भारतीय अर्थव्यवस्था - 2",
+    date: "2026-09-22",
+    duration: "",
+    url: "",
+  }
 ];
