@@ -21,6 +21,49 @@ export default {
     // STUDYHUB_TOKEN is preferred; GITHUB_TOKEN also works.
     const TOKEN = env.STUDYHUB_TOKEN || env.GITHUB_TOKEN;
 
+    // Admin data delete helper. It updates the same GitHub JSON files used by
+    // the existing tracking APIs, so the delete is permanent after refresh.
+    async function deleteTrackingRecord(fileName, matcher, successMessage) {
+      if (!TOKEN) return reply("Tracking server configured nahi hai.", 500);
+
+      const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${fileName}`;
+      const headers = {
+        "Authorization": `Bearer ${TOKEN}`,
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "StudyHub-Admin"
+      };
+
+      const response = await fetch(`${api}?ref=${encodeURIComponent(BRANCH)}`, { headers });
+      if (response.status === 404) return reply("Record file empty hai.", 404);
+      const file = await response.json();
+      if (!response.ok) return reply(`Record read failed: ${file.message || response.status}`, 502);
+
+      let records;
+      try { records = JSON.parse(decodeBase64(file.content)); } catch (_) { records = []; }
+      if (!Array.isArray(records)) records = [];
+
+      const index = records.findIndex(matcher);
+      if (index < 0) return reply("Record nahi mila.", 404);
+      records.splice(index, 1);
+
+      const body = {
+        message: `${successMessage}`,
+        content: encodeBase64(JSON.stringify(records, null, 2) + "\n"),
+        branch: BRANCH,
+        sha: file.sha
+      };
+
+      const put = await fetch(api, {
+        method: "PUT",
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      const result = await put.json().catch(() => ({}));
+      if (!put.ok) return reply(`Delete save failed: ${result.message || put.status}`, 502);
+      return reply(successMessage, 200, { ok: true });
+    }
+
     // Attendance is stored centrally in GitHub so the admin can see every
     // student's attendance, while the student only needs to enter their name.
     if (request.method === "OPTIONS") {
@@ -138,6 +181,22 @@ export default {
       }
     }
 
+    // Admin delete: one attendance record.
+    if (request.method === "DELETE" && url.pathname === "/api/attendance") {
+      try {
+        const name = String(url.searchParams.get("name") || "").trim();
+        const date = String(url.searchParams.get("date") || "").trim();
+        const time = String(url.searchParams.get("time") || "").trim();
+        if (!name || !date || !time) return reply("Delete details missing hain.", 400);
+        return await deleteTrackingRecord(ATTENDANCE_FILE, x =>
+          String(x.name || "") === name && String(x.date || "") === date && String(x.time || "") === time,
+          `Attendance deleted: ${name} - ${date}`
+        );
+      } catch (error) {
+        return reply(`Attendance delete error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
     // Admin can see the centrally stored attendance list.
     if (request.method === "GET" && url.pathname === "/api/attendance") {
       try {
@@ -235,6 +294,22 @@ export default {
         return reply("Website visit saved.", 200, { ok: true, date, time });
       } catch (error) {
         return reply(`Visit tracking error: ${error?.message || "Unknown error"}`, 500);
+      }
+    }
+
+    // Admin delete: one website-visit record.
+    if (request.method === "DELETE" && url.pathname === "/api/visits") {
+      try {
+        const name = String(url.searchParams.get("name") || "").trim();
+        const date = String(url.searchParams.get("date") || "").trim();
+        const time = String(url.searchParams.get("time") || "").trim();
+        if (!name || !date || !time) return reply("Delete details missing hain.", 400);
+        return await deleteTrackingRecord(VISITS_FILE, x =>
+          String(x.name || "") === name && String(x.date || "") === date && String(x.time || "") === time,
+          `Website visit deleted: ${name} - ${date} ${time}`
+        );
+      } catch (error) {
+        return reply(`Visit delete error: ${error?.message || "Unknown error"}`, 500);
       }
     }
 
@@ -388,6 +463,21 @@ export default {
           `Time tracking error: ${error?.message || "Unknown error"}`,
           500
         );
+      }
+    }
+
+    // Admin delete: one website-time record (student + IST date).
+    if (request.method === "DELETE" && url.pathname === "/api/time") {
+      try {
+        const name = String(url.searchParams.get("name") || "").trim();
+        const date = String(url.searchParams.get("date") || "").trim();
+        if (!name || !date) return reply("Delete details missing hain.", 400);
+        return await deleteTrackingRecord(TIME_FILE, x =>
+          String(x.name || "") === name && String(x.date || "") === date,
+          `Website time deleted: ${name} - ${date}`
+        );
+      } catch (error) {
+        return reply(`Time delete error: ${error?.message || "Unknown error"}`, 500);
       }
     }
 
@@ -1032,7 +1122,7 @@ Lecture save hone par selected subject ki GitHub file automatically update hogi.
 <div id="attendanceAdminMsg" class="small">Attendance list load karne ke liye Refresh Attendance dabaye.</div>
 <div style="overflow:auto;margin-top:12px">
 <table id="attendanceTable" style="width:100%;border-collapse:collapse;display:none">
-<thead><tr><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Name</th><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Date</th><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Time</th></tr></thead>
+<thead><tr><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Name</th><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Date</th><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Time</th><th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Action</th></tr></thead>
 <tbody></tbody>
 </table>
 </div>
@@ -1050,6 +1140,7 @@ Lecture save hone par selected subject ki GitHub file automatically update hogi.
 <th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Date</th>
 <th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Time</th>
 <th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Last Seen</th>
+<th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Action</th>
 </tr>
 </thead>
 <tbody></tbody>
@@ -1095,19 +1186,27 @@ async function loadWebsiteTime(){
     records.forEach(item => {
       const tr = document.createElement("tr");
 
-      [
-        item.name,
-        item.date,
-        formatTrackedTime(item.seconds),
-        item.lastSeen || ""
-      ].forEach(value => {
+      [item.name, item.date, formatTrackedTime(item.seconds), item.lastSeen || ""].forEach(value => {
         const td = document.createElement("td");
         td.textContent = value;
         td.style.padding = "10px";
         td.style.borderBottom = "1px solid #eee";
         tr.appendChild(td);
       });
-
+      const action = document.createElement("td");
+      action.style.padding = "10px";
+      action.style.borderBottom = "1px solid #eee";
+      action.innerHTML = '<button type="button" style="background:#b42318;color:#fff;border:0;border-radius:8px;padding:7px 12px;cursor:pointer">Delete</button>';
+      action.querySelector("button").onclick = async () => {
+        if(!confirm("Is website time record ko delete karna hai?")) return;
+        try {
+          const r = await fetch("/api/time?name=" + encodeURIComponent(item.name || "") + "&date=" + encodeURIComponent(item.date || ""), {method:"DELETE"});
+          const result = await r.json();
+          if(!r.ok || !result.ok) throw new Error(result.message || "Delete failed.");
+          loadWebsiteTime();
+        } catch(e) { msg.textContent = e.message || "Delete failed."; }
+      };
+      tr.appendChild(action);
       body.appendChild(tr);
     });
 
@@ -1133,7 +1232,7 @@ async function loadWebsiteTime(){
 <th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Name</th>
 <th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Date</th>
 <th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Time</th>
-</tr>
+<th style="text-align:left;padding:10px;border-bottom:1px solid #ddd">Action</th></tr>
 </thead>
 <tbody></tbody>
 </table>
@@ -1167,6 +1266,20 @@ async function loadWebsiteVisits(){
         td.style.borderBottom = "1px solid #eee";
         tr.appendChild(td);
       });
+      const action = document.createElement("td");
+      action.style.padding = "10px";
+      action.style.borderBottom = "1px solid #eee";
+      action.innerHTML = '<button type="button" style="background:#b42318;color:#fff;border:0;border-radius:8px;padding:7px 12px;cursor:pointer">Delete</button>';
+      action.querySelector("button").onclick = async () => {
+        if(!confirm("Is website visit ko delete karna hai?")) return;
+        try {
+          const r = await fetch("/api/visits?name=" + encodeURIComponent(item.name || "") + "&date=" + encodeURIComponent(item.date || "") + "&time=" + encodeURIComponent(item.time || ""), {method:"DELETE"});
+          const result = await r.json();
+          if(!r.ok || !result.ok) throw new Error(result.message || "Delete failed.");
+          loadWebsiteVisits();
+        } catch(e) { msg.textContent = e.message || "Delete failed."; }
+      };
+      tr.appendChild(action);
       body.appendChild(tr);
     });
 
@@ -1213,6 +1326,20 @@ async function loadAttendance(){
         td.style.borderBottom = "1px solid #eee";
         tr.appendChild(td);
       });
+      const action = document.createElement("td");
+      action.style.padding = "10px";
+      action.style.borderBottom = "1px solid #eee";
+      action.innerHTML = '<button type="button" style="background:#b42318;color:#fff;border:0;border-radius:8px;padding:7px 12px;cursor:pointer">Delete</button>';
+      action.querySelector("button").onclick = async () => {
+        if(!confirm("Is attendance record ko delete karna hai?")) return;
+        try {
+          const r = await fetch("/api/attendance?name=" + encodeURIComponent(item.name || "") + "&date=" + encodeURIComponent(item.date || "") + "&time=" + encodeURIComponent(item.time || ""), {method:"DELETE"});
+          const result = await r.json();
+          if(!r.ok || !result.ok) throw new Error(result.message || "Delete failed.");
+          loadAttendance();
+        } catch(e) { msg.textContent = e.message || "Delete failed."; }
+      };
+      tr.appendChild(action);
       body.appendChild(tr);
     });
     table.style.display = records.length ? "table" : "none";
@@ -1400,7 +1527,7 @@ manageSubject.addEventListener("change", loadPosts);
 function corsHeaders() {
   return {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type"
   };
 }
