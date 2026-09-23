@@ -270,4 +270,13 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/5?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/99ba320a-549c-488c-b95b-45738ba33111.pdf"
   }
+,
+  {
+    id: "ncert-1790132060217",
+    chapter: "Economics",
+    title: "Economics 23",
+    date: "2026-09-23",
+    duration: "",
+    url: "",
+  }
 ];
