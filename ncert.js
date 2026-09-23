@@ -279,4 +279,13 @@ const NCERT_LECTURES = [
     duration: "",
     url: "",
   }
+,
+  {
+    id: "ncert-1790132088779",
+    chapter: "General Science",
+    title: "General Science 04",
+    date: "2026-09-23",
+    duration: "",
+    url: "",
+  }
 ];
