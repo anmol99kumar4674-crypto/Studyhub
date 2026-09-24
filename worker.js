@@ -695,6 +695,7 @@ export default {
         const notes = String(data.notes || "").trim();
         const date = String(data.date || "").trim();
         const duration = String(data.duration || "").trim();
+        const scheduledAt = String(data.scheduledAt || "").trim();
         const pdfOnly = PDF_ONLY_SUBJECTS.has(subject);
         const contentUrl = pdfOnly ? pdf : video;
 
