@@ -281,7 +281,9 @@ const NCERT_LECTURES = [
   {
     id: "ncert-1790132088779",
     chapter: "General Science",
-    title: "General Science 04",
-    date: "2026-09-23"
+    title: "General Science 05 : मानव पाचन तंत्र 02 || Rescheduled @05:10 PM",
+    date: "2026-09-23",
+    url: "https://studyhub-telegram-stream.onrender.com/video/5?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/45e8da69-feb9-4484-abff-540dde860975.pdf"
   }
 ];
