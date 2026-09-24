@@ -572,6 +572,8 @@ export default {
         const notes = String(data.notes || "").trim();
         const date = String(data.date || "").trim();
         const duration = String(data.duration || "").trim();
+        const scheduledAt = String(data.scheduledAt || "").trim();
+        const scheduledAt = String(data.scheduledAt || "").trim();
         const pdfOnly = PDF_ONLY_SUBJECTS.has(subject);
         const contentUrl = pdfOnly ? pdf : video;
         const config = SUBJECT_FILES[subject];
@@ -601,12 +603,14 @@ export default {
         posts[index] = {
           ...posts[index],
           chapter, title, date,
+          ...(scheduledAt ? { scheduledAt } : {}),
           duration: pdfOnly ? "" : duration,
           url: contentUrl,
           ...(pdfOnly ? { type:"pdf" } : { type: posts[index].type === "pdf" ? undefined : posts[index].type }),
           ...(notes ? { notes } : {})
         };
         if (!pdfOnly && !notes) delete posts[index].notes;
+        if (!scheduledAt) delete posts[index].scheduledAt;
         if (!pdfOnly && posts[index].type === "pdf") delete posts[index].type;
 
         const updatedSource = replaceLectureArray(source, config.array, posts);
@@ -770,6 +774,7 @@ export default {
           `    chapter: ${jsString(chapter)},`,
           `    title: ${jsString(title)},`,
           `    date: ${jsString(date)},`,
+          ...(scheduledAt ? [`    scheduledAt: ${jsString(scheduledAt)},`] : []),
           `    duration: ${jsString(pdfOnly ? "" : duration)},`,
           `    url: ${jsString(contentUrl)},`
         ];
@@ -883,7 +888,7 @@ function parseLectureArray(source, arrayName) {
 
 function parseLectureObject(block) {
   const item = {};
-  const fields = ["id","chapter","title","date","duration","url","notes","dpp","dppUrl","dppPdf","dppPdfUrl","type"];
+  const fields = ["id","chapter","title","date","scheduledAt","duration","url","notes","dpp","dppUrl","dppPdf","dppPdfUrl","type"];
   for (const key of fields) {
     const re = new RegExp("\\b" + key.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\$&") + "\\s*:\\s*([\\s\\S]*?)(?:,\\s*\\n|\\n\\s*})");
     const m = block.match(re);
@@ -1107,6 +1112,10 @@ button:disabled{
 
 <label>Date</label>
 <input id="date" type="date">
+
+<label>Schedule Publish (Optional)</label>
+<input id="scheduledAt" type="datetime-local">
+<div class="small">YouTube ki tarah: future date/time set karenge to lecture us time se pehle website par nahi dikhega. Blank rakhenge to lecture turant publish hoga.</div>
 
 <button id="btn" type="button" onclick="save()">Add Lecture</button>
 
@@ -1363,6 +1372,7 @@ async function save(){
     pdf: document.getElementById("pdf") ? document.getElementById("pdf").value.trim() : "",
     notes: document.getElementById("notes").value.trim(),
     date: document.getElementById("date").value,
+    scheduledAt: document.getElementById("scheduledAt").value,
     duration: document.getElementById("duration").value.trim()
   };
 
@@ -1405,6 +1415,7 @@ async function save(){
       btn.innerText = "Add Lecture";
       document.getElementById("title").value = "";
       document.getElementById("video").value = "";
+      document.getElementById("scheduledAt").value = "";
       document.getElementById("notes").value = "";
       if(document.getElementById("pdf")) document.getElementById("pdf").value = "";
     }else{
@@ -1474,7 +1485,7 @@ async function loadPosts(){
       card.style.cssText = "border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0;background:#fff";
       card.innerHTML =
         '<div style="font-weight:700;font-size:16px">' + esc(post.title) + '</div>' +
-        '<div class="small">Chapter: ' + esc(post.chapter) + ' · ' + esc(post.date) + '</div>' +
+        '<div class="small">Chapter: ' + esc(post.chapter) + ' · ' + esc(post.date) + (post.scheduledAt ? ' · Scheduled: ' + esc(post.scheduledAt) : ' · Published immediately') + '</div>' +
         '<div style="display:flex;gap:8px;margin-top:10px">' +
           '<button type="button" class="edit-post" style="flex:1;padding:10px">Edit</button>' +
           '<button type="button" class="delete-post" style="flex:1;padding:10px;background:#b42318">Delete</button>' +
@@ -1500,6 +1511,7 @@ function startEdit(post){
   document.getElementById("duration").value = post.duration || "";
   if(document.getElementById("pdf")) document.getElementById("pdf").value = post.url || "";
   document.getElementById("date").value = post.date || "";
+  document.getElementById("scheduledAt").value = post.scheduledAt || "";
   const btn = document.getElementById("btn");
   btn.textContent = "Update Lecture";
   btn.dataset.editId = post.id;

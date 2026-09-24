@@ -293,10 +293,19 @@ function subjects() {
   return [...new Set([...SUBJECTS, ...LECTURES.map(x => x.subject)])];
 }
 
+function isLecturePublished(item) {
+  const raw = String(item?.scheduledAt || "").trim();
+  if (!raw) return true;
+  const when = new Date(raw);
+  if (Number.isNaN(when.getTime())) return true;
+  return Date.now() >= when.getTime();
+}
+
 function getFilteredLectures() {
   const q = searchInput.value.trim().toLowerCase();
 
   return LECTURES
+    .filter(x => isLecturePublished(x))
     .filter(x =>
       (activeSubject === "All" || x.subject === activeSubject) &&
       (!q || [x.title, x.subject, x.chapter]
@@ -333,7 +342,7 @@ function renderTodayClasses() {
   // Do not fall back to future or older lectures.
   const today = attendanceTodayKey();
   const items = LECTURES
-    .filter(item => item && item.title && String(item.date || "") === today)
+    .filter(item => item && item.title && isLecturePublished(item) && String(item.date || "") === today)
     .sort((a, b) => String(a.id || "").localeCompare(String(b.id || "")));
 
   wrap.innerHTML = "";
@@ -352,7 +361,7 @@ function renderTodayClasses() {
 
     const thumb = itemThumb(item);
     const teacher = item.teacher || item.teacherName || item.faculty || "Study Lecture";
-    const time = item.time || item.startTime || (item.duration ? item.duration : "Scheduled");
+    const time = item.time || item.startTime || (item.scheduledAt ? new Date(item.scheduledAt).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) : (item.duration ? item.duration : "Scheduled"));
 
     card.innerHTML = `
       <div class="today-class-top">
