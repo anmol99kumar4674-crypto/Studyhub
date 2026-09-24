@@ -269,23 +269,19 @@ const NCERT_LECTURES = [
     date: "2026-09-22",
     url: "https://studyhub-telegram-stream.onrender.com/video/5?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/99ba320a-549c-488c-b95b-45738ba33111.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790132060217",
     chapter: "Economics",
-    title: "Economics 23",
+    title: "Economics 23 : गरीबी",
     date: "2026-09-23",
-    duration: "",
-    url: "",
-  }
-,
+    url: "https://studyhub-telegram-stream.onrender.com/video/24?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/4a8aa752-f9a1-4a77-88ca-bc0c583be665.pdf"
+  },
   {
     id: "ncert-1790132088779",
     chapter: "General Science",
     title: "General Science 04",
-    date: "2026-09-23",
-    duration: "",
-    url: "",
+    date: "2026-09-23"
   }
 ];
