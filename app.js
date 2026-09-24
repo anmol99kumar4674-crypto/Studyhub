@@ -342,7 +342,7 @@ function renderTodayClasses() {
   // Do not fall back to future or older lectures.
   const today = attendanceTodayKey();
   const items = LECTURES
-    .filter(item => item && item.title && isLecturePublished(item) && String(item.date || "") === today)
+    .filter(item => item && item.title && String(item.date || "") === today)
     .sort((a, b) => String(a.id || "").localeCompare(String(b.id || "")));
 
   wrap.innerHTML = "";
@@ -372,7 +372,7 @@ function renderTodayClasses() {
         <div class="today-class-info">
           <div class="today-class-teacher">${escHtml(teacher)}</div>
           <div class="today-class-meta">
-            <span class="today-class-status">TODAY</span>
+            <span class="today-class-status">${isLecturePublished(item) ? "TODAY" : "UPCOMING"}</span>
             <span class="today-class-time">◷ ${escHtml(time)}</span>
           </div>
         </div>
