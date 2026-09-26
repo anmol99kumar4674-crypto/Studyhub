@@ -304,4 +304,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/8?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/f841bb10-8c58-44f9-a49e-94dbd9f7e75b.pdf"
   }
+,
+  {
+    id: "ncert-1790392017496",
+    chapter: "General Science",
+    title: "General Science 08",
+    date: "2026-09-26",
+    scheduledAt: "2026-09-26T21:00",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/9?chat=@ghxhcjv&key=@navinkumarraja",
+  }
 ];
