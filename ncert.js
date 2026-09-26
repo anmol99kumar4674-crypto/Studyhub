@@ -285,15 +285,13 @@ const NCERT_LECTURES = [
     date: "2026-09-23",
     url: "https://studyhub-telegram-stream.onrender.com/video/5?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/45e8da69-feb9-4484-abff-540dde860975.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790228002872",
     chapter: "General Science",
-    title: "General Science 06",
+    title: "General Science 06 : पाचन ग्रंथियां",
     date: "2026-09-24",
-    scheduledAt: "2026-09-24T21:00",
-    duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/6?chat=@ghxhcjv&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/7?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/0b60fdc8-42e5-4075-970d-e1649cd32700.pdf"
   }
 ];
