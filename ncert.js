@@ -341,7 +341,7 @@ const NCERT_LECTURES = [
   },
   {
     id: "ncert-1790431400816",
-    chapter: "General Science : Unit Wise Notes || PDF Only",
+    chapter: "Economics Unit Wise Notes || Pdf Only",
     title: "Economics : Unit Wise Notes 08",
     date: "2026-09-25",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/4f64ed48-fce3-462c-8900-4297d55df951.pdf"
