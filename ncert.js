@@ -294,4 +294,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/7?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/0b60fdc8-42e5-4075-970d-e1649cd32700.pdf"
   }
+,
+  {
+    id: "ncert-1790391869268",
+    chapter: "General Science",
+    title: "General Science 07 : श्वसन तंत्र और मानव परिसंचरण तंत्र",
+    date: "2026-09-25",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/8?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/f841bb10-8c58-44f9-a49e-94dbd9f7e75b.pdf"
+  }
 ];
