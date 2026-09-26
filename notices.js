@@ -83,4 +83,14 @@ const NOTICES_LECTURES = [
     date: "2026-08-23",
     notes: "https://docs.google.com/gview?url=https%3A%2F%2Fstatic.pw.live%2F5eb393ee95fab7468a79d189%2FADMIN%2Fe5033030-2c64-4c8c-9f47-587005efed31.pdf&embedded=true"
   }
+,
+  {
+    id: "notices-1790392487386",
+    chapter: "Lecture Planner || PDF Only",
+    title: "Lecture Planner : General Science",
+    date: "2026-09-14",
+    duration: "",
+    url: "",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/fdd65b9d-d283-4b54-b36a-34574a6c7c97.pdf"
+  }
 ];
