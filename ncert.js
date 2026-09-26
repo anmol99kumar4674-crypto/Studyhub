@@ -324,105 +324,75 @@ const NCERT_LECTURES = [
     date: "2026-09-24",
     url: "https://studyhub-telegram-stream.onrender.com/video/25?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/bd527bcc-5049-4a26-95f8-0dc311fc08be.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431202681",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "Economics : Unit Wise Notes 05",
     date: "2026-09-01",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c3da21f1-97f7-4fc2-87da-7630564ad2b1.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431244096",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "Economics : Unit Wise Notes 06",
     date: "2026-09-25",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/5b9e2b66-a893-4ea2-a506-f7f411e26c42.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431308144",
     chapter: "General Science : Unit Wise Notes || PDF Only",
-    title: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/fa26e5e6-7866-4bc6-abae-ae7fd76a13a7.pdf",
+    title: "Economics : Unit Wise Notes 07",
     date: "2026-09-25",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/fa26e5e6-7866-4bc6-abae-ae7fd76a13a7.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431400816",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "Economics : Unit Wise Notes 08",
     date: "2026-09-25",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/4f64ed48-fce3-462c-8900-4297d55df951.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431430108",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "Economics : Unit Wise Notes 09",
     date: "2026-09-25",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/6d076ed3-6ab7-4bc1-b538-4bb8fb4cad5a.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431468626",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "Economics : Unit Wise Notes 10",
     date: "2026-09-25",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/d5db0e2b-9854-4aea-849c-8905c94ccf1b.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431487862",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "Economics : Unit Wise Notes 11",
     date: "2026-09-25",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8bcd7faa-2fd0-4924-b0c5-e0a0758a47fb.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431521040",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "Economics : Unit Wise Notes 12",
     date: "2026-09-25",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/23b88182-c91d-4863-bf7e-a7110a4b2815.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431546981",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "Economics : Unit Wise Notes 13",
     date: "2026-09-25",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/6df4b89a-3852-47d9-a9fb-98893b8db911.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790431570892",
     chapter: "General Science : Unit Wise Notes || PDF Only",
     title: "Economics : Unit Wise Notes 14",
     date: "2026-09-25",
-    duration: "",
-    url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c6f1daec-2fb1-4c2f-926c-6b21edc63aab.pdf"
   }
 ];
