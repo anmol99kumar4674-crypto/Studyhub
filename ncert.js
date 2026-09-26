@@ -293,44 +293,35 @@ const NCERT_LECTURES = [
     date: "2026-09-24",
     url: "https://studyhub-telegram-stream.onrender.com/video/7?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/0b60fdc8-42e5-4075-970d-e1649cd32700.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790391869268",
     chapter: "General Science",
     title: "General Science 07 : श्वसन तंत्र और मानव परिसंचरण तंत्र",
     date: "2026-09-25",
-    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/8?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/f841bb10-8c58-44f9-a49e-94dbd9f7e75b.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790392017496",
     chapter: "General Science",
-    title: "General Science 08",
+    title: "General Science 08 : मानव परिसंचरण तंत्र || Rescheduled @05:10 PM",
     date: "2026-09-26",
-    scheduledAt: "2026-09-26T21:00",
-    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/9?chat=@ghxhcjv&key=@navinkumarraja",
-  }
-,
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/04a02fc7-216d-4508-9de5-5bf29a086a48.pdf"
+  },
   {
     id: "ncert-1790392087967",
     chapter: "General Science",
     title: "General Science 09",
     date: "2026-09-28",
-    scheduledAt: "2026-09-28T21:00",
-    duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/10?chat=@ghxhcjv&key=@navinkumarraja",
-  }
-,
+    url: "https://studyhub-telegram-stream.onrender.com/video/10?chat=@ghxhcjv&key=@navinkumarraja"
+  },
   {
     id: "ncert-1790392274125",
     chapter: "Economics",
     title: "Economics 23 : बेरोजगारी",
     date: "2026-09-24",
-    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/25?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/bd527bcc-5049-4a26-95f8-0dc311fc08be.pdf"
   }
