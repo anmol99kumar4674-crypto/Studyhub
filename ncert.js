@@ -314,4 +314,14 @@ const NCERT_LECTURES = [
     duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/9?chat=@ghxhcjv&key=@navinkumarraja",
   }
+,
+  {
+    id: "ncert-1790392087967",
+    chapter: "General Science",
+    title: "General Science 09",
+    date: "2026-09-28",
+    scheduledAt: "2026-09-28T21:00",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/10?chat=@ghxhcjv&key=@navinkumarraja",
+  }
 ];
