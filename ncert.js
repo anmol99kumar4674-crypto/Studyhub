@@ -325,4 +325,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/25?chat=@xjffjxzhfhfz&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/bd527bcc-5049-4a26-95f8-0dc311fc08be.pdf"
   }
+,
+  {
+    id: "ncert-1790431202681",
+    chapter: "General Science : Unit Wise Notes || PDF Only",
+    title: "Economics : Unit Wise Notes 05",
+    date: "2026-09-01",
+    duration: "",
+    url: "",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c3da21f1-97f7-4fc2-87da-7630564ad2b1.pdf"
+  }
 ];
