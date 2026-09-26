@@ -355,4 +355,14 @@ const NCERT_LECTURES = [
     url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/fa26e5e6-7866-4bc6-abae-ae7fd76a13a7.pdf"
   }
+,
+  {
+    id: "ncert-1790431400816",
+    chapter: "General Science : Unit Wise Notes || PDF Only",
+    title: "Economics : Unit Wise Notes 08",
+    date: "2026-09-25",
+    duration: "",
+    url: "",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/4f64ed48-fce3-462c-8900-4297d55df951.pdf"
+  }
 ];
