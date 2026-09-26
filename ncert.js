@@ -345,4 +345,14 @@ const NCERT_LECTURES = [
     url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/5b9e2b66-a893-4ea2-a506-f7f411e26c42.pdf"
   }
+,
+  {
+    id: "ncert-1790431308144",
+    chapter: "General Science : Unit Wise Notes || PDF Only",
+    title: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/fa26e5e6-7866-4bc6-abae-ae7fd76a13a7.pdf",
+    date: "2026-09-25",
+    duration: "",
+    url: "",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/fa26e5e6-7866-4bc6-abae-ae7fd76a13a7.pdf"
+  }
 ];
