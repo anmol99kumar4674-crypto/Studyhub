@@ -324,4 +324,14 @@ const NCERT_LECTURES = [
     duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/10?chat=@ghxhcjv&key=@navinkumarraja",
   }
+,
+  {
+    id: "ncert-1790392274125",
+    chapter: "Economics",
+    title: "Economics 23 : बेरोजगारी",
+    date: "2026-09-24",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/25?chat=@xjffjxzhfhfz&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/bd527bcc-5049-4a26-95f8-0dc311fc08be.pdf"
+  }
 ];
