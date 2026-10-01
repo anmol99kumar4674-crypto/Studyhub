@@ -313,9 +313,10 @@ const NCERT_LECTURES = [
   {
     id: "ncert-1790392087967",
     chapter: "General Science",
-    title: "General Science 09",
+    title: "General Science 09 : मानव हृदय और उत्सर्जन तंत्र",
     date: "2026-09-28",
-    url: "https://studyhub-telegram-stream.onrender.com/video/10?chat=@ghxhcjv&key=@navinkumarraja"
+    url: "https://studyhub-telegram-stream.onrender.com/video/10?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/6064116d-44d9-4566-b6c8-6149824d3ed1.pdf"
   },
   {
     id: "ncert-1790392274125",
