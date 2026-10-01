@@ -389,4 +389,14 @@ const NCERT_LECTURES = [
     date: "2026-09-25",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c6f1daec-2fb1-4c2f-926c-6b21edc63aab.pdf"
   }
+,
+  {
+    id: "ncert-1790822134471",
+    chapter: "General Science",
+    title: "General Science 10 : उत्सर्जन तंत्र 02",
+    date: "2026-09-29",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/11?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/7872c3ee-421d-40d6-bba2-2825d62a8061.pdf"
+  }
 ];
