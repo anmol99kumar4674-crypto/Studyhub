@@ -399,4 +399,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/11?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/7872c3ee-421d-40d6-bba2-2825d62a8061.pdf"
   }
+,
+  {
+    id: "ncert-1790822192543",
+    chapter: "General Science",
+    title: "General Science 11 : पौधों में ट्रॉपिज़्म और तंत्रिका तंत्र",
+    date: "2026-09-30",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/12?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8afec1e3-4903-48c5-b3cd-15339db41128.pdf"
+  }
 ];
