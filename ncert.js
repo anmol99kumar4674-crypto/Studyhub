@@ -409,4 +409,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/12?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8afec1e3-4903-48c5-b3cd-15339db41128.pdf"
   }
+,
+  {
+    id: "ncert-1790875647398",
+    chapter: "General Science",
+    title: "General Science 12 : कोशिका",
+    date: "2026-10-01",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/3b17f835-9ffd-4b49-a158-24e11b6bf333.pdf"
+  }
 ];
