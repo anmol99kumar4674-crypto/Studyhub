@@ -429,4 +429,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/15?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/e612062a-cf7e-4f6f-b6ce-6be958f70055.pdf"
   }
+,
+  {
+    id: "ncert-1791290361286",
+    chapter: "Ancient History",
+    title: "Ancient History 01: भारत का प्राचीन इतिहास",
+    date: "2026-10-05",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/2?chat=@tegrgf&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/d6d3581e-5943-445e-aa56-0a06ad4864bc.pdf"
+  }
 ];
