@@ -388,54 +388,44 @@ const NCERT_LECTURES = [
     title: "Economics : Unit Wise Notes 14",
     date: "2026-09-25",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/c6f1daec-2fb1-4c2f-926c-6b21edc63aab.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790822134471",
     chapter: "General Science",
     title: "General Science 10 : उत्सर्जन तंत्र 02",
     date: "2026-09-29",
-    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/11?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/7872c3ee-421d-40d6-bba2-2825d62a8061.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790822192543",
     chapter: "General Science",
     title: "General Science 11 : पौधों में ट्रॉपिज़्म और तंत्रिका तंत्र",
     date: "2026-09-30",
-    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/12?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/8afec1e3-4903-48c5-b3cd-15339db41128.pdf"
-  }
-,
+  },
   {
     id: "ncert-1790875647398",
     chapter: "General Science",
     title: "General Science 12 : कोशिका",
     date: "2026-10-01",
-    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/3b17f835-9ffd-4b49-a158-24e11b6bf333.pdf"
-  }
-,
+  },
   {
     id: "ncert-1791289562766",
     chapter: "General Science",
     title: "General Science 13 : कोशिका 02, ऊतक",
     date: "2026-10-03",
-    duration: "",
-    url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@ghxhcjv&key=@navinkumarraja",
+    url: "https://studyhub-telegram-stream.onrender.com/video/14?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/7f185ee2-ee5c-4427-93ea-f9cbd6f9f2f0.pdf"
-  }
-,
+  },
   {
     id: "ncert-1791289628340",
     chapter: "General Science",
     title: "General Science 14 : ऊतक 02",
     date: "2026-10-05",
-    duration: "",
     url: "https://studyhub-telegram-stream.onrender.com/video/15?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/e612062a-cf7e-4f6f-b6ce-6be958f70055.pdf"
   }
