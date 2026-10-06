@@ -419,4 +419,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/3b17f835-9ffd-4b49-a158-24e11b6bf333.pdf"
   }
+,
+  {
+    id: "ncert-1791289562766",
+    chapter: "General Science",
+    title: "General Science 13 : कोशिका 02, ऊतक",
+    date: "2026-10-03",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/7f185ee2-ee5c-4427-93ea-f9cbd6f9f2f0.pdf"
+  }
 ];
