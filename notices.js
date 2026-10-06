@@ -93,4 +93,14 @@ const NOTICES_LECTURES = [
     url: "",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/fdd65b9d-d283-4b54-b36a-34574a6c7c97.pdf"
   }
+,
+  {
+    id: "notices-1791290475651",
+    chapter: "Lecture Planner || PDF Only",
+    title: "Lecture Planner : Ancient History (NCERT)",
+    date: "2026-10-03",
+    duration: "",
+    url: "",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/934c6388-c4a8-4ab3-a3e3-1c76fb3f25cc.pdf"
+  }
 ];
