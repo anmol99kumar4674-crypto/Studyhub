@@ -429,4 +429,14 @@ const NCERT_LECTURES = [
     url: "https://studyhub-telegram-stream.onrender.com/video/13?chat=@ghxhcjv&key=@navinkumarraja",
     notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/7f185ee2-ee5c-4427-93ea-f9cbd6f9f2f0.pdf"
   }
+,
+  {
+    id: "ncert-1791289628340",
+    chapter: "General Science",
+    title: "General Science 14 : ऊतक 02",
+    date: "2026-10-05",
+    duration: "",
+    url: "https://studyhub-telegram-stream.onrender.com/video/15?chat=@ghxhcjv&key=@navinkumarraja",
+    notes: "https://static.pw.live/5eb393ee95fab7468a79d189/ADMIN/e612062a-cf7e-4f6f-b6ce-6be958f70055.pdf"
+  }
 ];
